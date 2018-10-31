@@ -10,7 +10,7 @@
 #   normal
 #   bananas
 
-EuclideanExamples <- function(name,samplesize){
+EuclideanExamples <- function(name,samplesize,sd_noise){
 
   if ( name == "spiral") {
     ###############################
@@ -21,8 +21,9 @@ EuclideanExamples <- function(name,samplesize){
     t = seq(pi,5*pi, length.out = n.steps)
     x = 1 * t * cos(t)
     y = 1 * t * sin(t)
-    e1 = rnorm(length(t), sd=.3)
-    e2 = rnorm(length(t), sd=.3)
+    true_mani = cbind(x,y)
+    e1 = rnorm(n.steps, sd=sd_noise)
+    e2 = rnorm(n.steps, sd=sd_noise)
     data = matrix(NA, nrow=n.steps, ncol=n.grid)
     data[,1] = x+e1
     data[,2] = y+e2
@@ -80,10 +81,10 @@ EuclideanExamples <- function(name,samplesize){
     ##circle
 
     h = 2
-
-    phi = rnorm(samplesize, sd=1.5)
+	phi <- runif(samplesize,0,2*pi)
+    #phi = rnorm(samplesize, sd=1.5)
     # noise
-    alpha = rnorm(samplesize, sd=2)
+    alpha = rnorm(samplesize, sd=sd_noise)
 
     true_mani = data.frame(x = 10*cos(phi) , y= 10*sin(phi) )
 
@@ -410,7 +411,7 @@ EuclideanExamples <- function(name,samplesize){
     y.to = 15
   }
 
-  # plot(true_mani, pch=19, xlab='', ylab='', main = paste("true manifold", name, sep = " "))
+  plot(true_mani, pch=19, xlab='', ylab='', main = paste("true manifold", name, sep = " "))
   plot(data, pch=19, xlab='', ylab='', main = paste("noisy manifold", name, sep = " "))
 
   # length.lm only used for plotEigenvectorField
