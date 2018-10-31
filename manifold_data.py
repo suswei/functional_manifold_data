@@ -1,22 +1,14 @@
+# TODO: find out where this code came from, some scms python package?
+
 import numpy as np
+import pandas as pd
 
 def manifold_data(samplesize):
-
-  # PARAMETERS
-  # =============================================================================
 
   # data sampling
   n_manifold = samplesize
   n_bg = samplesize
   sampling_sigma = .2
-
-  # mean shift
-  kernel_sigma = .5
-  mean_shift_iterations = 5
-
-  show_plots = False
-
-  # =============================================================================
 
   # sample the manifold
   manifold_x = np.linspace(0, 4*np.pi, n_manifold)
@@ -33,6 +25,7 @@ def manifold_data(samplesize):
   bg = np.column_stack((bg_x, bg_y))
 
   # combine the noise and the signal
-  data = np.vstack((manifold, bg))
+  # data = np.vstack((manifold, bg))
+  data = pd.DataFrame(manifold = manifold, noise = bg)
 
   return data

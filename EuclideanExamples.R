@@ -1,6 +1,7 @@
 # generate noisy manifold data
 # TODO: not sure if all of these noises are "normal" to the manifold
 # TODO: need to add the true manifold to all the examples, have only done this for circle
+# TODO: clean up extra parameters that don't get called when plotting is turned off
 # options:
 #   spiral
 #   cross
@@ -13,19 +14,23 @@
 EuclideanExamples <- function(name,samplesize){
 
   if ( name == "spiral") {
-    ###############################
-    ##spiral
+
     h= 1.4
     n.grid = 2
+
     n.steps = samplesize
     t = seq(pi,5*pi, length.out = n.steps)
     x = 1 * t * cos(t)
     y = 1 * t * sin(t)
+    true_mani = data.frame(x = x, y = y)
+
+    # TODO: is this noise normal to the manifold?
     e1 = rnorm(length(t), sd=.3)
     e2 = rnorm(length(t), sd=.3)
     data = matrix(NA, nrow=n.steps, ncol=n.grid)
     data[,1] = x+e1
     data[,2] = y+e2
+
     length.lm = 120/h^2
     d=1
     grid = 1
@@ -36,23 +41,26 @@ EuclideanExamples <- function(name,samplesize){
 
   } else if ( name == "manifold") {
 
+    # TODO: can't pick up the pandas dataframe structure!
+    source_python('manifold_data.py')
     temp = import("manifold_data")
-    data = temp$manifold_data(samplesize);
+    pythonobj = temp$manifold_data(samplesize)
+    true_mani = pythonobj$manifold
+
+    noise = pythonobj$noise
+    data = true_mani + noise
+
 
     x.from = -2
     x.to = 16
     y.from = -13
     y.to = 3
-
     grid = 1
     length.lm = 1
-    name = "manifold"
 
 
   } else if ( name == "cross") {
 
-    #################################################
-    ##cross
     x = rnorm(samplesize, sd=2)
     y = rnorm(samplesize, sd=.2)
 
@@ -79,21 +87,18 @@ EuclideanExamples <- function(name,samplesize){
     ###########################
     ##circle
 
-    h = 2
+    angle = runif(samplesize, 0,2*pi)
+    true_mani = data.frame(x = 10*cos(angle), y = 10*sin(angle))
 
-    phi = rnorm(samplesize, sd=1.5)
-    # noise
+    # add noise normal to manifold
     alpha = rnorm(samplesize, sd=2)
+    data = data.frame(x = (10+alpha)*cos(angle) , y= (10+alpha)*sin(angle) )
 
-    true_mani = data.frame(x = 10*cos(phi) , y= 10*sin(phi) )
-
-    data = data.frame(x = (10+alpha)*cos(phi) , y= (10+alpha)*sin(phi) )
-
+    h = 2
     length.lm = 200/h^2
     d=1
     h= 1
     grid = .8
-
     x.from = -15
     x.to = 15
     y.from = -15

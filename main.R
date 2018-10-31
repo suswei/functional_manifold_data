@@ -5,12 +5,11 @@ source('functions.R')
 
 library(reticulate)
 scms = import_from_path("scms",path='.')
-
 par(mfrow=c(1,4))
 
 # load noisy manifold data from EuclideanExamples
-name = "right-angle"
-samplesize = 500
+name = "manifold"
+samplesize = 10
 obj <- EuclideanExamples(name, samplesize)
 data = data.matrix(obj$data)
 # true_mani  = data.matrix(obj$true_mani)
