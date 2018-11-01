@@ -15,7 +15,7 @@ library(RandPro)
 
 ### blaha blah blah
 
-rp = FALSE
+rp = TRUE
 # use right version of python
 use_python('/Users/suswei/anaconda3/bin/python',required=TRUE)
 pyIso = import_from_path("getIsomapGdist",path='.')
