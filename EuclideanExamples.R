@@ -22,11 +22,14 @@ EuclideanExamples <- function(name,samplesize){
     t = seq(pi,5*pi, length.out = n.steps)
     x = 1 * t * cos(t)
     y = 1 * t * sin(t)
+<<<<<<< HEAD
     true_mani = data.frame(x = x, y = y)
 
     # TODO: is this noise normal to the manifold?
     e1 = rnorm(length(t), sd=.3)
     e2 = rnorm(length(t), sd=.3)
+=======
+>>>>>>> MH_code
     data = matrix(NA, nrow=n.steps, ncol=n.grid)
     data[,1] = x+e1
     data[,2] = y+e2
@@ -85,12 +88,15 @@ EuclideanExamples <- function(name,samplesize){
     ###########################
     ##circle
 
+<<<<<<< HEAD
     angle = runif(samplesize, 0,2*pi)
     true_mani = data.frame(x = 10*cos(angle), y = 10*sin(angle))
 
     # add noise normal to manifold
     alpha = rnorm(samplesize, sd=2)
     data = data.frame(x = (10+alpha)*cos(angle) , y= (10+alpha)*sin(angle) )
+=======
+>>>>>>> MH_code
 
     h = 2
     length.lm = 200/h^2

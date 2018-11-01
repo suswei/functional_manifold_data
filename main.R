@@ -1,10 +1,19 @@
+<<<<<<< HEAD
+=======
+setwd("/Users/marie_uqam/Dropbox/Marie-Moi/Susan_project/manifold learning/ridge_density_manifold_learning")
+
+>>>>>>> MH_code
 source('EuclideanExamples.R')
 source('functions.R')
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> MH_code
 library(reticulate)
 use_python('/Users/suswei/anaconda3/bin/python',required=TRUE)
 scms = import_from_path("scms",path='.')
+<<<<<<< HEAD
 par(mfrow=c(1,3))
 
 # load noisy manifold data from EuclideanExamples
@@ -31,5 +40,6 @@ true_mani  = data.matrix(obj$true_mani)
 
 # manifold estimation via subspace constrained mean shift (SCMS)
 scms_h = 3
+
 denoised = scms$scms(data, scms_h)  #has same shape as data
 plot(denoised, pch=19, xlab='', ylab='', main=paste("SCMS", 'h=', scms_h, sep=' '))
