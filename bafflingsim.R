@@ -11,8 +11,9 @@ source('pairwiseDistances.R')
 
 library(fields)
 library(reticulate)
+library(RandPro)
 
-rp = TRUE
+rp = FALSE
 # use right version of python
 use_python('/Users/suswei/anaconda3/bin/python',required=TRUE)
 pyIso = import_from_path("getIsomapGdist",path='.')
@@ -20,7 +21,7 @@ pyIso = import_from_path("getIsomapGdist",path='.')
 # set up parameters
 name = "archimedean-spiral"
 samplesize = 200
-scms_h = 1 # bandwidth parameter
+scms_h = .5 # bandwidth parameter
 num_neigh = 5
 
 par(mfrow = c(3,2))
