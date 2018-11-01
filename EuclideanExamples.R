@@ -41,15 +41,13 @@ EuclideanExamples <- function(name,samplesize){
 
   } else if ( name == "manifold") {
 
-    # TODO: can't pick up the pandas dataframe structure!
+    # calling manifold_data.py will return double the samplesize,
+    # first set is the noisy manifold data, second set is the true manifold
     source_python('manifold_data.py')
-    temp = import("manifold_data")
-    pythonobj = temp$manifold_data(samplesize)
-    true_mani = pythonobj$manifold
+    stacked = manifold_data(samplesize)
 
-    noise = pythonobj$noise
-    data = true_mani + noise
-
+    data = stacked[1:samplesize, ]
+    true_mani = stacked[-(1:samplesize), ]
 
     x.from = -2
     x.to = 16
@@ -415,7 +413,7 @@ EuclideanExamples <- function(name,samplesize){
     y.to = 15
   }
 
-  # plot(true_mani, pch=19, xlab='', ylab='', main = paste("true manifold", name, sep = " "))
+  plot(true_mani, pch=19, xlab='', ylab='', main = paste("true manifold", name, sep = " "))
   plot(data, pch=19, xlab='', ylab='', main = paste("noisy manifold", name, sep = " "))
 
   # length.lm only used for plotEigenvectorField

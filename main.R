@@ -1,18 +1,18 @@
-setwd("~/Dropbox/PycharmProjects/LocalCovarianceOperator")
-
 source('EuclideanExamples.R')
 source('functions.R')
 
+
 library(reticulate)
+use_python('/Users/suswei/anaconda3/bin/python',required=TRUE)
 scms = import_from_path("scms",path='.')
-par(mfrow=c(1,4))
+par(mfrow=c(1,3))
 
 # load noisy manifold data from EuclideanExamples
 name = "manifold"
-samplesize = 10
+samplesize = 1000
 obj <- EuclideanExamples(name, samplesize)
 data = data.matrix(obj$data)
-# true_mani  = data.matrix(obj$true_mani)
+true_mani  = data.matrix(obj$true_mani)
 
 # manifold estimation via local covariance flow
 # x0 = as.numeric(obj$data[500,])
