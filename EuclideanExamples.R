@@ -1,15 +1,18 @@
 # generate noisy manifold data
-# TODO: not sure if all of these noises are "normal" to the manifold
-# TODO: need to add the true manifold to all the examples, have only done this for circle
-# TODO: clean up extra parameters that don't get called when plotting is turned off
+# TODO future: not sure if all of these noises are "normal" to the manifold
+# TODO Marie: need to add the true manifold to all the examples, have only done this for circle
+# TODO Marie: add true geodesic distances
+# TODO Susan: clean up extra parameters that don't get called when plotting is turned off
 # options:
-#   spiral
+#   spiral: complete
+#   manifold: complete
 #   cross
-#   circle
+#   circle: complete
 #   right-angle
 #   half-moon
 #   normal
 #   bananas
+# complete in terms of having true_mani output
 
 EuclideanExamples <- function(name, samplesize, sd_noise){
 
@@ -22,13 +25,9 @@ EuclideanExamples <- function(name, samplesize, sd_noise){
     t = seq(pi,5*pi, length.out = n.steps)
     x = 1 * t * cos(t)
     y = 1 * t * sin(t)
-    true_mani = data.frame(x = x, y = y)
+    true_mani = cbind(x,y)
 
     # TODO: is this noise normal to the manifold?
-    e1 = rnorm(length(t), sd=.3)
-    e2 = rnorm(length(t), sd=.3)
-
-    true_mani = cbind(x,y)
     e1 = rnorm(n.steps, sd=sd_noise)
     e2 = rnorm(n.steps, sd=sd_noise)
 
@@ -93,7 +92,7 @@ EuclideanExamples <- function(name, samplesize, sd_noise){
     true_mani = data.frame(x = 10*cos(angle), y = 10*sin(angle))
 
     # add noise normal to manifold
-    alpha = rnorm(samplesize, sd=2)
+    alpha = rnorm(samplesize, sd=sd_noise)
     data = data.frame(x = (10+alpha)*cos(angle) , y= (10+alpha)*sin(angle) )
 
     h = 2
@@ -176,8 +175,6 @@ EuclideanExamples <- function(name, samplesize, sd_noise){
 
     #################################33
     ##normal distribution
-
-
 
     h=1.5
 
