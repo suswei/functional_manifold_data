@@ -8,7 +8,7 @@ def manifold_data(samplesize):
   # data sampling
   n_manifold = int(samplesize)
   n_bg = int(samplesize)
-  sampling_sigma = .2
+  sampling_sigma = .5
 
   # sample the manifold
   manifold_x = np.linspace(0, 4*np.pi, n_manifold)
