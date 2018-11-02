@@ -17,7 +17,6 @@
   #   bananas: complete
   #   line: complete
   #   two-clouds:
-  #   library: complete
   #   not-dense-spiral: complete
   #   sin-cos-curve: complete
   #   hetero-spiral: complete
@@ -27,11 +26,18 @@
 # true_mani: samplesize x 2 matrix of true manifold observations
 # plots true and noisy manifold observations
 
+library(truncnorm)
+
 EuclideanExamples <- function(name, samplesize, sd_noise, plotTrue){
 
   if ( name == "spiral") {
 
+    # regular sampling of manifold
     t = seq(pi,5*pi, length.out = samplesize)
+    # uniform sampling
+    t = runif(samplesize, pi, 5*pi)
+    # irregular sampling of manifold
+    # t = rtruncnorm(samplesize, a=pi, b=5*pi, mean = 3*pi, sd = 0.8)
     x = 1 * t * cos(t)
     y = 1 * t * sin(t)
     true_mani = cbind(x, y)
@@ -40,7 +46,6 @@ EuclideanExamples <- function(name, samplesize, sd_noise, plotTrue){
     e1 = rnorm(samplesize, sd=sd_noise)
     e2 = rnorm(samplesize, sd=sd_noise)
     data = cbind(x+e1, y+e2)
-
 
   } else if ( name == "sin-curve") {
 
@@ -139,17 +144,6 @@ EuclideanExamples <- function(name, samplesize, sd_noise, plotTrue){
     z = sample(c(-3,3),samplesize,replace=T)
 
     data = cbind(x+z, y)
-
-  } else if ( name == "archimedean-spiral") {
-
-    t = seq(0, 5*pi, length.out = samplesize)
-    x = 1 * t * cos(t)
-    y = 1 * t * sin(t)
-    true_mani = cbind(x, y)
-
-    e1 = rnorm(length(t), sd = sd_noise)
-    e2 = rnorm(length(t), sd = sd_noise)
-    data = cbind( x+e1 , y+e2 )
 
   } else if ( name == "not-dense-spiral") {
 
