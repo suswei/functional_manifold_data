@@ -12,7 +12,13 @@ source('pairwiseDistances.R')
 library(fields)
 library(reticulate)
 
+<<<<<<< HEAD
 
+=======
+### blaha blah blah
+
+rp = TRUE
+>>>>>>> 2b810b03e403f94d177efc1f8cbe3eaed77f848f
 # use right version of python
 use_python('/Users/suswei/anaconda3/bin/python',required=TRUE)
 pyIso = import_from_path("getIsomapGdist",path='.')
