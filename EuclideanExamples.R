@@ -37,7 +37,8 @@ EuclideanExamples <- function(name, samplesize, sd_noise, plotTrue){
     # uniform sampling
     t = runif(samplesize, pi, 5*pi)
     # irregular sampling of manifold
-    # t = rtruncnorm(samplesize, a=pi, b=5*pi, mean = 3*pi, sd = 0.8)
+    t = rtruncnorm(samplesize, a=pi, b=5*pi, mean = 3*pi, sd = 0.8)
+
     x = 1 * t * cos(t)
     y = 1 * t * sin(t)
     true_mani = cbind(x, y)

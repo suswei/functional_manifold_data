@@ -1,6 +1,5 @@
-# TODO: this simulation exhibits collapsing ISOMAP geodesic distance, what is this due to?
-# Seems like it's pretty easy to find other cases of collapse in the Euclidean examples for certain sd_noise and scms_h
-# related to short circuit?
+# check if regular versus irregular sampling of true manifold causes the ISOMAP geodesic distance collapsing issue
+# best Euclidean example for this is spiral, with three types of sampling in the code currently
 
 rm(list = ls())
 
