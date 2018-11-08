@@ -4628,6 +4628,7 @@
       <w>dst</w>
       <w>dsurvreg</w>
       <w>dt</w>
+      <w>dtruncnorm</w>
       <w>dual</w>
       <w>ducks</w>
       <w>dummy.coef</w>
@@ -4798,6 +4799,7 @@
       <w>estimate_yj</w>
       <w>estimethod</w>
       <w>ethanol</w>
+      <w>etruncnorm</w>
       <w>euro</w>
       <w>eurodist</w>
       <w>eval</w>
@@ -8674,6 +8676,7 @@
       <w>pspline</w>
       <w>psurvreg</w>
       <w>pt</w>
+      <w>ptruncnorm</w>
       <w>ptukey</w>
       <w>pull</w>
       <w>pulpfiber</w>
@@ -8749,6 +8752,7 @@
       <w>qsreg.trace</w>
       <w>qsurvreg</w>
       <w>qt</w>
+      <w>qtruncnorm</w>
       <w>qtukey</w>
       <w>quade.test</w>
       <w>quadrant</w>
@@ -9369,6 +9373,7 @@
       <w>rt</w>
       <w>rtags</w>
       <w>rtf_document</w>
+      <w>rtruncnorm</w>
       <w>rug</w>
       <w>rule</w>
       <w>rulesFinCenter</w>
@@ -11066,6 +11071,7 @@
       <w>trunc_mat</w>
       <w>truncate</w>
       <w>truncate.connection</w>
+      <w>truncnorm</w>
       <w>try</w>
       <w>tryCatch</w>
       <w>tryNULL</w>
@@ -11341,6 +11347,7 @@
       <w>vpPath</w>
       <w>vpStack</w>
       <w>vpTree</w>
+      <w>vtruncnorm</w>
       <w>waders</w>
       <w>wagnerGrowth</w>
       <w>wait</w>

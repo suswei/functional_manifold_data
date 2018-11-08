@@ -15,6 +15,7 @@ rp = FALSE
 # use right version of python
 use_python('/Users/suswei/anaconda3/bin/python',required=TRUE)
 pyIso = import_from_path("getIsomapGdist",path='.')
+pyIsoAuto = import_from_path("get_auto_isomap_gdist",path='.')
 
 # set up parameters
 name = "sin-curve"
@@ -48,6 +49,11 @@ plot(denoised, pch=19, xlab='', ylab='', main=paste("SCMS", 'h=', scms_h, sep=' 
 IsomapGdist_true = pyIso$getIsomapGdist(true_mani, num_neigh)
 IsomapGdist_obs = pyIso$getIsomapGdist(data, num_neigh)
 IsomapGdist_denoised = pyIso$getIsomapGdist(denoised, num_neigh)
+
+# use atuomatic isomap
+AutoIsomapGdist_true = pyIsoAuto$get_auto_isomap_gdist(true_mani, num_neigh)
+AutoIsomapGdist_obs = pyIsoAuto$get_auto_isomap_gdist(data, num_neigh)
+AutoIsomapGdist_denoised = pyIsoAuto$get_auto_isomap_gdist(denoised, num_neigh)
 
 # extract just upper triangular, don't include diagonal zeros
 IsomapGdist_true = IsomapGdist_true[lower.tri(IsomapGdist_true, diag = FALSE)]
