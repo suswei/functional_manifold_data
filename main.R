@@ -4,6 +4,7 @@ source('EuclideanExamples.R')
 source('functions.R')
 source('Isomap.R')
 source('pairwiseDistances.R')
+source('full_geo_from_adj_geo.R')
 
 library(fields)
 library(reticulate)
