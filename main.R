@@ -13,7 +13,7 @@ library(RandPro)
 rp = FALSE
 
 # use right version of python
-use_python('/Users/suswei/anaconda3/bin/python',required=TRUE)
+use_python('/anaconda3/bin/python',required=TRUE)
 pyIso = import_from_path("getIsomapGdist",path='.')
 
 # set up parameters
