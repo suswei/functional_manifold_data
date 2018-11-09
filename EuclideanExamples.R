@@ -3,7 +3,7 @@
 # generate 2D manifold and noisy observations off it
 # Input
 #   samplesize: self explanatory
-#   sd_noise: for certain simulations, can fiddle with this noise term from outside the function
+#   SNR_noise: signal to noise ratio SNR= 10*log_10 (var_signal/sigma^2), where sigma^2 = variance of noise (ref. Orientability and Diffusion Maps, Amit Singera and Hau-tieng Wu)
 #   plotTrue: plot of real and noisy manifold
 #   reg_sampling: TRUE = regular and FALSE = random uniformly
 #   min_ana_num: if calculus of true geodesic done numerically, = number of points used in approx
@@ -25,7 +25,7 @@
 # true_gep: samplesize x samplesize matrix of true geodesic distances
 # plots true and noisy manifold observations
 
-EuclideanExamples <- function(name, samplesize, sd_noise, plotTrue,reg_sampling,min_ana_num){
+EuclideanExamples <- function(name, samplesize, SNR, plotTrue,reg_sampling,min_ana_num){
   
   if ( name == "archimedean-spiral") {
     
@@ -42,6 +42,10 @@ EuclideanExamples <- function(name, samplesize, sd_noise, plotTrue,reg_sampling,
     
     adja_geo <- arc_length_spiral(t[-1])- arc_length_spiral(t[-samplesize])
     true_geo <- full_geo(adja_geo,samplesize)
+    
+    mean_signal= apply(true_mani,2,mean)
+    var_signal= (1/(samplesize*ncol(true_mani)))*sum((true_mani-matrix(mean_signal,ncol=2,nrow=samplesize,byrow=TRUE))^2)
+    sd_noise= sqrt(var_signal/(10^(SNR/10)))
     
     e1 = rnorm(length(t), sd = sd_noise)
     e2 = rnorm(length(t), sd = sd_noise)
@@ -79,6 +83,10 @@ EuclideanExamples <- function(name, samplesize, sd_noise, plotTrue,reg_sampling,
     }
     true_geo <- true_geo+t(true_geo)
     
+    mean_signal= apply(true_mani,2,mean)
+    var_signal= (1/(samplesize*ncol(true_mani)))*sum((true_mani-matrix(mean_signal,ncol=2,nrow=samplesize,byrow=TRUE))^2)
+    sd_noise= sqrt(var_signal/(10^(SNR/10)))
+    
     e1 = rnorm(samplesize,sd=sd_noise)
     e2 = rnorm(samplesize, sd=sd_noise)
     data = cbind(x+e1,y+e2)
@@ -96,7 +104,9 @@ EuclideanExamples <- function(name, samplesize, sd_noise, plotTrue,reg_sampling,
     }
     
     radius <- 10
-    true_mani = cbind( radius*cos(angle), radius*sin(angle) )
+    x=radius*cos(angle)
+    y=radius*sin(angle)
+    true_mani = cbind(x ,y  )
     
     true_geo <- matrix(0,ncol=samplesize,nrow=samplesize)
     for(i in 1:(samplesize-1)){
@@ -106,9 +116,14 @@ EuclideanExamples <- function(name, samplesize, sd_noise, plotTrue,reg_sampling,
     }
     true_geo <- true_geo+t(true_geo)
     
-    # add noise normal to manifold
-    alpha = rnorm(samplesize, sd=sd_noise)
-    data = cbind( (10+alpha)*cos(angle) , (10+alpha)*sin(angle) )
+    mean_signal= apply(true_mani,2,mean)
+    var_signal= (1/(samplesize*ncol(true_mani)))*sum((true_mani-matrix(mean_signal,ncol=2,nrow=samplesize,byrow=TRUE))^2)
+    sd_noise= sqrt(var_signal/(10^(SNR/10)))
+    
+    e1 = rnorm(samplesize,sd=sd_noise)
+    e2 = rnorm(samplesize, sd=sd_noise)
+    data = cbind(x+e1,y+e2)
+    
     
   } else if ( name == "right-angle") {
     
@@ -132,6 +147,9 @@ EuclideanExamples <- function(name, samplesize, sd_noise, plotTrue,reg_sampling,
     }
     true_geo <- true_geo+t(true_geo)
     
+    mean_signal= apply(true_mani,2,mean)
+    var_signal= (1/(samplesize*ncol(true_mani)))*sum((true_mani-matrix(mean_signal,ncol=2,nrow=samplesize,byrow=TRUE))^2)
+    sd_noise= sqrt(var_signal/(10^(SNR/10)))
     
     e1 = rnorm(samplesize, sd = sd_noise)
     e2 = rnorm(samplesize, sd = sd_noise)
@@ -151,6 +169,10 @@ EuclideanExamples <- function(name, samplesize, sd_noise, plotTrue,reg_sampling,
       }
     }
     true_geo <- true_geo+t(true_geo)
+    
+    mean_signal= apply(true_mani,2,mean)
+    var_signal= (1/(samplesize*ncol(true_mani)))*sum((true_mani-matrix(mean_signal,ncol=2,nrow=samplesize,byrow=TRUE))^2)
+    sd_noise= sqrt(var_signal/(10^(SNR/10)))
     
     e1 = rnorm(samplesize, sd = sd_noise)
     e2 = rnorm(samplesize, sd = sd_noise)
@@ -195,6 +217,10 @@ EuclideanExamples <- function(name, samplesize, sd_noise, plotTrue,reg_sampling,
     true_geo[1:dim_1st_comp,1:dim_1st_comp] <- true_geo1
     true_geo[(dim_1st_comp+1):samplesize,(dim_1st_comp+1):samplesize] <- true_geo2
     
+    mean_signal= apply(true_mani,2,mean)
+    var_signal= (1/(samplesize*ncol(true_mani)))*sum((true_mani-matrix(mean_signal,ncol=2,nrow=samplesize,byrow=TRUE))^2)
+    sd_noise= sqrt(var_signal/(10^(SNR/10)))
+    
     e1 = rnorm(samplesize, sd = 2)
     e2 = rnorm(samplesize, sd = .5)
     data = cbind( x2+e1 , (y2+e2)/3 )
@@ -213,6 +239,10 @@ EuclideanExamples <- function(name, samplesize, sd_noise, plotTrue,reg_sampling,
     
     adja_geo <- abs(x[-1]-x[-samplesize])
     true_geo <- full_geo(adja_geo,samplesize)
+    
+    mean_signal= apply(true_mani,2,mean)
+    var_signal= (1/(samplesize*ncol(true_mani)))*sum((true_mani-matrix(mean_signal,ncol=2,nrow=samplesize,byrow=TRUE))^2)
+    sd_noise= sqrt(var_signal/(10^(SNR/10)))
     
     e1 = rnorm(samplesize, sd=sd_noise)
     e2 = rnorm(samplesize, sd=sd_noise)
@@ -245,6 +275,10 @@ EuclideanExamples <- function(name, samplesize, sd_noise, plotTrue,reg_sampling,
       
     }
     
+    mean_signal= apply(true_mani,2,mean)
+    var_signal= (1/(samplesize*ncol(true_mani)))*sum((true_mani-matrix(mean_signal,ncol=2,nrow=samplesize,byrow=TRUE))^2)
+    sd_noise= sqrt(var_signal/(10^(SNR/10)))
+    
     e1 = rnorm(length(t), sd = sd_noise)
     e2 = rnorm(length(t), sd = sd_noise)
     data = cbind( x+e1 , y+e2 )
@@ -275,6 +309,10 @@ EuclideanExamples <- function(name, samplesize, sd_noise, plotTrue,reg_sampling,
       true_geo <- full_geo(adja_geo,samplesize)
       
     }
+    
+    mean_signal= apply(true_mani,2,mean)
+    var_signal= (1/(samplesize*ncol(true_mani)))*sum((true_mani-matrix(mean_signal,ncol=2,nrow=samplesize,byrow=TRUE))^2)
+    sd_noise= sqrt(var_signal/(10^(SNR/10)))
     
     e1 = rnorm(length(t), sd=sd.noise)
     e2 = rnorm(length(t), sd=sd.noise)
