@@ -324,7 +324,7 @@ EuclideanExamples <- function(name, samplesize, SNR, plotTrue,reg_sampling,min_a
     plot(true_mani, pch=19, xlab='', ylab='', main = paste("true manifold", name, sep = " "))
     plot(data, pch=19, xlab='', ylab='', main = paste("noisy manifold", name, sep = " "))
   }
-  
+  ###gcgskdc
   result = list(data = data, true_mani = true_mani,true_geo=true_geo)
   return(result)
   
