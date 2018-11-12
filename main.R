@@ -21,6 +21,7 @@ pyIsoAuto = import_from_path("get_auto_isomap_gdist",path='.')
 scms = import_from_path("scms",path='.')
 
 # set up parameters
+
 #name = c("archimedean-spiral",'circle',"right-angle","sin-cos-curve")
 name = c('circle',"sin-cos-curve")
 samplesize = c(200,500)
@@ -29,6 +30,7 @@ SNR = c(20,25,30) # noise sd
 #SNR = c(20) # noise sd
 #reg_sampling=c(TRUE,FALSE)
 reg_sampling=c(FALSE)
+
 
 
 #Obtain the plot for each combination of parameter

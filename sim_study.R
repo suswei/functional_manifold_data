@@ -4,7 +4,6 @@
 # noise = sd of the noise
 # reg_sampling : TRUE = regular sampling, FALSE = random uniform
 
-
 ## Output
 # plot of the true manlifold, of the observed one, and of the error in the geodesic estimation 
 # for different choices of h
@@ -22,7 +21,6 @@ generate_data<-function(name,samplesize,SNR,reg_sampling){
 
 sim_study<- function(name,samplesize,SNR,reg_sampling){
   
-  
   # load true and noisy manifold data from the folder Simulated_data
   data<- as.matrix(read.table(file=paste("./simulated_data/",name,'_n=',samplesize,'_SNR=',SNR,'_reg_sam=',reg_sampling,'_data.txt',sep='')))
   true_mani<- as.matrix(read.table(file=paste("./simulated_data/",name,'_n=',samplesize,'_SNR=',SNR,'_reg_sam=',reg_sampling,'_mani.txt',sep='')))
@@ -38,7 +36,7 @@ sim_study<- function(name,samplesize,SNR,reg_sampling){
     
     
     Error_denoised_K= rep(0,length(num_neigh))
-    
+
     denoised = scms$scms(data, scms_h[i])  #has same shape as data
     
     #plot(denoised)
@@ -92,7 +90,7 @@ sim_study<- function(name,samplesize,SNR,reg_sampling){
   plot(scms_h,Error_denoised_h,type="b",ylim=c(min(Error_denoised_h,err_raw),max(Error_denoised_h,err_raw)),xlab='h',ylab='error',main=paste('n=',samplesize,' sampl.=',reg_sampling,' SNR=',SNR,sep=''))
   abline(h=err_raw,col='red')
   dev.off()
-  
+
 }
 
 
