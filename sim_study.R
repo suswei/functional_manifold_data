@@ -91,6 +91,7 @@ sim_study<- function(name,samplesize,SNR,reg_sampling){
   abline(h=err_raw,col='red')
   dev.off()
 
+  #add a comment
 }
 
 
