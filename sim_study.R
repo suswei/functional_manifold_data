@@ -50,7 +50,7 @@ sim_study<- function(name,samplesize,SNR,reg_sampling,do_plot,do_pdf){
     for(j in 1:length(num_neigh)){
       IsomapGdist_denoised = pyIso$getIsomapGdist(denoised,num_neigh[j])
       geo_dist<- IsomapGdist_denoised[lower.tri(IsomapGdist_denoised, diag = FALSE)]
-      Error_denoised_K[j]=sqrt(sum((geo_dist -true_geo_tri_inf )^2))
+      Error_denoised_K[j]=(1/samplesize)*sqrt(sum((geo_dist -true_geo_tri_inf )^2))
     }
     Error_denoised_h[i]=min(Error_denoised_K)
   }
@@ -61,7 +61,7 @@ sim_study<- function(name,samplesize,SNR,reg_sampling,do_plot,do_pdf){
   for(j in 1:length(num_neigh)){
     IsomapGdist = pyIso$getIsomapGdist(data,num_neigh[j])
     geo_dist<- IsomapGdist[lower.tri(IsomapGdist, diag = FALSE)]
-    Error_denoised_K[j]=sqrt(sum((geo_dist -true_geo_tri_inf )^2))
+    Error_denoised_K[j]=(1/samplesize)*sqrt(sum((geo_dist -true_geo_tri_inf )^2))
   }
   err_raw=min(Error_denoised_K)
   
