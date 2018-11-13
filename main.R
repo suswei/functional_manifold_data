@@ -23,13 +23,13 @@ scms = import_from_path("scms",path='.')
 # set up parameters
 
 #name = c("archimedean-spiral",'circle',"right-angle","sin-cos-curve")
-name = c('circle',"sin-cos-curve")
+name = c("right-angle")
 samplesize = c(200,500)
-#samplesize = c(500)
+#samplesize = c(200)
 SNR = c(20,25,30) # noise sd
 #SNR = c(20) # noise sd
-#reg_sampling=c(TRUE,FALSE)
-reg_sampling=c(FALSE)
+reg_sampling=c(TRUE,FALSE)
+#reg_sampling=c(TRUE)
 
 
 
