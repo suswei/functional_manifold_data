@@ -25,7 +25,8 @@
 # true_gep: samplesize x samplesize matrix of true geodesic distances
 # plots true and noisy manifold observations
 
-EuclideanExamples <- function(name, samplesize, SNR, plotTrue,reg_sampling,min_ana_num=300){
+
+EuclideanExamples <- function(name, samplesize, SNR, plotTrue,reg_sampling,min_ana_num){
   
   if ( name == "archimedean-spiral") {
     
@@ -33,7 +34,7 @@ EuclideanExamples <- function(name, samplesize, SNR, plotTrue,reg_sampling,min_a
       t = seq(0, 5*pi, length.out = samplesize)
     }else {
       t = runif(samplesize,0, 5*pi)
-      t=sort(t)
+      t = sort(t)
     }
     
     x = 1 * t * cos(t)
@@ -107,6 +108,7 @@ EuclideanExamples <- function(name, samplesize, SNR, plotTrue,reg_sampling,min_a
     x=radius*cos(angle)
     y=radius*sin(angle)
     true_mani = cbind(x ,y)
+
     
     true_geo <- matrix(0,ncol=samplesize,nrow=samplesize)
     for(i in 1:(samplesize-1)){
@@ -124,9 +126,6 @@ EuclideanExamples <- function(name, samplesize, SNR, plotTrue,reg_sampling,min_a
     e2 = rnorm(samplesize, sd=sd_noise)
     data = cbind(x+e1,y+e2)
     
-    # # add noise normal to manifold
-    # alpha = rnorm(samplesize, sd=sd_noise)
-    # data = cbind( (radius+alpha)*cos(angle) , (radius+alpha)*sin(angle) )
     
   } else if ( name == "right-angle") {
     
@@ -322,6 +321,7 @@ EuclideanExamples <- function(name, samplesize, SNR, plotTrue,reg_sampling,min_a
   } 
   
   if(plotTrue){
+    par(mfrwo=c(1,2))
     plot(true_mani, pch=19, xlab='', ylab='', main = paste("true manifold", name, sep = " "))
     plot(data, pch=19, xlab='', ylab='', main = paste("noisy manifold", name, sep = " "))
   }

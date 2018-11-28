@@ -18,48 +18,44 @@
 ##	Nxdim matrix (N samples, dim features) with the reduced input data (list of several matrices if more than one dimension specified)
 
 
-Isomap = function(data, dims=2, k, mod=FALSE, plotResiduals=FALSE, verbose=TRUE){
-
-	## catch missing or bad input
+Isomap = function(data, dims=2, k, mod=FALSE){
+#Isomap = function(data,  k, mod=FALSE, plotResiduals=FALSE, verbose=FALSE){
+# catch missing or bad input
 	if(missing(data))
-          stop("data argument missing")
-        else
-          if(!is.matrix(data))
-            stop("invalid argument: data argument is required to be a N x D matrix (N samples, D features)")
-        if(!all(is.numeric(dims)) | any(dims < 1))
-          stop("invalid argument: target dimension is required to be a (vector of) positive integer value(s)")
+      stop("data argument missing")
+  else
+    if(!is.matrix(data))
+        stop("invalid argument: data argument is required to be a N x D matrix (N samples, D features)")
+    if(!all(is.numeric(dims)) | any(dims < 1))
+        stop("invalid argument: target dimension is required to be a (vector of) positive integer value(s)")
 	if(missing(k))
 		k = min(nrow(data),5)
 	else{
-          if(k >= nrow(data))
-            stop("invalid argument: more neighbours than samples")
-          if(!is.numeric(k) | k <= 1)
-            stop("invalid argument: neighbour parameter is required to be an integer value >= 2")
-        }
+    if(k >= nrow(data))
+      stop("invalid argument: more neighbours than samples")
+    if(!is.numeric(k) | k <= 1)
+      stop("invalid argument: neighbour parameter is required to be an integer value >= 2")
+  }
 
-        k = round(k)
-        dims = round(dims)
+  k = round(k)
+  dims = round(dims)
         
-        num_samples = nrow(data)
-        num_features = ncol(data)
+  num_samples = nrow(data)
+  num_features = ncol(data)
 
-        ## compute pairwise distances
-	message("Computing distance matrix ... ", appendLF = FALSE)
+  ## compute pairwise distances
 	d = pairwiseDistances(data)
-	message("done")
-
+	
 	## build graph of shortest paths between two neighbours (using Floyd's Algorithm)
 	## modified Isomap: Use k/2 nearest neighbours and k/2 farthest neighbours
 	if(mod == TRUE){
 		first_k = round(k/2)
 		last_k = k - first_k
-		message("Building graph with shortest paths (using ", first_k ," nearest and ", last_k, " farthest neighbours) ... ", appendLF = FALSE)
 	}
 	## original Isomap: Use k nearest neighbours only
 	else{
 		first_k = k
 		last_k = 0
-		message("Building graph with shortest paths (using ", first_k ," nearest neighbours) ... ", appendLF = FALSE)
 	}
 	sort_idx = apply(d,2,order)
 
@@ -84,57 +80,35 @@ Isomap = function(data, dims=2, k, mod=FALSE, plotResiduals=FALSE, verbose=TRUE)
 	first_connections = apply(is.infinite(d),1,which.min)
 	components = unique(first_connections)
 	num_components = length(components)
-	message("done")	
+
 	## reduce dimension of all components seperately and merge them to a single dataset
-	message("Computing low dimensional embedding ... ", appendLF = FALSE)
 	all_Y = list(NULL)
 	residuals = rep(0,length(dims))
 	i = 1
 	for(dim in dims){
 		Y = matrix(0,num_samples,dim)
 		for(c in 1:num_components){
-	
 			## only use the distances of points in the connected component
 			comp_indices = which(first_connections == components[c])
 			D = d[comp_indices,comp_indices]
 			N = length(comp_indices)
 
-			## convert graph matrix to inner products	
-			T = -0.5 * ( D^2 - rowSums(D^2) %*% t(rep(1/N,N)) - rep(1,N) %*% t(rowSums(D^2))/N + sum(D^2)/(N^2))			
+			## convert graph matrix to inner products
+			T = -0.5 * ( D^2 - rowSums(D^2) %*% t(rep(1/N,N)) - rep(1,N) %*% t(rowSums(D^2))/N + sum(D^2)/(N^2))
 
-                        ## catch possible errors caused by too small connected components
-                        if(dim(T)[1] < dim)
-                          stop("Problem occured while computing embedding: Connected component ", c, " consists of too few samples (", dim(T)[1], ") and cannot be reduced to ", dim, " dimensions. Try Isomap with a neighbourhood parameter higher than ", k, " or with dimension parameters lower than ", dim, ".")
-                        
+      ## catch possible errors caused by too small connected components
+      if(dim(T)[1] < dim)
+        stop("Problem occured while computing embedding: Connected component ", c, " consists of too few samples (", dim(T)[1], ") and cannot be reduced to ", dim, " dimensions. Try Isomap with a neighbourhood parameter higher than ", k, " or with dimension parameters lower than ", dim, ".")
+
 			## embedding Y is given by the eigenvectors of T belonging to (some of) its biggest eigenvalues
-	   		eig_T = eigen(T)
+	   	eig_T = eigen(T)
 			sweep(eig_T$vectors, 2, sqrt(colSums(eig_T$vectors^2)), "/")	#normalize eingenvectors
-               		Y[comp_indices,] = Re(eig_T$vectors[,1:dim] * (matrix(1,N,1) %*%  sqrt(as.complex(eig_T$values[1:dim]))))		
-		}
-		## calculate residual variances (take care of not neighboured samples (Inf values))
-		if(plotResiduals == TRUE){
-                        tmp = as.vector(d)
-                        tmp[is.infinite(tmp)] = NA
-			r = 1 - cor(cbind(tmp ,as.vector(pairwiseDistances(Y))), use="complete.obs")^2
-			residuals[i] = r[1,2]
-                        rm(tmp)
+      Y[comp_indices,] = Re(eig_T$vectors[,1:dim] * (matrix(1,N,1) %*%  sqrt(as.complex(eig_T$values[1:dim]))))
 		}
 		all_Y[[i]] = Y
 		i = i+1
 	}
-	message("done")
-	#names(all_Y) = paste("dim", dims, sep="")	
-
-	## give a summary of what has been done
-	if(verbose == TRUE){
-		message("number of samples: ", num_samples)
-		message("reduction from ", num_features, " to ", dims, " dimensions")
-		message("number of connected components in graph: ", num_components)
-	}
 	
-	## plot residual variances for all dimensions
-	if(plotResiduals == TRUE)
-		plot(dims,residuals,type="b",xlab="dimension",ylab="residual variance")
 	rep <- list(all_Y,d)
 	names(rep) <- c("bla","geod")
 
