@@ -68,11 +68,13 @@ def local_inv_cov(x, data, kernel, sigma):
     """
     Computes the local inverse covariance from the gradient and hessian.
     """
+    
     p = kernel_density_estimate(x, data, kernel)
     h = hessian(x, data, kernel, sigma)
     g = gradient(x, data, kernel, sigma)[:,np.newaxis]
-
     return -1./p * h + 1./p**2 * g.dot(g.T)
+
+    
 
 
 def mean_shift_update(x, data, kernel):
@@ -123,9 +125,10 @@ def scms(data, sigma, n_iterations=5):
     """
     denoised = data.copy()
     kernel = make_isotropic_gaussian_kernel(sigma)
+    
     for j in range(n_iterations):
         for i in range(data.shape[0]):
-            denoised[i] += subspace_constrained_mean_shift_update(
-                    denoised[i], data, kernel, sigma)
-
+            # denoised[i] += subspace_constrained_mean_shift_update(
+            #        denoised[i], data, kernel, sigma)
+            np.add(denoised[i],subspace_constrained_mean_shift_update(denoised[i], data, kernel, sigma), out=denoised[i],casting="unsafe")
     return denoised
