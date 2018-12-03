@@ -321,7 +321,7 @@ EuclideanExamples <- function(name, samplesize, SNR, plotTrue,reg_sampling,min_a
   } 
   
   if(plotTrue){
-    par(mfrwo=c(1,2))
+    par(mfrow=c(1,2))
     plot(true_mani, pch=19, xlab='', ylab='', main = paste("true manifold", name, sep = " "))
     plot(data, pch=19, xlab='', ylab='', main = paste("noisy manifold", name, sep = " "))
   }
