@@ -41,4 +41,7 @@ fi
 module load MATLAB
 
 # The job command(s):
-R main.R
+R --vanilla < main.R 
+
+
+

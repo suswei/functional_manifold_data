@@ -11,7 +11,7 @@ source('full_geo_from_adj_geo.R')
 source('smooth_FD_bspline.R')
 source('sim_functional_data.R')
 source('Geo_estimation.R')
-source('sim_Euclidean_datagit.R')
+source('sim_Euclidean_data.R')
 source('assess_goodness_estimation.R')
 
 library(fields)
