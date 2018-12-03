@@ -58,7 +58,7 @@ data<- sim_functional_data(sce,samplesize,K,a,b,SNR,reg_sampling,com_grid,plotTr
 # Estimation of geodesic distances with different methods
 Estim<- Geo_estimation(data$true_data,data$discrete_data,data$true_geo,plotTrue,FD_true,s,nb_proj,data$grid,data$reg_grid,com_grid)
 
-saveRDS(Estim, file = paste("sce=%d,samplesize=%d,SNR=%d,reg_sampling=%d,s=%d,mc=%d",sce,samplesize,SNR,reg_sampling,s,mc))
+saveRDS(Estim, file = sprintf("sce=%d,samplesize=%d,SNR=%d,reg_sampling=%d,s=%d,mc=%d",sce,samplesize,SNR,reg_sampling,s,mc))
 
 # Assessment of the estimation of a spscific method
 # mat_to_assess = Estim$estim_geo_true_data # choices are estim_geo_true_data, estim_geo_noisy_data, estim_geo_smooth_data, estim_geo_penalized_isomap, estim_geo_mds_scms, estim_geo_RP_scms
