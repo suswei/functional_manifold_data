@@ -75,4 +75,4 @@ Estim<- Geo_estimation(data$true_data,data$discrete_data,data$true_geo,plotTrue,
 Rel_errs = lapply(Estim,assess_goodness_estimation, true_geo = data$true_geo)
 
 
-saveRDS(Rel_errs, file = sprintf("sce=%d_samplesize=%d_SNR=%d_reg_sampling=%d_s=%d_mc=%d",sce,samplesize,SNR,reg_sampling,s,mc))
+saveRDS(Rel_errs, file = sprintf("sce=%d_samplesize=%d_SNR=%.01f_reg_sampling=%d_s=%d_mc=%d",sce,samplesize,SNR,reg_sampling,s,mc))
