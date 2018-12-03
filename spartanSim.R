@@ -4,13 +4,13 @@
 # Created on: 3/12/18
 
 slurm_arrayid <- Sys.getenv('SLURM_ARRAY_TASK_ID')
-mc = as.numeric(slurm_arrayid)
-print(mc)
+slurm_arrayid = as.numeric(slurm_arrayid)
+print(slurm_arrayid)
 
 # parameters that will be fixed during the sim study
 K = 30 # number of grid points (each curve is observed on K points on [a,b])
 com_grid = 1 # 1 or 0 to indicate if yes or no each curve is observed on a common grid
-nb_proj = 500 # number of random projection
+nb_proj = 100 # number of random projection
 plotTrue = FALSE
 a = -2
 b = 3
@@ -21,14 +21,24 @@ FD_true = TRUE
 # samplesize # number of points on the manifold
 # SNR # signal to noise ratio (in Chen and Muller is 0.1 or 0.5)
 # reg_sampling=TRUE # regular sampling of the point on the manifold or uniformly random
-# s = 3 # reduced dimension use for mds and random projection
+# s = {1,2,3,4,5} # reduced dimension use for mds and random projection
 
-# TODO: these need to be unraveled from slurm_arrayid
-sce = 1
-samplesize = 100
-SNR = 0.5
-reg_sampling = TRUE
-s = 2
+sces = c(1,2)
+samplesizes = c(100,250)
+SNRs = c(0.1,0.5)
+reg_samplings = c(TRUE,FALSE)
+ss = c(1,2,3,4)
+mcs = 1:100
+
+unravel=arrayInd(slurm_arrayid,c(length(sces), length(samplesizes), length(SNRs), length(reg_samplings), length(ss), length(mcs)))
+
+# actual parameters for this run
+sce = sces(unravel[1,1])
+samplesize = samplesizes(unravel[1,2])
+SNR = SNRs(unravel[1,3])
+reg_sampling = reg_samplings(unravel[1,4])
+s = ss(unravel[1,5])
+mc = mcs(unravel[1,6])
 
 source('EuclideanExamples.R')
 source('functions.R')
@@ -58,9 +68,11 @@ data<- sim_functional_data(sce,samplesize,K,a,b,SNR,reg_sampling,com_grid,plotTr
 # Estimation of geodesic distances with different methods
 Estim<- Geo_estimation(data$true_data,data$discrete_data,data$true_geo,plotTrue,FD_true,s,nb_proj,data$grid,data$reg_grid,com_grid)
 
-saveRDS(Estim, file = sprintf("sce=%d,samplesize=%d,SNR=%d,reg_sampling=%d,s=%d,mc=%d",sce,samplesize,SNR,reg_sampling,s,mc))
+# TODO: decide if we need to save Estim?
+# saveRDS(Estim, file = sprintf("sce=%d_samplesize=%d_SNR=%d_reg_sampling=%d_s=%d_mc=%d",sce,samplesize,SNR,reg_sampling,s,mc))
 
 # Assessment of the estimation of a spscific method
-# mat_to_assess = Estim$estim_geo_true_data # choices are estim_geo_true_data, estim_geo_noisy_data, estim_geo_smooth_data, estim_geo_penalized_isomap, estim_geo_mds_scms, estim_geo_RP_scms
-# Rel_err <- assess_goodness_estimation(mat_to_assess,data$true_geo)
+Rel_errs = lapply(Estim,assess_goodness_estimation, true_geo = data$true_geo)
 
+
+saveRDS(Rel_errs, file = sprintf("sce=%d_samplesize=%d_SNR=%d_reg_sampling=%d_s=%d_mc=%d",sce,samplesize,SNR,reg_sampling,s,mc))

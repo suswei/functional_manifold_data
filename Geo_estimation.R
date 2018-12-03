@@ -1,3 +1,4 @@
+# TODO Marie, this function should call assess_goodness_estimation!
 ##### Estimation of geodesic distances
 
 # We estimate the geodesic matrix obtained via
