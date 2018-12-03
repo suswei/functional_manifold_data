@@ -19,6 +19,7 @@ library(reticulate)
 library(fda)
 library(matlabr)
 
+# TODO: it doesn't make ansy sense to define these outside of Geo_estimation?
 # use right version of python
 # use_python('/anaconda3/bin/python',required=TRUE)
 # use_python('/Users/suswei/anaconda3/bin/python',required=TRUE)
@@ -78,4 +79,4 @@ Estim<- Geo_estimation(data$true_data,data$discrete_data,data$true_geo,plotTrue,
 mat_to_assess = Estim$estim_geo_true_data # choices are estim_geo_true_data, estim_geo_noisy_data, estim_geo_smooth_data, estim_geo_penalized_isomap, estim_geo_mds_scms, estim_geo_RP_scms 
 Rel_err <- assess_goodness_estimation(mat_to_assess,data$true_geo)
 
-
+print(Rel_err)

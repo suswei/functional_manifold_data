@@ -6,13 +6,15 @@
 slurm_arrayid <- Sys.getenv('SLURM_ARRAY_TASK_ID')
 mc = as.numeric(slurm_arrayid)
 print(mc)
+
 # parameters that will be fixed during the sim study
-# K = 30 # number of grid points (each curve is observed on K points on [a,b])
-# com_grid = 1 # 1 or 0 to indicate if yes or no each curve is observed on a common grid
-# nb_proj = 500 # number of random projection
-# plotTrue = FALSE
-# a = -2
-# b = 3
+K = 30 # number of grid points (each curve is observed on K points on [a,b])
+com_grid = 1 # 1 or 0 to indicate if yes or no each curve is observed on a common grid
+nb_proj = 500 # number of random projection
+plotTrue = FALSE
+a = -2
+b = 3
+FD_true = TRUE
 
 # parameters under study
 # sce {1,2} (for more info see sim_functional_data.R),K,a,b,SNR,reg_sampling,com_grid,plot_true
@@ -21,9 +23,7 @@ print(mc)
 # reg_sampling=TRUE # regular sampling of the point on the manifold or uniformly random
 # s = 3 # reduced dimension use for mds and random projection
 
-# spartanSim <- function(sce, samplesize, SNR, reg_sampling, s, mc, K = 30, com_grid=1, nb_proj = 500, plotTrue = FALSE, a = -2, b = 3, FD_true = TRUE){
-spartanSim <- function(mc, K = 30, com_grid=1, nb_proj = 500, plotTrue = FALSE, a = -2, b = 3, FD_true = TRUE){
-
+# TODO: these need to be unraveled from slurm_arrayid
 sce = 1
 samplesize = 100
 SNR = 0.5
@@ -47,6 +47,7 @@ library(reticulate)
 library(fda)
 library(matlabr)
 
+# TODO: it doesn't make ansy sense to define these outside of Geo_estimation?
 pyIso = import_from_path("getIsomapGdist",path='.')
 py_min_neigh = import_from_path("get_min_num_neighbors",path='.')
 scms = import_from_path("scms",path='.')
@@ -63,6 +64,3 @@ saveRDS(Estim, file = paste("sce=%d,samplesize=%d,SNR=%d,reg_sampling=%d,s=%d,mc
 # mat_to_assess = Estim$estim_geo_true_data # choices are estim_geo_true_data, estim_geo_noisy_data, estim_geo_smooth_data, estim_geo_penalized_isomap, estim_geo_mds_scms, estim_geo_RP_scms
 # Rel_err <- assess_goodness_estimation(mat_to_assess,data$true_geo)
 
-}
-
-spartanSim(mc)

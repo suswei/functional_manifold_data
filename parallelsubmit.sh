@@ -46,4 +46,5 @@ fi
 module load MATLAB
 
 # The job command(s):
-R --vanilla < spartanSim.R ${i}
+# R --vanilla < spartanSim.R ${i} #this isn't necessary since we get the environment
+R --vanilla < spartanSim.R
