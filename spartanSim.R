@@ -33,12 +33,12 @@ mcs = 1:100
 unravel=arrayInd(slurm_arrayid,c(length(sces), length(samplesizes), length(SNRs), length(reg_samplings), length(ss), length(mcs)))
 
 # actual parameters for this run
-sce = sces(unravel[1,1])
-samplesize = samplesizes(unravel[1,2])
-SNR = SNRs(unravel[1,3])
-reg_sampling = reg_samplings(unravel[1,4])
-s = ss(unravel[1,5])
-mc = mcs(unravel[1,6])
+sce = sces[unravel[1,1]]
+samplesize = samplesizes[unravel[1,2]]
+SNR = SNRs[unravel[1,3]]
+reg_sampling = reg_samplings[unravel[1,4]]
+s = ss[unravel[1,5]]
+mc = mcs[unravel[1,6]]
 
 source('EuclideanExamples.R')
 source('functions.R')
