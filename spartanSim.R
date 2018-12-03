@@ -3,6 +3,9 @@
 # Created by: suswei
 # Created on: 3/12/18
 
+slurm_arrayid <- Sys.getenv('SLURM_ARRAY_TASK_ID')
+mc = as.numeric(slurm_arrayid)
+print(mc)
 # parameters that will be fixed during the sim study
 # K = 30 # number of grid points (each curve is observed on K points on [a,b])
 # com_grid = 1 # 1 or 0 to indicate if yes or no each curve is observed on a common grid
@@ -26,8 +29,6 @@ samplesize = 100
 SNR = 0.5
 reg_sampling = TRUE
 s = 2
-
-rm(list = ls())
 
 source('EuclideanExamples.R')
 source('functions.R')
@@ -63,3 +64,5 @@ saveRDS(Estim, file = paste("sce=%d,samplesize=%d,SNR=%d,reg_sampling=%d,s=%d,mc
 # Rel_err <- assess_goodness_estimation(mat_to_assess,data$true_geo)
 
 }
+
+spartanSim(mc)
