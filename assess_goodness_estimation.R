@@ -6,7 +6,7 @@ assess_goodness_estimation <- function(estim_mat,true_geo){
 
   rmse = sqrt(sum((estim_mat-true_geo)^2)/sum(true_geo^2))
 
-  epsilons = seq(0.05,0.95,0.05)
+  epsilons = seq(1,100,1)
   epsilon_isometry = lapply(epsilons,check_epsilon_isometry,estim_mat=estim_mat,true_geo=true_geo)
 
   smallest_epsilon = min(epsilons[unlist(epsilon_isometry)]) #find out which is the smallest epsilon such that isometry holds, returns Inf if nothing in the eipsilons exhibit this behavior
