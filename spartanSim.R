@@ -1,5 +1,5 @@
 # Title     : TODO
-# Objective : This is modeled after Marie's main.R. Simulation sweep of parameters.
+# Objective : This is modeled after Marie's main.R but designed for submission to Spartan HPC. Performs sweep of certain parameters.
 # Created by: suswei
 # Created on: 3/12/18
 
@@ -17,11 +17,11 @@ b = 3
 FD_true = TRUE
 
 # parameters under study
-# sce {1,2} (for more info see sim_functional_data.R),K,a,b,SNR,reg_sampling,com_grid,plot_true
+# sce = {1,2} (for more info see sim_functional_data.R),K,a,b,SNR,reg_sampling,com_grid,plot_true
 # samplesize # number of points on the manifold
 # SNR # signal to noise ratio (in Chen and Muller is 0.1 or 0.5)
-# reg_sampling=TRUE # regular sampling of the point on the manifold or uniformly random
-# s = {1,2,3,4,5} # reduced dimension use for mds and random projection
+# reg_sampling {True,False} # regular sampling of the point on the manifold or uniformly random
+# s {1,2,3,4} # reduced dimension use for mds and random projection
 
 sces = c(1,2)
 samplesizes = c(100,250)
@@ -63,16 +63,16 @@ py_min_neigh = import_from_path("get_min_num_neighbors",path='.')
 scms = import_from_path("scms",path='.')
 
 # Generate data
-data<- sim_functional_data(sce,samplesize,K,a,b,SNR,reg_sampling,com_grid,plotTrue)
+data<- sim_functional_data(sce, samplesize, K, a, b, SNR, reg_sampling, com_grid, plotTrue)
 
 # Estimation of geodesic distances with different methods
-Estim<- Geo_estimation(data$true_data,data$discrete_data,data$true_geo,plotTrue,FD_true,s,nb_proj,data$grid,data$reg_grid,com_grid)
+Estim<- Geo_estimation(data$true_data, data$discrete_data, data$true_geo, plotTrue, FD_true, s, nb_proj, data$grid, data$reg_grid, com_grid)
 
 # TODO: decide if we need to save Estim?
 # saveRDS(Estim, file = sprintf("sce=%d_samplesize=%d_SNR=%d_reg_sampling=%d_s=%d_mc=%d",sce,samplesize,SNR,reg_sampling,s,mc))
 
 # Assessment of the estimation of a spscific method
-Rel_errs = lapply(Estim,assess_goodness_estimation, true_geo = data$true_geo)
+Rel_errs = lapply(Estim, assess_goodness_estimation, true_geo = data$true_geo)
 
 
-saveRDS(Rel_errs, file = sprintf("sce=%d_samplesize=%d_SNR=%.01f_reg_sampling=%d_s=%d_mc=%d",sce,samplesize,SNR,reg_sampling,s,mc))
+saveRDS(Rel_errs, file = sprintf("taskid=%d_sce=%d_samplesize=%d_SNR=%.01f_reg_sampling=%d_s=%d_mc=%d",slurm_arrayid,sce,samplesize,SNR,reg_sampling,s,mc))

@@ -27,9 +27,9 @@
 #SBATCH --mail-user=susan.wei@unimelb.edu.au
 
 # The maximum running time of the job in days-hours:mins:sec
-#SBATCH --time=0-1:0:00
+#SBATCH --time=1-0:0:00
 
-#SBATCH --array=1-5          ### Array index | %50: number of simultaneously tasks
+#SBATCH --array=1-100%5          ### Array index | %50: number of simultaneously tasks
 
 # Get Array ID
 i=${SLURM_ARRAY_TASK_ID}
