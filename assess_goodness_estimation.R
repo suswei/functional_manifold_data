@@ -6,16 +6,17 @@ assess_goodness_estimation <- function(estim_mat,true_geo){
 
   rmse = sqrt(sum((estim_mat-true_geo)^2)/sum(true_geo^2))
 
-  epsilons = seq(1,100,1)
-  epsilon_isometry = lapply(epsilons,check_epsilon_isometry,estim_mat=estim_mat,true_geo=true_geo)
+  epsilons = seq(0,1,0.01)
+  epsilon_isometry_prop = lapply(epsilons,check_epsilon_isometry,estim_mat=estim_mat,true_geo=true_geo)
+  epsilon_isometry_auc = AUC(epsilons, unlist(epsilon_isometry_prop), method = "spline", na.rm = FALSE)
 
-  smallest_epsilon = min(epsilons[unlist(epsilon_isometry)]) #find out which is the smallest epsilon such that isometry holds, returns Inf if nothing in the eipsilons exhibit this behavior
+  pearson_corr = cor.test(estim_mat[lower.tri(estim_mat)],true_geo[lower.tri(true_geo)], method="pearson")$estimate
 
-  return(list("rmse" = rmse, "smallest_epsilon" = smallest_epsilon))
+  return(list("rmse" = rmse, "epsilon_isometry_auc" = epsilon_isometry_auc, "pearson_corr"=pearson_corr))
 }
 
 check_epsilon_isometry <- function(estim_mat,true_geo,epsilon){
 
-  all( ( (1-epsilon)*true_geo <= estim_mat) & (estim_mat <= (1+epsilon) *true_geo) )
+  mean( ( (1-epsilon)*true_geo <= estim_mat) & (estim_mat <= (1+epsilon) *true_geo) )
 
 }

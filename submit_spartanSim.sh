@@ -27,7 +27,7 @@
 # The maximum running time of the job in days-hours:mins:sec
 #SBATCH --time=5-0:0:00
 
-#SBATCH --array=68-6400%50          ### Array index | %50: number of simultaneously tasks
+#SBATCH --array=1-6400%50          ### Array index | %50: number of simultaneously tasks
 
 # Get Array ID
 i=${SLURM_ARRAY_TASK_ID}

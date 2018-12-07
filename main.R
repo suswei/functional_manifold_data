@@ -14,6 +14,7 @@ source('Geo_estimation.R')
 source('sim_Euclidean_data.R')
 source('assess_goodness_estimation.R')
 
+library(DescTools)
 library(fields)
 library(reticulate)
 library(fda)
