@@ -5,15 +5,13 @@
 # Partition for the job:
 #SBATCH --partition=cloud
 
-# Multithreaded (SMP) job: must run on one node and the cloud partition
-#SBATCH --nodes=1
 
 # The name of the job:
 #SBATCH --job-name="manifoldFDAgeodesic"
 
 # Maximum number of tasks/CPU cores used by the job:
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=1
+#SBATCH --cpus-per-task=8
 
 # Send yourself an email when the job:
 # aborts abnormally (fails)
@@ -27,9 +25,9 @@
 #SBATCH --mail-user=susan.wei@unimelb.edu.au
 
 # The maximum running time of the job in days-hours:mins:sec
-#SBATCH --time=1-0:0:00
+#SBATCH --time=5-0:0:00
 
-#SBATCH --array=1-100%5          ### Array index | %50: number of simultaneously tasks
+#SBATCH --array=68-6400%50          ### Array index | %50: number of simultaneously tasks
 
 # Get Array ID
 i=${SLURM_ARRAY_TASK_ID}
