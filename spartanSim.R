@@ -15,6 +15,7 @@ plotTrue = FALSE
 a = -2
 b = 3
 FD_true = TRUE
+sce = 1 # there is something wrong with the true geodesic distance calculation for scenario 2, so fix this at scenario 1 for now
 
 # parameters under study
 # sce = {1,2} (for more info see sim_functional_data.R),K,a,b,SNR,reg_sampling,com_grid,plot_true
@@ -23,22 +24,20 @@ FD_true = TRUE
 # reg_sampling {True,False} # regular sampling of the point on the manifold or uniformly random
 # s {2,3,4} # reduced dimension use for mds and random projection
 
-sces = c(1,2)
 samplesizes = c(100,250)
 SNRs = c(0.1,0.5)
 reg_samplings = c(TRUE,FALSE)
 ss = c(2,3,4)
 mcs = 1:100
 
-unravel=arrayInd(slurm_arrayid,c(length(sces), length(samplesizes), length(SNRs), length(reg_samplings), length(ss), length(mcs)))
+unravel=arrayInd(slurm_arrayid,c(length(samplesizes), length(SNRs), length(reg_samplings), length(ss), length(mcs)))
 
 # actual parameters for this run
-sce = sces[unravel[1,1]]
-samplesize = samplesizes[unravel[1,2]]
-SNR = SNRs[unravel[1,3]]
-reg_sampling = reg_samplings[unravel[1,4]]
-s = ss[unravel[1,5]]
-mc = mcs[unravel[1,6]]
+samplesize = samplesizes[unravel[1,1]]
+SNR = SNRs[unravel[1,2]]
+reg_sampling = reg_samplings[unravel[1,3]]
+s = ss[unravel[1,4]]
+mc = mcs[unravel[1,5]]
 
 source('EuclideanExamples.R')
 source('functions.R')
