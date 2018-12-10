@@ -1,5 +1,3 @@
-# TODO future: not sure if all of these noises are "normal" to the manifold
-
 # generate 2D manifold and noisy observations off it
 # Input
 #   samplesize: self explanatory

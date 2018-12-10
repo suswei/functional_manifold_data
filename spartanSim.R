@@ -1,4 +1,4 @@
-# Title     : TODO
+# Title     : spartanSim.R
 # Objective : This is modeled after Marie's main.R but designed for submission to Spartan HPC. Performs sweep of certain parameters.
 # Created by: suswei
 # Created on: 3/12/18
@@ -52,15 +52,11 @@ source('sim_Euclidean_data.R')
 source('assess_goodness_estimation.R')
 
 library(fields)
-library(reticulate)
 library(fda)
 library(matlabr)
 library(MESS)
 
-# TODO: it doesn't make ansy sense to define these outside of Geo_estimation?
-pyIso = import_from_path("getIsomapGdist",path='.')
-py_min_neigh = import_from_path("get_min_num_neighbors",path='.')
-scms = import_from_path("scms",path='.')
+
 
 # Generate data
 data<- sim_functional_data(sce, samplesize, K, a, b, SNR, reg_sampling, com_grid, plotTrue)

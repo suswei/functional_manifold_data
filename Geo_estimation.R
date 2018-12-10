@@ -1,14 +1,18 @@
-# TODO Marie, this function should call assess_goodness_estimation!
+# TODO Marie: this function should call assess_goodness_estimation
+# TODO Marie: this function should actually be renamed to reflect that it is an oracle estimation procedure
+# TODO Marie/Susan: work on tuning parameters
+# TODO Marie/Susan: if it turns out random projection method g is still worth considering, implement parallel for loops
 ##### Estimation of geodesic distances
+
 
 # We estimate the geodesic matrix obtained via
 # a) Floyd's Algorithm on true data (just to make sure that the theoretical geo. is calculated correctly)
 # b) Floyd's Algorithm on raw data
 # c) Floyd's Algorithm on smooth data (only for FD)
 # d) p-isomap of Muller on smooth data
-# e) mds of smooth data + scsm + Floyd's Algorithm (only for FD) 
-# f) scsm + Floyd's Algorithm (only for ED)
-# g) random proj. of smooth data + scsm + Floyd's Algorithm (only for FD)
+# e) mds of smooth data + scms + Floyd's Algorithm (only for FD) 
+# f) scms + Floyd's Algorithm (only for ED)
+# g) random proj. of smooth data + scms + Floyd's Algorithm (only for FD)
 
 
 ## Note that a) and b) can only be used if the data are observed on a common grid
@@ -41,6 +45,13 @@
 #Example of call for FD
 # Estim<- Geo_estimation(data$true_data,data$discrete_data,data$true_geo,TRUE,FALSE)
 
+library(reticulate)
+
+# TODO Marie/Susan: consider replacing python Isomap with R implementation of Floyd's algorithm? https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm
+pyIso = import_from_path("getIsomapGdist",path='.')
+py_min_neigh = import_from_path("get_min_num_neighbors",path='.')
+# TODO Marie/Susan: consider replacing python scms with R version, see https://sites.google.com/site/yenchicr/algorithm
+scms = import_from_path("scms",path='.')
 
 Geo_estimation <- function(true_data,discrete_data,true_geo,plot_true,FD_true,s,nb_proj,grid,reg_grid,common_grid_true=0){
   
@@ -57,7 +68,7 @@ Geo_estimation <- function(true_data,discrete_data,true_geo,plot_true,FD_true,s,
     
     ### a) Estimation from the true data 
     
-    print("method a running")
+    print("Floyd's Algorithm on true data")
     
     if(FD_true){
       a = reg_grid[1]
@@ -82,7 +93,7 @@ Geo_estimation <- function(true_data,discrete_data,true_geo,plot_true,FD_true,s,
     
     ### b) Direct estimation from the noisy data
     
-    print("method b running")
+    print("Floyd's Algorithm on raw data")
     
     if(FD_true){
       a = reg_grid[1]
@@ -120,7 +131,7 @@ Geo_estimation <- function(true_data,discrete_data,true_geo,plot_true,FD_true,s,
   ## Apply method c) for functional data 
   if(FD_true){
     
-    print("method c running")
+    print("Floyd's Algorithm on smooth data")
     
     # Smooth the observed data using b-spline and evaluate the full curve on the same regular grid
     smooth_data = smooth_FD_bspline(discrete_data,grid,reg_grid)
@@ -158,7 +169,7 @@ Geo_estimation <- function(true_data,discrete_data,true_geo,plot_true,FD_true,s,
   
   ### d) p-isomap of Muller
   
-  print("method d running")
+  print("p-isomap of Muller on smooth data")
   
   # Find a grid of possible values for the number of neigbors
   num_neigh_min=py_min_neigh$get_min_num_neighbors(discrete_data)
@@ -187,7 +198,7 @@ Geo_estimation <- function(true_data,discrete_data,true_geo,plot_true,FD_true,s,
   ###    and estimation geo with Floyd's algo.
   ### f) Euclidean data : use SCMS to estimate the manifold 
   ###    and estimation geo with Floyd's algo.
-  print("method e/f running")
+  print("mds of smooth data + scms + Floyd's Algorithm or scms + Floyd's Algorithm")
   
   if(FD_true){
     # Projection of the data in dim s using mds
@@ -219,9 +230,10 @@ Geo_estimation <- function(true_data,discrete_data,true_geo,plot_true,FD_true,s,
   estim_geo_mds_scms = pyIso$getIsomapGdist(denoised,Error_mds_h[ind,2])
   
   if(FD_true){
-    # list3_to_return = list("estim_geo_penalized_isomap"=estim_geo_penalized_isomap,"pisomap_delta" = delta_min,"estim_geo_mds_scms"=estim_geo_mds_scms) returning delta_min currently throws error in assess_goodness
-list3_to_return = list("estim_geo_penalized_isomap"=estim_geo_penalized_isomap,"estim_geo_mds_scms"=estim_geo_mds_scms)  
-print(delta_min)
+    # TODO Susan: returning delta_min currently throws error in assess_goodness
+    # list3_to_return = list("estim_geo_penalized_isomap"=estim_geo_penalized_isomap,"pisomap_delta" = delta_min,"estim_geo_mds_scms"=estim_geo_mds_scms)
+    list3_to_return = list("estim_geo_penalized_isomap"=estim_geo_penalized_isomap,"estim_geo_mds_scms"=estim_geo_mds_scms)
+    print(delta_min)
 } else{
     list3_to_return = list("estim_geo_penalized_isomap"=estim_geo_penalized_isomap,"estim_geo_scms"=estim_geo_mds_scms)
   }
@@ -239,7 +251,7 @@ print(delta_min)
   ### f) use random projection to obtain a s-d version of each data point, use SCMS to estimate the manifold 
   ###    and estimation geo with Floyd's algo.
   if(FD_true){
-    print("method f running")
+    print("scms + Floyd's Algorithm")
   
     scms_h=seq(0.1,2,by=0.2)
     geo_proj<-matrix(0,nrow=nb_proj,ncol=samplesize*(samplesize-1)/2)

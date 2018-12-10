@@ -1,7 +1,10 @@
 ##### Dataset generators
 
-# Scenario 1 : random function from the manifolg M={X(t)=u(h_alpha(t)},with h_alpha(t)=t-alpha and u(t)=t 
+# Scenario 1 : random function from the manifolg M={X(t)=u(h_alpha(t)},with h_alpha(t)=t-alpha and u(t)=t
+# TODO Marie: the true geodesic distance calculation is incorrect for scenario 2
 # Scenario 2 : random function from the manifolg M={X(t)=density N(alpha,1)}
+
+# TODO Marie/Susan: we need more functional scenarios!
 
 ## Input 
 # samplesize
