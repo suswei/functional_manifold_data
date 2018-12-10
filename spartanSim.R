@@ -21,13 +21,13 @@ FD_true = TRUE
 # samplesize # number of points on the manifold
 # SNR # signal to noise ratio (in Chen and Muller is 0.1 or 0.5)
 # reg_sampling {True,False} # regular sampling of the point on the manifold or uniformly random
-# s {1,2,3,4} # reduced dimension use for mds and random projection
+# s {2,3,4} # reduced dimension use for mds and random projection
 
 sces = c(1,2)
 samplesizes = c(100,250)
 SNRs = c(0.1,0.5)
 reg_samplings = c(TRUE,FALSE)
-ss = c(1,2,3,4)
+ss = c(2,3,4)
 mcs = 1:100
 
 unravel=arrayInd(slurm_arrayid,c(length(sces), length(samplesizes), length(SNRs), length(reg_samplings), length(ss), length(mcs)))
@@ -56,6 +56,7 @@ library(fields)
 library(reticulate)
 library(fda)
 library(matlabr)
+library(MESS)
 
 # TODO: it doesn't make ansy sense to define these outside of Geo_estimation?
 pyIso = import_from_path("getIsomapGdist",path='.')
@@ -67,12 +68,12 @@ data<- sim_functional_data(sce, samplesize, K, a, b, SNR, reg_sampling, com_grid
 
 # Estimation of geodesic distances with different methods
 Estim<- Geo_estimation(data$true_data, data$discrete_data, data$true_geo, plotTrue, FD_true, s, nb_proj, data$grid, data$reg_grid, com_grid)
-
 # TODO: decide if we need to save Estim?
 # saveRDS(Estim, file = sprintf("sce=%d_samplesize=%d_SNR=%d_reg_sampling=%d_s=%d_mc=%d",sce,samplesize,SNR,reg_sampling,s,mc))
 
 # Assessment of the estimation of a spscific method
 Rel_errs = lapply(Estim, assess_goodness_estimation, true_geo = data$true_geo)
+print(Rel_errs)
 
-
-saveRDS(Rel_errs, file = sprintf("/data/cephfs/punim0715/taskid=%d_sce=%d_samplesize=%d_SNR=%.01f_reg_sampling=%d_s=%d_mc=%d",slurm_arrayid,sce,samplesize,SNR,reg_sampling,s,mc))
+saveRDS(Rel_errs, file = sprintf("taskid=%d_sce=%d_samplesize=%d_SNR=%.01f_reg_sampling=%d_s=%d_mc=%d",slurm_arrayid,sce,samplesize,SNR,reg_sampling,s,mc))
+# saveRDS(Rel_errs, file = sprintf("/data/cephfs/punim0715/taskid=%d_sce=%d_samplesize=%d_SNR=%.01f_reg_sampling=%d_s=%d_mc=%d",slurm_arrayid,sce,samplesize,SNR,reg_sampling,s,mc))

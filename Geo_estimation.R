@@ -219,8 +219,10 @@ Geo_estimation <- function(true_data,discrete_data,true_geo,plot_true,FD_true,s,
   estim_geo_mds_scms = pyIso$getIsomapGdist(denoised,Error_mds_h[ind,2])
   
   if(FD_true){
-    list3_to_return = list("estim_geo_penalized_isomap"=estim_geo_penalized_isomap,"pisomap_delta" = delta_min,"estim_geo_mds_scms"=estim_geo_mds_scms)
-  } else{
+    # list3_to_return = list("estim_geo_penalized_isomap"=estim_geo_penalized_isomap,"pisomap_delta" = delta_min,"estim_geo_mds_scms"=estim_geo_mds_scms) returning delta_min currently throws error in assess_goodness
+list3_to_return = list("estim_geo_penalized_isomap"=estim_geo_penalized_isomap,"estim_geo_mds_scms"=estim_geo_mds_scms)  
+print(delta_min)
+} else{
     list3_to_return = list("estim_geo_penalized_isomap"=estim_geo_penalized_isomap,"estim_geo_scms"=estim_geo_mds_scms)
   }
   

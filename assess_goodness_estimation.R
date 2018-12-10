@@ -8,9 +8,9 @@ assess_goodness_estimation <- function(estim_mat,true_geo){
 
   epsilons = seq(0,1,0.01)
   epsilon_isometry_prop = lapply(epsilons,check_epsilon_isometry,estim_mat=estim_mat,true_geo=true_geo)
-  epsilon_isometry_auc = AUC(epsilons, unlist(epsilon_isometry_prop), method = "spline", na.rm = FALSE)
-
-  pearson_corr = cor.test(estim_mat[lower.tri(estim_mat)],true_geo[lower.tri(true_geo)], method="pearson")$estimate
+  epsilon_isometry_auc = auc(epsilons, unlist(epsilon_isometry_prop), type = "spline")
+  
+pearson_corr = cor.test(estim_mat[lower.tri(estim_mat)],true_geo[lower.tri(true_geo)], method="pearson")$estimate
 
   return(list("rmse" = rmse, "epsilon_isometry_auc" = epsilon_isometry_auc, "pearson_corr"=pearson_corr))
 }
