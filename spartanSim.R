@@ -72,3 +72,5 @@ print(Rel_errs)
 
 saveRDS(Rel_errs, file = sprintf("taskid=%d_sce=%d_samplesize=%d_SNR=%.01f_reg_sampling=%d_s=%d_mc=%d",slurm_arrayid,sce,samplesize,SNR,reg_sampling,s,mc))
 # saveRDS(Rel_errs, file = sprintf("/data/cephfs/punim0715/taskid=%d_sce=%d_samplesize=%d_SNR=%.01f_reg_sampling=%d_s=%d_mc=%d",slurm_arrayid,sce,samplesize,SNR,reg_sampling,s,mc))
+
+# open with readRDS(filename)
