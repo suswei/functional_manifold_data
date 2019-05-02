@@ -85,5 +85,5 @@ We compare our method to the following ones:
     + Is P-isomap always choosing zero penalty automatically?
     + Shouldn’t the smoothing method be doing better? Thought the smooth was close to the true curve.
 * Next time we submit spartanSim.R, make sure to hold dataset constant for different projection dimensions
-* Read Marie's suggested paper on robust ISOMAP
+* Read Marie's suggested paper on [robust ISOMAP](https://arxiv.org/abs/1306.3373)
 * Revisit Mueller manifold examples. Need to write down some differential equations to solve the geodesic minimisation problem?

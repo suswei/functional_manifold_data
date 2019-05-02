@@ -8,4 +8,4 @@ https://github.com/lgreski/datasciencectacontent/blob/master/markdown/pml-ghPage
 
 As a result of following the instruction above, the default branch has been set to gh-pages. 
 
-Running changes will be made to the index.Rmd file. 
+To modify the report, use the index.Rmd file. This report will be frequently updated to organize project progress.
