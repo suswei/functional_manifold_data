@@ -1,5 +1,5 @@
 ---
-title: "Comparison of methods"
+title: "Comparison of methods test"
 output: html_document
 ---
 
