@@ -1,7 +1,7 @@
 # LocalCovarianceOperator
 
 The associated Github Page is located at
-https://susanwe.github.io/LocalCovarianceOperator/
+https://susanwe.github.io/functional_manifold_data/
 
 It was set up according to the instructions here:
 https://github.com/lgreski/datasciencectacontent/blob/master/markdown/pml-ghPagesSetup.md

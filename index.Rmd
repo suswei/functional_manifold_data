@@ -63,9 +63,6 @@ MH : Floyd or Dijkstra are methods to find the smallest path given a weigthed gr
 
 Isomap is a three steps procedure that takes as input a set of points $x_1,\ldots,x_n\in \R^D$ and produces an embedding of the input data in the space $\R^d$ with $d<D$, that preserves pairwise geodesic distances. The first step consists in constructing a weighted graph $G$ with nodes corresponding to the input data and for which the weight of an edge between two nodes $x_i$ and $x_j$ is equal to $||x_i-x_j ||_{\R^D}$. The graph $G$ is constructed such that a node is connected to a fix number $N$ of neighbors or to all nodes that are at a distance smaller than a given value $\epsilon$. In the second step, the pairwise geodesic distances $d_\M(x_i,x_j)$
 are estimated based on $G$. The geodesic distance between two nodes is simply the length of the shortest path in $G$ between these two nodes, and can be calculated easily with Floyd-Warshall or Dijkstra’s algorithms. The last step consists in using MDS on the matrix of pairwise geodesic distances obtained in the first step in order to obtain an embedding in $\R^d$. 
-```{r}
-3 + 5
-```
 
 %In the sequel, we use the first step of Isomap to estimate pairwise geodesic distances and we call this procedure IsoGeo.
 In the sequel, we call IsoGeo the procedure of estimating pairwise geodesic distances with the two first steps of Isomap.
