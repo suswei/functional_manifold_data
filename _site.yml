@@ -1,11 +1,13 @@
-name: "my-website"
+name: "Functional manifold data"
 output_dir: "."
 navbar:
-  title: "My Website"
+  title: "Functional manifold data"
   left:
-    - text: "Home"
+    - text: "Project description"
       href: index.html
-    - text: "Functional data"
+    - text: "About"
+      href: README.html
+    - text: "Functional manifold simulation scenarios"
       href: sim_functional_data.html      
-    - text: "Testing analytic geodesic distance derivation"
+    - text: "Verifying analytic geodesic distance derivation"
       href: test_analytic_geodesic_distance.html            
