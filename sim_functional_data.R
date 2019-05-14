@@ -46,6 +46,7 @@
 #' $$ <v_1,v_2> = \int_0^1 v_1(s) v_2(s) \,ds $$ for two tangent vectors $v_1,v_2 \in T_\psi(\M)$. The geodesic distance between any two $\psi_1$ and $\psi_2$ in $\M$ is simply
 #' $$d(\psi_1,\psi_2) = \cos^{-1}<\psi_1,\psi_2>$$.
 
+
 ## Input 
 # samplesize
 # K = number of grid points
@@ -71,7 +72,6 @@ library(fields)
 source('full_geo_from_adj_geo.R')
 
 sim_functional_data<-function(sce,samplesize=100,K=30,a=-4,b=4,SNR=1,reg_sampling=1,com_grid=1,plot_true=1){
-  
   if(sce == 1){
     if(reg_sampling==0){
       Z <- rnorm(samplesize,0,0.3)
@@ -141,7 +141,8 @@ sim_functional_data<-function(sce,samplesize=100,K=30,a=-4,b=4,SNR=1,reg_samplin
     matplot(t(grid),t(noisy_data),main="Observed data",type='l', col=rainbow(samplesize))
     image.plot(analytic_geo,main='analytic geodesic')
   }
-    
-  return(list('noiseless_data'=noiseless_data,'noisy_data'=noisy_data,'analytic_geo'=analytic_geo,'grid'=grid,'reg_grid'=reg_grid))
+    return(list('noiseless_data'=noiseless_data,'noisy_data'=noisy_data,'analytic_geo'=analytic_geo,'grid'=grid,'reg_grid'=reg_grid))
+}
 
-  
+#'bla bla
+#'
