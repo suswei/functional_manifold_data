@@ -19,11 +19,19 @@
 #'
 #'
 #' ##Scenario 2: 
-#' This is based on Manifold 2 in Chen and Muller 2012 where we fix the variance to be $1$. The paper claims that in this case the resulting manifold $$\M = \{ \text{probability density function } N(\alpha,1): \alpha \in \mathbb R \}$$ is isometric.
+#' This is based on Manifold 2 in Chen and Muller 2012 where we fix the variance to be $1$. The paper claims that in this case the resulting manifold $$\M =  \left \{ X_\beta \in L^2([-4,4]) : X_\beta(t) = \frac{1}{\sqrt{2\pi}} \exp{[-\frac{1}{2}(t-\beta)^2]}, \beta \in \R\right \}.$$ is isometric.
 #' Chen and Muller are also working with the $L_2$ inner product as their metric tensor of $\M$. 
 #' Isometric means the geodesic distance between $X_1$ and $X_2$ in $\M$ is the Euclidan distance between the $\alpha$'s up to some scaling factor. ???Why is there a scaling factor???
 #' Note that the "straight" line connecting $X_1$ and $X_2$ in $\M$ does not always stay inside of $\M$ since $t N(\alpha_1,1) + (1-t) N(\alpha_2,1)$ no longer has variance $1$ for all $t \in [0,1]$. 
-#'
+#'  The geodesic distance between the curves $X_{\beta_1}$ and $X_{\beta_2}$ is 
+#'\begin{eqnarray*}
+#'d(X_{\beta_1},X_{\beta_2}) &=& \int_{\beta_1}^{\beta_2} \left \| \frac{d X_\beta (t)}{d\beta} \right\|_{L^2} d\beta \\
+#'&=&  \int_{\beta_1}^{\beta_2} \sqrt{ \frac{1}{2\sqrt{\pi}} \int_{-4}^4 \frac{1}{\sqrt{\pi}} \exp\{-(t-\beta)^2\}(t-\beta)^2 dt  }  \  d\beta \\
+#'&=&   \int_{\beta_1}^{\beta_2} \sqrt{ \frac{1}{2\sqrt{\pi}} \int_{-4}^4(t-\beta)^2 f(t) dt  }  \  d\beta, \textrm{ where $f$ is the density of a N$(\beta,1/2)$ }   \\
+#'&\approx&  \int_{\beta_1}^{\beta_2}  \sqrt{ \frac{1}{2\sqrt{\pi}} \frac{1}{2}} \ d\beta \\
+#'&=& (\beta_2-\beta_1) \frac{1}{2\pi^{1/4}},
+#'\end{eqnarray*}
+#'where the approximation comes from the fact that we are integrating on $[-4,4]$ and not on $\R$. Moreover the mean $\beta$ has to be close to 0 for the approximation to make sense.
 #'
 #' #Scenario 3: ???This needs to be implemented eventually???
 #' Consider the manifold $$ \M = \{ \text{probability density function } N(\alpha,\sigma^2): \alpha \in \mathbb R, \sigma > 0 \} $$ with the $L_2$ inner product as the metric tensor.
@@ -62,7 +70,7 @@
 library(fields)
 source('full_geo_from_adj_geo.R')
 
-sim_functional_data<-function(sce,samplesize=100,K=20,a=0,b=1,SNR=1,reg_sampling=1,com_grid=1,plot_true=1){
+sim_functional_data<-function(sce,samplesize=100,K=30,a=-4,b=4,SNR=1,reg_sampling=1,com_grid=1,plot_true=1){
   
   if(sce == 1){
     if(reg_sampling==0){
@@ -89,7 +97,7 @@ sim_functional_data<-function(sce,samplesize=100,K=20,a=0,b=1,SNR=1,reg_sampling
       alpha <- apply(cbind(rep(-1,samplesize),Z),1,max)
       alpha=sort(alpha)
     } else if(reg_sampling==1){
-      alpha <- seq(-2,2,length.out=samplesize)
+      alpha <- seq(-1,1,length.out=samplesize)
     }
     
     mu_t <- function(t,al){
@@ -99,7 +107,6 @@ sim_functional_data<-function(sce,samplesize=100,K=20,a=0,b=1,SNR=1,reg_sampling
     adja_geo <- (alpha[-1]- alpha[-samplesize])/(2*pi^(1/4))
     ### Calculate the analytic geodesic matrix
     analytic_geo <- full_geo(adja_geo,samplesize)
-    
   }
   
   noiseless_data <- matrix(ncol=K,nrow=samplesize)
@@ -136,4 +143,3 @@ sim_functional_data<-function(sce,samplesize=100,K=20,a=0,b=1,SNR=1,reg_sampling
   }
     
   return(list('noiseless_data'=noiseless_data,'noisy_data'=noisy_data,'analytic_geo'=analytic_geo,'grid'=grid,'reg_grid'=reg_grid))
-}
