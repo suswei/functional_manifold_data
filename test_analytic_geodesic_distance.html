@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Test if analytic derivation of geodesic distance for curves from sim_functional_data.R is correct</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">My Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="sim_functional_data.html">Functional data</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Test if analytic derivation of geodesic distance for curves from sim_functional_data.R is correct</h1>
+
+</div>
+
+
+<pre class="r"><code>source(&#39;sim_functional_data.R&#39;)</code></pre>
+<pre><code>## Warning: package &#39;fields&#39; was built under R version 3.5.2</code></pre>
+<pre><code>## Loading required package: spam</code></pre>
+<pre><code>## Loading required package: dotCall64</code></pre>
+<pre><code>## Loading required package: grid</code></pre>
+<pre><code>## Spam version 2.2-0 (2018-06-19) is loaded.
+## Type &#39;help( Spam)&#39; or &#39;demo( spam)&#39; for a short introduction 
+## and overview of this package.
+## Help for individual functions is also obtained by adding the
+## suffix &#39;.spam&#39; to the function name, e.g. &#39;help( chol.spam)&#39;.</code></pre>
+<pre><code>## 
+## Attaching package: &#39;spam&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     backsolve, forwardsolve</code></pre>
+<pre><code>## Loading required package: maps</code></pre>
+<pre><code>## See https://github.com/NCAR/Fields for
+##  an extensive vignette, other supplements and source code</code></pre>
+<p>The function sim_functional_data.R allows specification of several simulatin scenarios. The samplesize is purposefully set very high for reasons explained below.</p>
+<pre class="r"><code># Generate data
+sim &lt;- sim_functional_data(sce=2,samplesize=100)</code></pre>
+<p><img src="test_analytic_geodesic_distance_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>The output actually contains more than just the simulated functional data. In particular, it contains the in-sample pairwise geodesic distance matrix (analytic_geo) via analytic derivation. The purpose of this notebook is to see if our analytic derivations match numerical results.</p>
+<pre class="r"><code>names(sim)</code></pre>
+<pre><code>## [1] &quot;noiseless_data&quot; &quot;noisy_data&quot;     &quot;analytic_geo&quot;   &quot;grid&quot;          
+## [5] &quot;reg_grid&quot;</code></pre>
+<p>We would like to compare sim$analytic_geo to geodesic distance estimation via Floyd’s algorithm for the noiseless (discretised) curve. This algorithm is guaranteed to do well if we sample the manifold densely enough? (That’s why we set the samplesize to be quite high initially.)</p>
+<pre class="r"><code>library(reticulate)
+# sometimes reticulate requires specific instruction on where to find your python
+# first call Sys.which(&quot;python&quot;) and then copy that path into 
+use_python(&#39;/Users/suswei/anaconda3/bin/python&#39;,required=TRUE)
+get_min_num_neighbors = import_from_path(&quot;get_min_num_neighbors&quot;,path=&#39;.&#39;)
+getIsomapGdist = import_from_path(&quot;getIsomapGdist&quot;,path=&#39;.&#39;)
+
+attach(sim)
+a = reg_grid[1]
+b = tail(reg_grid,1)
+K = length(reg_grid)
+samplesize = dim(noiseless_data)[1]
+noiseless_data_tmp = (sqrt((b-a)/K))*noiseless_data
+
+# Find a grid of possible values for the number of neigbors
+num_neigh_min=get_min_num_neighbors$get_min_num_neighbors(noiseless_data_tmp)
+num_neigh_true=seq(num_neigh_min,samplesize/2,by=2)
+
+# Calculate the geo matrix for each number of neighbors and keep the one that gives the minimal error
+norm_analytic_geo = sqrt(sum(analytic_geo^2))
+Error_true_mani_K= rep(0,length(num_neigh_true))
+for(j in 1:length(num_neigh_true)){
+  IsomapGdist = getIsomapGdist$getIsomapGdist(noiseless_data_tmp,num_neigh_true[j])
+  Error_true_mani_K[j]=sqrt(sum((IsomapGdist - analytic_geo )^2))/norm_analytic_geo
+}
+ind_op_true=min(which(Error_true_mani_K==min(Error_true_mani_K)))
+estim_geo_noiseless_data = getIsomapGdist$getIsomapGdist(noiseless_data_tmp,num_neigh_true[ind_op_true])</code></pre>
+<p>If the analytic derviation is correct, then estim_geo_noiseless_data should be extremely similar to analytic_geo. We can assess their closeness using assess_goodness_estimation.R. Running this notebook for sce=1 gives rmse on the order of e-16.</p>
+<pre class="r"><code>library(MESS)</code></pre>
+<pre><code>## Warning: package &#39;MESS&#39; was built under R version 3.5.2</code></pre>
+<pre><code>## Loading required package: geepack</code></pre>
+<pre><code>## Loading required package: geeM</code></pre>
+<pre><code>## Loading required package: Matrix</code></pre>
+<pre><code>## 
+## Attaching package: &#39;Matrix&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:spam&#39;:
+## 
+##     det</code></pre>
+<pre class="r"><code>source(&#39;assess_goodness_estimation.R&#39;)
+assess_goodness_estimation(estim_geo_noiseless_data,analytic_geo)</code></pre>
+<pre><code>## $rmse
+## [1] 0.5414023
+## 
+## $epsilon_isometry_auc
+## [1] 0.4639738
+## 
+## $pearson_corr
+##       cor 
+## 0.9931417</code></pre>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

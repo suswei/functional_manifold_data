@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Report</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">My Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="sim_functional_data.html">Functional data</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Report</h1>
+
+</div>
+
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>The classical setup in FDA is to assume that we observe a sample of <span class="math inline">\(n\)</span> independant realizations <span class="math inline">\(X_1,\ldots,X_n\)</span> of a random variable <span class="math inline">\(X\)</span> that takes value in the Hilbert space <span class="math inline">\(L^2([a,b],\R)\)</span>. The first steps of a classical approach to analyse such data are to first obtain a functional version <span class="math inline">\(\tilde X_1,\ldots,\tilde X_n\)</span> of the raw data (by either smoothing or using PACE) and then perform FPCA to reduce the dimension of the data.</p>
+<p>However, it might very well happen that the function <span class="math inline">\(X\)</span> belongs to <span class="math inline">\(\M \subset L^2([a,b],\R)\)</span> a low-dimensional nonlinear manifold (gives examples and references). If it is indeed the case, it is no longer appropriate to use the norm induced by the <span class="math inline">\(L^2\)</span> inner product to calculate the distance between two curves. Explain why. One should instead use the geodesic distance <span class="math inline">\(d_\M\)</span> induced by <span class="math inline">\(\M\)</span> which takes into account the intrinsic structure of <span class="math inline">\(\M\)</span>.</p>
+<p>Before continuing, some diambiguities are called for. Contrast existing work on functional data where either the domain is a manifold or the range is a manifold, or both.</p>
+<p>Now back to functional data living in a low-dimensional manifold embedded in the ambient Hilbert space. There exist many nonlinear dimension reduction methods in the literature, also known as manifold learning methods, which are particularly popular in computer vision. However, the success of these methods typically require the data to be observed with a high signal-to-noise ratio. (is it true? ref?) This is a luxury that FDA cannot always afford.</p>
+<p>Though powerful techniques exist for smoothing/interpolating discretely observed noisy functional data, the recovered functional versions of the data, <span class="math inline">\(\tilde X_1,\ldots,\tilde X_n\)</span>, may not lie even close to the functional manifold <span class="math inline">\(\M\)</span>. This presents challenges to the application of many manifold learning techniques which assume fully observed nearly-noiseless inputs.</p>
+<p>% the following two sentences are not related to each other % Estimating the manifold <span class="math inline">\(\M\)</span> from a sample of functions observed discretely and with measurements is a challenging task (results depend on curvature of the manifold, need a lot of data). Even after recovering a functional version of the data, the chances are pretty high that <span class="math inline">\(\tilde X_1,\ldots,\tilde X_n\)</span> do not lie exactly on <span class="math inline">\(\M\)</span>.</p>
+<p>With this challenge in mind, we put forth a technique for the specific task of estimating pairwise geodesic distances <span class="math inline">\(\{ d_\M (X_i,X_j\}_{i&gt;j}\)</span> when we have access only to discretely-observed noisy functional observations. Say why pairwise distances important, e.g. classification, clustering, manifold learning (ISOMAP), nonparametric regression (kernel regression). Certainly, pairwise geodesic distances are legitimate objects of interest in themselves but our motivation is more general in nature. Specifically, we use pairwise distances as an illuminating example to advocate and promote the nonlinear perspective in FDA.</p>
+<p>???insert example that shows pairwise geodesic distances give visually more interesting results than pairwise <span class="math inline">\(L_2\)</span> distance. like the Berkeley growth curves, MDS based on pairwise geodesic versus MDS based on pairwise <span class="math inline">\(L_2\)</span>. The former separates the genders better? Something like this, but hopefully a different dataset.???</p>
+<p>Briefly outline the methodology: MDS plus density ridge are used in a cool way to estimate (consistently?, let’s hope..) pairwise geodesic distances.</p>
+<p>Along the way, we introduce a new tool to assess pairwise geodesic distance estimation. This is the ROC curve with <span class="math inline">\(\epsilon\)</span> on the <span class="math inline">\(x\)</span>-axis and degree to which near-<span class="math inline">\(\epsilon\)</span> isometry holds, i.e. the percentage of estimated pairwise distances between <span class="math inline">\(1-\epsilon\)</span> and <span class="math inline">\(1+\epsilon\)</span> of the truth pairwise distance.</p>
+</div>
+<div id="proposed-method-for-estimating-geodesic-distances" class="section level1">
+<h1>Proposed method for estimating geodesic distances</h1>
+<p>Let <span class="math inline">\(X_1,\ldots,X_n\)</span> be independent realizations of a random function <span class="math inline">\(X\in\M \subset L^2([a,b],\R)\)</span>, where <span class="math inline">\(\M\)</span> is an unknown manifold of dimension <span class="math inline">\(d\)</span>. Suppose that each curve <span class="math inline">\(X_i\)</span> is observed on a grid <span class="math inline">\(T_i=(t_{i1},\ldots,t_{iK})\)</span> and with measurements errors, i.e. that we observe a sample of <span class="math inline">\(K\)</span>-dimensional vectors <span class="math inline">\(Y_1,\ldots,Y_n\)</span> with <span class="math inline">\(Y_{ij} = X_i(t_{ij}) + \epsilon_{ij}\)</span>, where the random variables <span class="math inline">\(\epsilon_{ij}\)</span> are of mean zero and uncorrelated with each other. We assume that the grids <span class="math inline">\(T_1,\ldots,T_n\)</span> are dense.</p>
+<p>Our method is described by the following steps:</p>
+<ol style="list-style-type: decimal">
+<li>Transform each vector <span class="math inline">\(Y_i\)</span> into a function <span class="math inline">\(\tilde X_i\)</span> by spline smoothing: <span class="math display">\[ \tilde X_i = \arg\min_{f\in C^2[0,1]}\left\{\sum_{j=1}^{K}\left(f(t_{ij})-Y_{ij}\right)^2+\lambda \|\partial^2_tf\|^2_{L^2}\right\}\]</span> where <span class="math inline">\(\lambda&gt;0\)</span> is a tuning parameter controlling the smoothness of <span class="math inline">\(\tilde X_i\)</span>.</li>
+<li>Obtain a <span class="math inline">\(s\)</span>-dimensional representation <span class="math inline">\(\tilde X^s_1,\ldots,\tilde X^s_n\)</span> of the functions <span class="math inline">\(\tilde X_1,\ldots,\tilde X_n\)</span> that “preserves” the pairwise <span class="math inline">\(L^2\)</span> distances by using MDS.</li>
+<li>Obtain <span class="math inline">\(\tilde X^{s,\hat \M}_1,\ldots,\tilde X^{s,\hat \M}_n\)</span> a “projection” of <span class="math inline">\(\tilde X^s_1,\ldots,\tilde X^s_n\)</span> onto a ridge <span class="math inline">\(\hat \M\)</span> which is computed with a mean shift algorithm.</li>
+<li>Use IsoGeo to approximate the pairwise geodesic distances <span class="math inline">\(\{d_{\hat \M}(\tilde X^{s,\hat \M}_i,\tilde X^{s,\hat \M}_j)\}_{i&gt;j}\)</span> and define the $nn $ matrix <span class="math inline">\(\hat G\)</span> as <span class="math display">\[
+\hat G(i,j)=\hat G(j,i) = \left\{ \begin{array}{ll}
+ d_{\hat \M}(\tilde X^{s,\hat \M}_i,\tilde X^{s,\hat \M}_j) &amp; \textrm{if $i\neq j$,}\\
+ 0 &amp; \textrm{otherwise.}
+  \end{array} \right.
+\]</span></li>
+</ol>
+<p>Since the ridge estimation obtained from noisy measurements of a manifold should approximate well the manifold (ref. Genevose and al. 2014), we expect the points <span class="math inline">\(\tilde X^{s,\hat \M}_1,\ldots,\tilde X^{s,\hat \M}_n\)</span> to lie close to the real manifold <span class="math inline">\(\M\)</span> and then <span class="math inline">\(d_{\hat \M}\)</span> to be close to <span class="math inline">\(d_\M\)</span>. Ridge estimation suffers from the curse of dimensionality, this is why we first reduce the dimension of our data with MDS and then apply the shift-mean algorithm to estimate the ridge.</p>
+</div>
+<div id="comparison-to-other-methods" class="section level1">
+<h1>Comparison to other methods</h1>
+<p>Susan: why are we describing Isomap as the first sentence in this Simulation section? Shouldn’t we begin by describing the goal. Something like: We perform a simulation study to ascertain the efficacy of our method for estimating pairwise geodesic distances for discretely-observed noisy functional data, compared to various alternative approaches.</p>
+<p>MH : Sure, the introduction sentence was missing and we can also put the description of IsoMAP somewhere else.</p>
+<p>Susan question: Also, isn’t the real name for IsoGeo Floyd-Warshall or Dijkstra’s? These are the two options in python scikitlearn’s isomap routine, where the default is actually automatic selection.</p>
+<p>MH : Floyd or Dijkstra are methods to find the smallest path given a weigthed graph but they are not related to how to calculate that graph (which is the difficult part, depend on number of neighbors, many method out there to calculate that graph in a robust way, p-isomap is one of these). I wanted to introduce that IsoGeo to avoid confusion but maybe it was not clear, I changed a bit the description.</p>
+<p>Isomap is a three steps procedure that takes as input a set of points <span class="math inline">\(x_1,\ldots,x_n\in \R^D\)</span> and produces an embedding of the input data in the space <span class="math inline">\(\R^d\)</span> with <span class="math inline">\(d&lt;D\)</span>, that preserves pairwise geodesic distances. The first step consists in constructing a weighted graph <span class="math inline">\(G\)</span> with nodes corresponding to the input data and for which the weight of an edge between two nodes <span class="math inline">\(x_i\)</span> and <span class="math inline">\(x_j\)</span> is equal to <span class="math inline">\(||x_i-x_j ||_{\R^D}\)</span>. The graph <span class="math inline">\(G\)</span> is constructed such that a node is connected to a fix number <span class="math inline">\(N\)</span> of neighbors or to all nodes that are at a distance smaller than a given value <span class="math inline">\(\epsilon\)</span>. In the second step, the pairwise geodesic distances <span class="math inline">\(d_\M(x_i,x_j)\)</span> are estimated based on <span class="math inline">\(G\)</span>. The geodesic distance between two nodes is simply the length of the shortest path in <span class="math inline">\(G\)</span> between these two nodes, and can be calculated easily with Floyd-Warshall or Dijkstra’s algorithms. The last step consists in using MDS on the matrix of pairwise geodesic distances obtained in the first step in order to obtain an embedding in <span class="math inline">\(\R^d\)</span>.</p>
+<p>%In the sequel, we use the first step of Isomap to estimate pairwise geodesic distances and we call this procedure IsoGeo. In the sequel, we call IsoGeo the procedure of estimating pairwise geodesic distances with the two first steps of Isomap.</p>
+<p>We compare our method to the following ones: * [] Apply IsoGeo on the raw data <span class="math inline">\(Y_1,\ldots,Y_n\)</span> to obtain an estimator <span class="math inline">\(\hat G_{\textrm{RD}}\)</span>. Note that this procedure can only be used if the grid <span class="math inline">\(T_i\)</span> is the same for each <span class="math inline">\(i\)</span>. * [] Transform each vector <span class="math inline">\(Y_i\)</span> into a function <span class="math inline">\(\tilde X_i\)</span> by spline smoothing. Apply IsoGeo on the vectors <span class="math inline">\(\{(\tilde X_i(t_1), \ldots, X_i(t_K)\}_{i=1}^n\)</span>, where <span class="math inline">\(t_1,\ldots,t_K\)</span> is a regular grid of <span class="math inline">\([a,b]\)</span>, to obtain an estimator <span class="math inline">\(\hat G_{\textrm{SS}}\)</span>. * [] Transform each vector <span class="math inline">\(Y_i\)</span> into a function <span class="math inline">\(\tilde X_i\)</span> by spline smoothing. Calculate the weighted graph of step I of Isomap with a penalty (describe the penalty of Chen and Muller). Apply step II of Isomap to obtain <span class="math inline">\(\hat G_{\textrm{pI}}\)</span>. [] same method as our but change step 2 by : obtain <span class="math inline">\(s\)</span>-dimensional representation by random projection and setp 4 by obtain <span class="math inline">\(\hat G\)</span> using a ensemble method.</p>
+</div>
+<div id="todos" class="section level1">
+<h1>TODOs</h1>
+<ul>
+<li>Clean up the writing in this notebook. Add code and graphs where helpful.</li>
+<li>Related to tuning parameter
+<ul>
+<li>Choose the number of neighbors <span class="math inline">\(N\)</span> in IsoGeo.</li>
+<li>Choose projection dimension for avoiding curse of dimensionality in performing density ridge scms routine</li>
+<li>Choose the bandwidth <span class="math inline">\(h\)</span> in scms.</li>
+</ul></li>
+<li>Related to spartanSim.R simulations results
+<ul>
+<li>Why do some Monte Carlo simulations fail?</li>
+<li>Is P-isomap always choosing zero penalty automatically?</li>
+<li>Shouldn’t the smoothing method be doing better? Thought the smooth was close to the true curve.</li>
+</ul></li>
+<li>Next time we submit spartanSim.R, make sure to hold dataset constant for different projection dimensions</li>
+<li>Read Marie’s suggested paper on <a href="https://arxiv.org/abs/1306.3373">robust ISOMAP</a></li>
+<li>Revisit Mueller manifold examples. Need to write down some differential equations to solve the geodesic minimisation problem?</li>
+</ul>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,6 +1,9 @@
 name: "my-website"
+output_dir: "."
 navbar:
   title: "My Website"
   left:
     - text: "Home"
       href: index.html
+    - text: "Functional data"
+      href: sim_functional_data.html      
