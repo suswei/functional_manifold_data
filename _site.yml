@@ -5,9 +5,9 @@ navbar:
   left:
     - text: "Project description"
       href: index.html
-    - text: "About"
-      href: README.html
     - text: "Functional manifold simulation scenarios"
       href: sim_functional_data.html      
     - text: "Verifying analytic geodesic distance derivation"
       href: test_analytic_geodesic_distance.html            
+    - text: "About"
+      href: README.html      

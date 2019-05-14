@@ -1,13 +1,17 @@
-# Functional Manifold Data
+# About
 
-The associated Github Page is located at
-https://susanwe.github.io/functional_manifold_data/
+The project webpage is organized according to _site.yml. Individual pages are created using Rmarkdown .Rmd files. Before committing and pushing to Github, click the Build button in Rstudio.
 
-It was set up according to the instructions here:
+Some useful resources for building a webpage hosted on Github Pages comprising of Rmarkdown files:
+
 https://github.com/lgreski/datasciencectacontent/blob/master/markdown/pml-ghPagesSetup.md
 
-As a result of following the instruction above, the default branch has been set to gh-pages. 
+https://jules32.github.io/rmarkdown-website-tutorial/index.html
 
-To modify the report, use the index.Rmd file. This report will be frequently updated to organize project progress.
+https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html
+
+https://www.emilyzabor.com/tutorials/rmarkdown_websites_tutorial.html
+
+*Note: the default branch is set to gh-pages.
 
 *Note: original repository was called LocalCovarianceOperator. 
