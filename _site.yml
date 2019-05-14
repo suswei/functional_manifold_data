@@ -7,3 +7,5 @@ navbar:
       href: index.html
     - text: "Functional data"
       href: sim_functional_data.html      
+    - text: "Testing analytic geodesic distance derivation"
+      href: test_analytic_geodesic_distance.html            
