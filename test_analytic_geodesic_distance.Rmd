@@ -6,6 +6,10 @@ output:
     df_print: paged
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = TRUE)
+```
+
 ```{r}
 source('sim_functional_data.R')
 ```
@@ -14,7 +18,7 @@ The function sim_functional_data.R allows specification of several simulatin sce
 
 ```{r}
 # Generate data
-sim <- sim_functional_data(sce=2,samplesize=1000)
+sim <- sim_functional_data(sce=2,samplesize=100)
 ```
 
 The output actually contains more than just the simulated functional data. In particular, it contains the in-sample pairwise geodesic distance matrix (analytic_geo) via analytic derivation. The purpose of this notebook is to see if our analytic derivations match numerical results.
