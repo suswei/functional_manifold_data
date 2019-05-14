@@ -2,6 +2,7 @@
 title: Test if analytic derivation of geodesic distance for curves from sim_functional_data.R
   is correct
 output:
+  pdf_document: default
   html_document:
     df_print: paged
 ---
@@ -34,7 +35,8 @@ We would like to compare sim$analytic_geo to geodesic distance estimation via Fl
 library(reticulate)
 # sometimes reticulate requires specific instruction on where to find your python
 # first call Sys.which("python") and then copy that path into 
-use_python('/Users/suswei/anaconda3/bin/python',required=TRUE)
+#use_python('/Users/suswei/anaconda3/bin/python',required=TRUE)
+use_python('/anaconda3/bin/python',required=TRUE)
 get_min_num_neighbors = import_from_path("get_min_num_neighbors",path='.')
 getIsomapGdist = import_from_path("getIsomapGdist",path='.')
 
@@ -58,11 +60,13 @@ for(j in 1:length(num_neigh_true)){
 }
 ind_op_true=min(which(Error_true_mani_K==min(Error_true_mani_K)))
 estim_geo_noiseless_data = getIsomapGdist$getIsomapGdist(noiseless_data_tmp,num_neigh_true[ind_op_true])
+image.plot(estim_geo_noiseless_data,main='geo estimation')
 ```
+
 If the analytic derviation is correct, then estim_geo_noiseless_data should be extremely similar to analytic_geo. We can assess their closeness using assess_goodness_estimation.R. Running this notebook for sce=1 gives rmse on the order of e-16.
 ```{r}
 library(MESS)
 source('assess_goodness_estimation.R')
-assess_goodness_estimation(estim_geo_noiseless_data,analytic_geo)
+assess_goodness_estimation(estim_geo_noiseless_data,sim$analytic_geo)
 ```
 
