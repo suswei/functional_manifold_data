@@ -143,3 +143,5 @@ sim_functional_data<-function(sce,samplesize=100,K=30,a=-4,b=4,SNR=1,reg_samplin
   }
     
   return(list('noiseless_data'=noiseless_data,'noisy_data'=noisy_data,'analytic_geo'=analytic_geo,'grid'=grid,'reg_grid'=reg_grid))
+
+  
