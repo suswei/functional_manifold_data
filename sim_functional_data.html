@@ -9,7 +9,7 @@
 <meta name="generator" content="pandoc" />
 
 
-<meta name="author" content="suswei" />
+<meta name="author" content="marie_uqam" />
 
 
 <title>Functional manifold data examples</title>
@@ -206,8 +206,8 @@ $(document).ready(function () {
 
 
 <h1 class="title toc-ignore">Functional manifold data examples</h1>
-<h4 class="author"><em>suswei</em></h4>
-<h4 class="date"><em>Tue May 14 15:17:07 2019</em></h4>
+<h4 class="author"><em>marie_uqam</em></h4>
+<h4 class="date"><em>Tue May 14 16:34:52 2019</em></h4>
 
 </div>
 
@@ -218,7 +218,15 @@ $(document).ready(function () {
 </div>
 <div id="scenario-2" class="section level2">
 <h2>Scenario 2:</h2>
-<p>This is based on Manifold 2 in Chen and Muller 2012 where we fix the variance to be <span class="math inline">\(1\)</span>. The paper claims that in this case the resulting manifold <span class="math display">\[{\mathcal{M}}= \{ \text{probability density function } N(\alpha,1): \alpha \in \mathbb R \}\]</span> is isometric. Chen and Muller are also working with the <span class="math inline">\(L_2\)</span> inner product as their metric tensor of <span class="math inline">\({\mathcal{M}}\)</span>. Isometric means the geodesic distance between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> in <span class="math inline">\({\mathcal{M}}\)</span> is the Euclidan distance between the <span class="math inline">\(\alpha\)</span>’s up to some scaling factor. ???Why is there a scaling factor??? Note that the “straight” line connecting <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> in <span class="math inline">\({\mathcal{M}}\)</span> does not always stay inside of <span class="math inline">\({\mathcal{M}}\)</span> since <span class="math inline">\(t N(\alpha_1,1) + (1-t) N(\alpha_2,1)\)</span> no longer has variance <span class="math inline">\(1\)</span> for all <span class="math inline">\(t \in [0,1]\)</span>.</p>
+This is based on Manifold 2 in Chen and Muller 2012 where we fix the variance to be <span class="math inline">\(1\)</span>. The paper claims that in this case the resulting manifold <span class="math display">\[{\mathcal{M}}=  \left \{ X_\beta \in L^2([-4,4]) : X_\beta(t) = \frac{1}{\sqrt{2\pi}} \exp{[-\frac{1}{2}(t-\beta)^2]}, \beta \in {\mathbb{R}}\right \}.\]</span> is isometric. Chen and Muller are also working with the <span class="math inline">\(L_2\)</span> inner product as their metric tensor of <span class="math inline">\({\mathcal{M}}\)</span>. Isometric means the geodesic distance between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> in <span class="math inline">\({\mathcal{M}}\)</span> is the Euclidan distance between the <span class="math inline">\(\alpha\)</span>’s up to some scaling factor. ???Why is there a scaling factor??? Note that the “straight” line connecting <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> in <span class="math inline">\({\mathcal{M}}\)</span> does not always stay inside of <span class="math inline">\({\mathcal{M}}\)</span> since <span class="math inline">\(t N(\alpha_1,1) + (1-t) N(\alpha_2,1)\)</span> no longer has variance <span class="math inline">\(1\)</span> for all <span class="math inline">\(t \in [0,1]\)</span>. The geodesic distance between the curves <span class="math inline">\(X_{\beta_1}\)</span> and <span class="math inline">\(X_{\beta_2}\)</span> is
+<span class="math display">\[\begin{eqnarray*}
+d(X_{\beta_1},X_{\beta_2}) &amp;=&amp; \int_{\beta_1}^{\beta_2} \left \| \frac{d X_\beta (t)}{d\beta} \right\|_{L^2} d\beta \\
+&amp;=&amp;  \int_{\beta_1}^{\beta_2} \sqrt{ \frac{1}{2\sqrt{\pi}} \int_{-4}^4 \frac{1}{\sqrt{\pi}} \exp\{-(t-\beta)^2\}(t-\beta)^2 dt  }  \  d\beta \\
+&amp;=&amp;   \int_{\beta_1}^{\beta_2} \sqrt{ \frac{1}{2\sqrt{\pi}} \int_{-4}^4(t-\beta)^2 f(t) dt  }  \  d\beta, \textrm{ where $f$ is the density of a N$(\beta,1/2)$ }   \\
+&amp;\approx&amp;  \int_{\beta_1}^{\beta_2}  \sqrt{ \frac{1}{2\sqrt{\pi}} \frac{1}{2}} \ d\beta \\
+&amp;=&amp; (\beta_2-\beta_1) \frac{1}{2\pi^{1/4}},
+\end{eqnarray*}\]</span>
+<p>where the approximation comes from the fact that we are integrating on <span class="math inline">\([-4,4]\)</span> and not on <span class="math inline">\({\mathbb{R}}\)</span>. Moreover the mean <span class="math inline">\(\beta\)</span> has to be close to 0 for the approximation to make sense.</p>
 </div>
 <div id="scenario-3-this-needs-to-be-implemented-eventually" class="section level1">
 <h1>Scenario 3: ???This needs to be implemented eventually???</h1>
@@ -249,7 +257,6 @@ $(document).ready(function () {
 # data&lt;- sim_functional_data(1,20,15,-3,3,0.5,1,1,1)
 
 library(fields)</code></pre>
-<pre><code>## Warning: package &#39;fields&#39; was built under R version 3.5.2</code></pre>
 <pre><code>## Loading required package: spam</code></pre>
 <pre><code>## Loading required package: dotCall64</code></pre>
 <pre><code>## Loading required package: grid</code></pre>
@@ -264,12 +271,11 @@ library(fields)</code></pre>
 ## 
 ##     backsolve, forwardsolve</code></pre>
 <pre><code>## Loading required package: maps</code></pre>
-<pre><code>## See https://github.com/NCAR/Fields for
-##  an extensive vignette, other supplements and source code</code></pre>
+<pre><code>## See www.image.ucar.edu/~nychka/Fields for
+##  a vignette and other supplements.</code></pre>
 <pre class="r"><code>source(&#39;full_geo_from_adj_geo.R&#39;)
 
-sim_functional_data&lt;-function(sce,samplesize=100,K=20,a=0,b=1,SNR=1,reg_sampling=1,com_grid=1,plot_true=1){
-  
+sim_functional_data&lt;-function(sce,samplesize=100,K=30,a=-4,b=4,SNR=1,reg_sampling=1,com_grid=1,plot_true=1){
   if(sce == 1){
     if(reg_sampling==0){
       Z &lt;- rnorm(samplesize,0,0.3)
@@ -295,7 +301,7 @@ sim_functional_data&lt;-function(sce,samplesize=100,K=20,a=0,b=1,SNR=1,reg_sampl
       alpha &lt;- apply(cbind(rep(-1,samplesize),Z),1,max)
       alpha=sort(alpha)
     } else if(reg_sampling==1){
-      alpha &lt;- seq(-2,2,length.out=samplesize)
+      alpha &lt;- seq(-1,1,length.out=samplesize)
     }
     
     mu_t &lt;- function(t,al){
@@ -305,7 +311,6 @@ sim_functional_data&lt;-function(sce,samplesize=100,K=20,a=0,b=1,SNR=1,reg_sampl
     adja_geo &lt;- (alpha[-1]- alpha[-samplesize])/(2*pi^(1/4))
     ### Calculate the analytic geodesic matrix
     analytic_geo &lt;- full_geo(adja_geo,samplesize)
-    
   }
   
   noiseless_data &lt;- matrix(ncol=K,nrow=samplesize)
@@ -340,9 +345,9 @@ sim_functional_data&lt;-function(sce,samplesize=100,K=20,a=0,b=1,SNR=1,reg_sampl
     matplot(t(grid),t(noisy_data),main=&quot;Observed data&quot;,type=&#39;l&#39;, col=rainbow(samplesize))
     image.plot(analytic_geo,main=&#39;analytic geodesic&#39;)
   }
-    
-  return(list(&#39;noiseless_data&#39;=noiseless_data,&#39;noisy_data&#39;=noisy_data,&#39;analytic_geo&#39;=analytic_geo,&#39;grid&#39;=grid,&#39;reg_grid&#39;=reg_grid))
+    return(list(&#39;noiseless_data&#39;=noiseless_data,&#39;noisy_data&#39;=noisy_data,&#39;analytic_geo&#39;=analytic_geo,&#39;grid&#39;=grid,&#39;reg_grid&#39;=reg_grid))
 }</code></pre>
+<p>bla bla</p>
 </div>
 
 
