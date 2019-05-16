@@ -33,7 +33,7 @@
 #'\end{eqnarray*}
 #'where the approximation comes from the fact that we are integrating on $[-4,4]$ and not on $\R$. Moreover the mean $\beta$ has to be close to 0 for the approximation to make sense.
 #'
-#' #Scenario 3: ???This needs to be implemented eventually???
+#' #Scenario 3: 
 #' Consider the manifold $$ \M = \{ \text{probability density function } N(\alpha,\sigma^2): \alpha \in \mathbb R, \sigma > 0 \} $$ with the $L_2$ inner product as the metric tensor.
 #' Let $X_1$ be the pdf of $N(\alpha_1,\sigma_1^2)$ and $X_2$ be the pdf of $N(\alpha_2,\sigma_2^2)$. 
 #' Again, since $$ \gamma(t) := t X_1 + (1-t) X_2$$ belongs to $M$ for all $t$, it must be the shortest path between $X_1$ and $X_2$. The geodesic distance between $X_1$ and $X_2$ is
@@ -71,8 +71,10 @@
 library(fields)
 source('full_geo_from_adj_geo.R')
 
-sim_functional_data<-function(sce,samplesize=100,K=30,a=-4,b=4,SNR=1,reg_sampling=1,com_grid=1,plot_true=1){
+sim_functional_data<-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,com_grid=1,plot_true=1){
   if(sce == 1){
+    a<- -4
+    b<- 4
     if(reg_sampling==0){
       Z <- rnorm(samplesize,0,0.3)
       alpha <- apply(cbind(rep(-1,samplesize),Z),1,max)
@@ -91,10 +93,10 @@ sim_functional_data<-function(sce,samplesize=100,K=30,a=-4,b=4,SNR=1,reg_samplin
     analytic_geo <- full_geo(adja_geo,samplesize)
     
   } else if(sce ==2){
-    
+    a<- -4
+    b<- 4
     if(reg_sampling==0){
       Z <- rnorm(samplesize,0,0.3)
-      alpha <- apply(cbind(rep(-1,samplesize),Z),1,max)
       alpha=sort(alpha)
     } else if(reg_sampling==1){
       alpha <- seq(-1,1,length.out=samplesize)
@@ -107,6 +109,35 @@ sim_functional_data<-function(sce,samplesize=100,K=30,a=-4,b=4,SNR=1,reg_samplin
     adja_geo <- (alpha[-1]- alpha[-samplesize])/(2*pi^(1/4))
     ### Calculate the analytic geodesic matrix
     analytic_geo <- full_geo(adja_geo,samplesize)
+  }else if(sce==3){
+    a<- -5
+    b<- 5
+    # we make samplesize different combinations of the parameters alpha and sigma
+    nb_alpha<- 10
+    nb_beta<- samplesize/10
+    if(reg_sampling==0){
+      alpha <- rnorm(samplesize,0,0.3)
+      alpha=sort(alpha)
+      sig<- runif(nb_beta,0.5,1.5)
+      sig<-sort(sig)
+    } else if(reg_sampling==1){
+      alpha <- seq(-1,1,length.out=nb_alpha)
+      sig<- seq(0.5,1.5,length.out=nb_beta)
+    }
+    alpha_sig<- expand.grid(alpha,sig)
+    
+    mu_t <- function(t,al_sig){
+      fct <- dnorm(t,al_sig[,1],al_sig[,2])
+    }
+    
+    analytic_geo <- matrix(0,samplesize,samplesize)
+    grid_int <- seq(a,b,0.01)
+    for(comb1 in 1:(samplesize-1)){
+      for(comb2 in comb1:(samplesize)){
+        analytic_geo[comb1,comb2]<-  sqrt(0.01*sum((dnorm(grid_int,alpha_sig[comb1,1],alpha_sig[comb1,2]) -dnorm(grid_int,alpha_sig[comb2,1],alpha_sig[comb2,2]))^2))
+      }
+    }
+    analytic_geo <- analytic_geo + t(analytic_geo)
   }
   
   noiseless_data <- matrix(ncol=K,nrow=samplesize)
@@ -117,16 +148,27 @@ sim_functional_data<-function(sce,samplesize=100,K=30,a=-4,b=4,SNR=1,reg_samplin
     for(i in 1:samplesize){
       tmp_grid=sort(runif(K,a,b))
       grid[i,]=tmp_grid
-      noiseless_data[i,] <- mu_t(tmp_grid,alpha[i])
-      reg_noiseless_data[i,]<-mu_t(reg_grid,alpha[i])
+      if(sce==1 || sce==2){
+        noiseless_data[i,] <- mu_t(tmp_grid,alpha[i])
+        reg_noiseless_data[i,]<-mu_t(reg_grid,alpha[i])
+      } else if(sce==3){
+        noiseless_data[i,] <- mu_t(tmp_grid,alpha_sig[i,])
+        reg_noiseless_data[i,]<-mu_t(reg_grid,alpha_sig[i,])
+      }
+      
     }
   }else if (com_grid==1){
     for(i in 1:samplesize){
       grid[i,]=reg_grid
-      noiseless_data[i,] <- mu_t(reg_grid,alpha[i])
+      if(sce==1 || sce==2){
+        noiseless_data[i,] <- mu_t(reg_grid,alpha[i])
+      }else if(sce==3){
+        noiseless_data[i,] <- mu_t(reg_grid,alpha_sig[i,])
+      }
     }
     reg_noiseless_data=noiseless_data
   }
+  
     
   mean_signal= apply(reg_noiseless_data,2,mean)
   var_signal= (1/(samplesize*K))*sum((reg_noiseless_data-matrix(mean_signal,ncol=K,nrow=samplesize,byrow=TRUE))^2)
@@ -144,5 +186,3 @@ sim_functional_data<-function(sce,samplesize=100,K=30,a=-4,b=4,SNR=1,reg_samplin
     return(list('noiseless_data'=noiseless_data,'noisy_data'=noisy_data,'analytic_geo'=analytic_geo,'grid'=grid,'reg_grid'=reg_grid))
 }
 
-#'bla bla
-#'
