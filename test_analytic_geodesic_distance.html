@@ -314,7 +314,25 @@ $(document).ready(function () {
 </div>
 
 
+<div id="r-setup-includefalse-knitropts_chunksetcache-true" class="section level1">
+<h1><code>{r setup, include=FALSE} # #knitr::opts_chunk$set(cache = TRUE) #</code></h1>
 <pre class="r"><code>source(&#39;sim_functional_data.R&#39;)</code></pre>
+<pre><code>## Loading required package: spam</code></pre>
+<pre><code>## Loading required package: dotCall64</code></pre>
+<pre><code>## Loading required package: grid</code></pre>
+<pre><code>## Spam version 2.2-0 (2018-06-19) is loaded.
+## Type &#39;help( Spam)&#39; or &#39;demo( spam)&#39; for a short introduction 
+## and overview of this package.
+## Help for individual functions is also obtained by adding the
+## suffix &#39;.spam&#39; to the function name, e.g. &#39;help( chol.spam)&#39;.</code></pre>
+<pre><code>## 
+## Attaching package: &#39;spam&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     backsolve, forwardsolve</code></pre>
+<pre><code>## Loading required package: maps</code></pre>
+<pre><code>## See www.image.ucar.edu/~nychka/Fields for
+##  a vignette and other supplements.</code></pre>
 <p>The function sim_functional_data.R allows specification of several simulatin scenarios. The samplesize is purposefully set very high for reasons explained below.</p>
 <pre class="r"><code># Generate data
 sim &lt;- sim_functional_data(sce=3,samplesize=100)</code></pre>
@@ -327,16 +345,18 @@ sim &lt;- sim_functional_data(sce=3,samplesize=100)</code></pre>
 <pre class="r"><code>library(reticulate)
 # sometimes reticulate requires specific instruction on where to find your python
 # first call Sys.which(&quot;python&quot;) and then copy that path into 
+<<<<<<< HEAD
 #use_python(&#39;/Users/suswei/anaconda3/bin/python&#39;,required=TRUE)
 use_python(&#39;/Users/UQAM/anaconda3/bin/python&#39;,required=TRUE)
+=======
+use_python(&#39;/Users/suswei/anaconda3/bin/python&#39;,required=TRUE)
+#use_python(&#39;/anaconda3/bin/python&#39;,required=TRUE)
+>>>>>>> f3f88a2f5cacb986d8a3068b95183417db5499ce
 get_min_num_neighbors = import_from_path(&quot;get_min_num_neighbors&quot;,path=&#39;.&#39;)
 getIsomapGdist = import_from_path(&quot;getIsomapGdist&quot;,path=&#39;.&#39;)
 
-attach(sim)</code></pre>
-<pre><code>## The following objects are masked from sim (pos = 7):
-## 
-##     analytic_geo, grid, noiseless_data, noisy_data, reg_grid</code></pre>
-<pre class="r"><code>a = reg_grid[1]
+attach(sim)
+a = reg_grid[1]
 b = tail(reg_grid,1)
 K = length(reg_grid)
 samplesize = dim(noiseless_data)[1]
@@ -358,8 +378,16 @@ estim_geo_noiseless_data = getIsomapGdist$getIsomapGdist(noiseless_data_tmp,num_
 image.plot(estim_geo_noiseless_data,main=&#39;geo estimation&#39;)</code></pre>
 <p><img src="test_analytic_geodesic_distance_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <p>If the analytic derviation is correct, then estim_geo_noiseless_data should be extremely similar to analytic_geo. We can assess their closeness using assess_goodness_estimation.R. Running this notebook for sce=1 gives rmse on the order of e-16.</p>
-<pre class="r"><code>library(MESS)
-source(&#39;assess_goodness_estimation.R&#39;)
+<pre class="r"><code>library(MESS)</code></pre>
+<pre><code>## Loading required package: geepack</code></pre>
+<pre><code>## Loading required package: geeM</code></pre>
+<pre><code>## Loading required package: Matrix</code></pre>
+<pre><code>## 
+## Attaching package: &#39;Matrix&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:spam&#39;:
+## 
+##     det</code></pre>
+<pre class="r"><code>source(&#39;assess_goodness_estimation.R&#39;)
 assess_goodness_estimation(estim_geo_noiseless_data,sim$analytic_geo)</code></pre>
 <pre><code>## $rmse
 ## [1] 0.02128164
@@ -368,8 +396,14 @@ assess_goodness_estimation(estim_geo_noiseless_data,sim$analytic_geo)</code></pr
 ## [1] 0.984879
 ## 
 ## $pearson_corr
+<<<<<<< HEAD
 ##       cor 
 ## 0.9991665</code></pre>
+=======
+## cor 
+##   1</code></pre>
+</div>
+>>>>>>> f3f88a2f5cacb986d8a3068b95183417db5499ce
 
 
 
