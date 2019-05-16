@@ -38,8 +38,8 @@ pairwiseDistances = function(data){
 ##	verbose:	show a summary of the embedding procedure at the end (default TRUE)	 
 ##
 ## output: 
-##	Nxdim matrix (N samples, dim features) with the reduced input data (list of several matrices if more than one dimension specified)
-
+##	low_mani :Nxdim matrix (N samples, dim features) with the reduced input data (list of several matrices if more than one dimension specified)
+##  geod : NxN pairwise geo distance matrix
 
 Isomap = function(data, dims=2, k, mod=FALSE){
 #Isomap = function(data,  k, mod=FALSE, plotResiduals=FALSE, verbose=FALSE){
@@ -132,9 +132,6 @@ Isomap = function(data, dims=2, k, mod=FALSE){
 		i = i+1
 	}
 	
-	rep <- list(all_Y,d)
-	names(rep) <- c("bla","geod")
-
-	return(rep)
+	return(list("low_mani" = all_Y,"geod" = d))
 
 }
