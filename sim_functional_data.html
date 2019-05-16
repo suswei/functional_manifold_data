@@ -9,8 +9,9 @@
 <meta name="generator" content="pandoc" />
 
 
-<meta name="author" content="marie_uqam" />
+<meta name="author" content="MarieHeleneDescary" />
 
+<meta name="date" content="2019-05-16" />
 
 <title>Functional manifold data examples</title>
 
@@ -70,9 +71,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -97,6 +96,9 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
@@ -111,7 +113,6 @@ body {
   padding-top: 56px;
   margin-top: -56px;
 }
-
 .section h2 {
   padding-top: 56px;
   margin-top: -56px;
@@ -131,6 +132,43 @@ body {
 .section h6 {
   padding-top: 56px;
   margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -152,19 +190,85 @@ $(document).ready(function () {
 });
 </script>
 
-
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
 });
 </script>
 
 <!-- code folding -->
 
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
 
 
 
@@ -206,35 +310,23 @@ $(document).ready(function () {
 
 
 <h1 class="title toc-ignore">Functional manifold data examples</h1>
-<h4 class="author"><em>marie_uqam</em></h4>
-<h4 class="date"><em>Tue May 14 16:34:52 2019</em></h4>
+<h4 class="author">MarieHeleneDescary</h4>
+<h4 class="date">2019-05-16</h4>
 
 </div>
 
 
-<div id="scenario-1" class="section level2">
-<h2>Scenario 1:</h2>
-<p>Consider the manifold <span class="math display">\[ {\mathcal{M}}= \{X(t) = t-\alpha, -0.9 \le \alpha \le 3, t \in [a,b]\} \]</span> with the <span class="math inline">\(L_2\)</span> inner product as the metric tensor. The shortest path <span class="math inline">\(\gamma: [0,1] \to {\mathcal{M}}\)</span> between two functions <span class="math inline">\(X_1 = (t-\alpha_1)\)</span> and <span class="math inline">\(X_2 = (t-\alpha_2)\)</span> in <span class="math inline">\({\mathcal{M}}\)</span> is clearly given by <span class="math inline">\(\gamma(t) = t X_1 + (1-t) X_2\)</span>. The geodesic distance between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> is <span class="math display">\[L(\gamma) = \int_0^1 || \dot \gamma(t) ||_{L^2} \,dt = ||X_1 - X_2||_{L_2} = (\alpha_1-\alpha_2)\sqrt{b-a}.\]</span></p>
-</div>
-<div id="scenario-2" class="section level2">
-<h2>Scenario 2:</h2>
-This is based on Manifold 2 in Chen and Muller 2012 where we fix the variance to be <span class="math inline">\(1\)</span>. The paper claims that in this case the resulting manifold <span class="math display">\[{\mathcal{M}}=  \left \{ X_\beta \in L^2([-4,4]) : X_\beta(t) = \frac{1}{\sqrt{2\pi}} \exp{[-\frac{1}{2}(t-\beta)^2]}, \beta \in {\mathbb{R}}\right \}.\]</span> is isometric. Chen and Muller are also working with the <span class="math inline">\(L_2\)</span> inner product as their metric tensor of <span class="math inline">\({\mathcal{M}}\)</span>. Isometric means the geodesic distance between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> in <span class="math inline">\({\mathcal{M}}\)</span> is the Euclidan distance between the <span class="math inline">\(\alpha\)</span>’s up to some scaling factor. ???Why is there a scaling factor??? Note that the “straight” line connecting <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> in <span class="math inline">\({\mathcal{M}}\)</span> does not always stay inside of <span class="math inline">\({\mathcal{M}}\)</span> since <span class="math inline">\(t N(\alpha_1,1) + (1-t) N(\alpha_2,1)\)</span> no longer has variance <span class="math inline">\(1\)</span> for all <span class="math inline">\(t \in [0,1]\)</span>. The geodesic distance between the curves <span class="math inline">\(X_{\beta_1}\)</span> and <span class="math inline">\(X_{\beta_2}\)</span> is
-<span class="math display">\[\begin{eqnarray*}
+
+<p>##Scenario 1: Consider the manifold <span class="math display">\[ \mathcal{M}= \{X(t) = t-\alpha, -0.9 \le \alpha \le 3, t \in [a,b]\} \]</span> with the <span class="math inline">\(L_2\)</span> inner product as the metric tensor. The shortest path <span class="math inline">\(\gamma: [0,1] \to \mathcal{M}\)</span> between two functions <span class="math inline">\(X_1 = (t-\alpha_1)\)</span> and <span class="math inline">\(X_2 = (t-\alpha_2)\)</span> in <span class="math inline">\(\mathcal{M}\)</span> is clearly given by <span class="math inline">\(\gamma(t) = t X_1 + (1-t) X_2\)</span>. The geodesic distance between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> is <span class="math display">\[L(\gamma) = \int_0^1 || \dot \gamma(t) ||_{L^2} \,dt = ||X_1 - X_2||_{L_2} = (\alpha_1-\alpha_2)\sqrt{b-a}.\]</span></p>
+<p>##Scenario 2: This is based on Manifold 2 in Chen and Muller 2012 where we fix the variance to be <span class="math inline">\(1\)</span>. The paper claims that in this case the resulting manifold <span class="math display">\[\mathcal{M}=  \left \{ X_\beta \in L^2([-4,4]) : X_\beta(t) = \frac{1}{\sqrt{2\pi}} \exp{[-\frac{1}{2}(t-\beta)^2]}, \beta \in \mathbb{R}\right \}.\]</span> is isometric. Chen and Muller are also working with the <span class="math inline">\(L_2\)</span> inner product as their metric tensor of <span class="math inline">\(\mathcal{M}\)</span>. Isometric means the geodesic distance between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> in <span class="math inline">\(\mathcal{M}\)</span> is the Euclidan distance between the <span class="math inline">\(\alpha\)</span>’s up to some scaling factor. ???Why is there a scaling factor??? Note that the “straight” line connecting <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> in <span class="math inline">\(\mathcal{M}\)</span> does not always stay inside of <span class="math inline">\(\mathcal{M}\)</span> since <span class="math inline">\(t N(\alpha_1,1) + (1-t) N(\alpha_2,1)\)</span> no longer has variance <span class="math inline">\(1\)</span> for all <span class="math inline">\(t \in [0,1]\)</span>. The geodesic distance between the curves <span class="math inline">\(X_{\beta_1}\)</span> and <span class="math inline">\(X_{\beta_2}\)</span> is <span class="math display">\[\begin{eqnarray*}
 d(X_{\beta_1},X_{\beta_2}) &amp;=&amp; \int_{\beta_1}^{\beta_2} \left \| \frac{d X_\beta (t)}{d\beta} \right\|_{L^2} d\beta \\
 &amp;=&amp;  \int_{\beta_1}^{\beta_2} \sqrt{ \frac{1}{2\sqrt{\pi}} \int_{-4}^4 \frac{1}{\sqrt{\pi}} \exp\{-(t-\beta)^2\}(t-\beta)^2 dt  }  \  d\beta \\
 &amp;=&amp;   \int_{\beta_1}^{\beta_2} \sqrt{ \frac{1}{2\sqrt{\pi}} \int_{-4}^4(t-\beta)^2 f(t) dt  }  \  d\beta, \textrm{ where $f$ is the density of a N$(\beta,1/2)$ }   \\
 &amp;\approx&amp;  \int_{\beta_1}^{\beta_2}  \sqrt{ \frac{1}{2\sqrt{\pi}} \frac{1}{2}} \ d\beta \\
 &amp;=&amp; (\beta_2-\beta_1) \frac{1}{2\pi^{1/4}},
-\end{eqnarray*}\]</span>
-<p>where the approximation comes from the fact that we are integrating on <span class="math inline">\([-4,4]\)</span> and not on <span class="math inline">\({\mathbb{R}}\)</span>. Moreover the mean <span class="math inline">\(\beta\)</span> has to be close to 0 for the approximation to make sense.</p>
-</div>
-<div id="scenario-3-this-needs-to-be-implemented-eventually" class="section level1">
-<h1>Scenario 3: ???This needs to be implemented eventually???</h1>
-<p>Consider the manifold <span class="math display">\[ {\mathcal{M}}= \{ \text{probability density function } N(\alpha,\sigma^2): \alpha \in \mathbb R, \sigma &gt; 0 \} \]</span> with the <span class="math inline">\(L_2\)</span> inner product as the metric tensor. Let <span class="math inline">\(X_1\)</span> be the pdf of <span class="math inline">\(N(\alpha_1,\sigma_1^2)\)</span> and <span class="math inline">\(X_2\)</span> be the pdf of <span class="math inline">\(N(\alpha_2,\sigma_2^2)\)</span>. Again, since <span class="math display">\[ \gamma(t) := t X_1 + (1-t) X_2\]</span> belongs to <span class="math inline">\(M\)</span> for all <span class="math inline">\(t\)</span>, it must be the shortest path between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span>. The geodesic distance between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> is <span class="math display">\[\int_0^1 || \dot \gamma(t) ||_{L^2} \,dt = ||X_1 - X_2||_{L_2}\]</span> which has no easy analytic solution.</p>
-</div>
-<div id="scenario-4-this-needs-to-be-implemented-eventually" class="section level1">
-<h1>Scenario 4: ???This needs to be implemented eventually???</h1>
-<p>This is taken from <a href="https://www-sop.inria.fr/ariana/Projets/Shapes/ThirdYearReport/JoshietalCVPR07b.pdf">Srivastava2007</a>. Consider the manifold <span class="math display">\[ {\mathcal{M}}= \{ \psi:[0,1] \to {\mathbb{R}}: \psi \ge 0, \int_0^1 \psi^2(s) \,ds = 1 \}\]</span> with the Fisher-Rao metric tensor given by <span class="math display">\[ &lt;v_1,v_2&gt; = \int_0^1 v_1(s) v_2(s) \,ds \]</span> for two tangent vectors <span class="math inline">\(v_1,v_2 \in T_\psi({\mathcal{M}})\)</span>. The geodesic distance between any two <span class="math inline">\(\psi_1\)</span> and <span class="math inline">\(\psi_2\)</span> in <span class="math inline">\({\mathcal{M}}\)</span> is simply <span class="math display">\[d(\psi_1,\psi_2) = \cos^{-1}&lt;\psi_1,\psi_2&gt;\]</span>.</p>
+\end{eqnarray*}\]</span> where the approximation comes from the fact that we are integrating on <span class="math inline">\([-4,4]\)</span> and not on <span class="math inline">\(\mathbb{R}\)</span>. Moreover the mean <span class="math inline">\(\beta\)</span> has to be close to 0 for the approximation to make sense.</p>
+<p>#Scenario 3: Consider the manifold <span class="math display">\[ \mathcal{M}= \{ \text{probability density function } N(\alpha,\sigma^2): \alpha \in \mathbb R, \sigma &gt; 0 \} \]</span> with the <span class="math inline">\(L_2\)</span> inner product as the metric tensor. Let <span class="math inline">\(X_1\)</span> be the pdf of <span class="math inline">\(N(\alpha_1,\sigma_1^2)\)</span> and <span class="math inline">\(X_2\)</span> be the pdf of <span class="math inline">\(N(\alpha_2,\sigma_2^2)\)</span>. Again, since <span class="math display">\[ \gamma(t) := t X_1 + (1-t) X_2\]</span> belongs to <span class="math inline">\(M\)</span> for all <span class="math inline">\(t\)</span>, it must be the shortest path between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span>. The geodesic distance between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> is <span class="math display">\[\int_0^1 || \dot \gamma(t) ||_{L^2} \,dt = ||X_1 - X_2||_{L_2}\]</span> which has no easy analytic solution.</p>
+<p>#Scenario 4: ???This needs to be implemented eventually??? This is taken from <a href="https://www-sop.inria.fr/ariana/Projets/Shapes/ThirdYearReport/JoshietalCVPR07b.pdf">Srivastava2007</a>. Consider the manifold <span class="math display">\[ \mathcal{M}= \{ \psi:[0,1] \to \mathbb{R}: \psi \ge 0, \int_0^1 \psi^2(s) \,ds = 1 \}\]</span> with the Fisher-Rao metric tensor given by <span class="math display">\[ &lt;v_1,v_2&gt; = \int_0^1 v_1(s) v_2(s) \,ds \]</span> for two tangent vectors <span class="math inline">\(v_1,v_2 \in T_\psi(\mathcal{M})\)</span>. The geodesic distance between any two <span class="math inline">\(\psi_1\)</span> and <span class="math inline">\(\psi_2\)</span> in <span class="math inline">\(\mathcal{M}\)</span> is simply <span class="math display">\[d(\psi_1,\psi_2) = \cos^{-1}&lt;\psi_1,\psi_2&gt;\]</span>.</p>
 <pre class="r"><code>## Input 
 # samplesize
 # K = number of grid points
@@ -258,9 +350,10 @@ d(X_{\beta_1},X_{\beta_2}) &amp;=&amp; \int_{\beta_1}^{\beta_2} \left \| \frac{d
 
 library(fields)</code></pre>
 <pre><code>## Loading required package: spam</code></pre>
+<pre><code>## Warning: package &#39;spam&#39; was built under R version 3.5.2</code></pre>
 <pre><code>## Loading required package: dotCall64</code></pre>
 <pre><code>## Loading required package: grid</code></pre>
-<pre><code>## Spam version 2.2-0 (2018-06-19) is loaded.
+<pre><code>## Spam version 2.2-2 (2019-03-07) is loaded.
 ## Type &#39;help( Spam)&#39; or &#39;demo( spam)&#39; for a short introduction 
 ## and overview of this package.
 ## Help for individual functions is also obtained by adding the
@@ -275,8 +368,10 @@ library(fields)</code></pre>
 ##  a vignette and other supplements.</code></pre>
 <pre class="r"><code>source(&#39;full_geo_from_adj_geo.R&#39;)
 
-sim_functional_data&lt;-function(sce,samplesize=100,K=30,a=-4,b=4,SNR=1,reg_sampling=1,com_grid=1,plot_true=1){
+sim_functional_data&lt;-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,com_grid=1,plot_true=1){
   if(sce == 1){
+    a&lt;- -4
+    b&lt;- 4
     if(reg_sampling==0){
       Z &lt;- rnorm(samplesize,0,0.3)
       alpha &lt;- apply(cbind(rep(-1,samplesize),Z),1,max)
@@ -295,10 +390,10 @@ sim_functional_data&lt;-function(sce,samplesize=100,K=30,a=-4,b=4,SNR=1,reg_samp
     analytic_geo &lt;- full_geo(adja_geo,samplesize)
     
   } else if(sce ==2){
-    
+    a&lt;- -4
+    b&lt;- 4
     if(reg_sampling==0){
       Z &lt;- rnorm(samplesize,0,0.3)
-      alpha &lt;- apply(cbind(rep(-1,samplesize),Z),1,max)
       alpha=sort(alpha)
     } else if(reg_sampling==1){
       alpha &lt;- seq(-1,1,length.out=samplesize)
@@ -311,6 +406,35 @@ sim_functional_data&lt;-function(sce,samplesize=100,K=30,a=-4,b=4,SNR=1,reg_samp
     adja_geo &lt;- (alpha[-1]- alpha[-samplesize])/(2*pi^(1/4))
     ### Calculate the analytic geodesic matrix
     analytic_geo &lt;- full_geo(adja_geo,samplesize)
+  }else if(sce==3){
+    a&lt;- -5
+    b&lt;- 5
+    # we make samplesize different combinations of the parameters alpha and sigma
+    nb_alpha&lt;- 10
+    nb_beta&lt;- samplesize/10
+    if(reg_sampling==0){
+      alpha &lt;- rnorm(samplesize,0,0.3)
+      alpha=sort(alpha)
+      sig&lt;- runif(nb_beta,0.5,1.5)
+      sig&lt;-sort(sig)
+    } else if(reg_sampling==1){
+      alpha &lt;- seq(-1,1,length.out=nb_alpha)
+      sig&lt;- seq(0.5,1.5,length.out=nb_beta)
+    }
+    alpha_sig&lt;- expand.grid(alpha,sig)
+    
+    mu_t &lt;- function(t,al_sig){
+      fct &lt;- dnorm(t,al_sig[,1],al_sig[,2])
+    }
+    
+    analytic_geo &lt;- matrix(0,samplesize,samplesize)
+    grid_int &lt;- seq(a,b,0.01)
+    for(comb1 in 1:(samplesize-1)){
+      for(comb2 in comb1:(samplesize)){
+        analytic_geo[comb1,comb2]&lt;-  sqrt(0.01*sum((dnorm(grid_int,alpha_sig[comb1,1],alpha_sig[comb1,2]) -dnorm(grid_int,alpha_sig[comb2,1],alpha_sig[comb2,2]))^2))
+      }
+    }
+    analytic_geo &lt;- analytic_geo + t(analytic_geo)
   }
   
   noiseless_data &lt;- matrix(ncol=K,nrow=samplesize)
@@ -321,16 +445,27 @@ sim_functional_data&lt;-function(sce,samplesize=100,K=30,a=-4,b=4,SNR=1,reg_samp
     for(i in 1:samplesize){
       tmp_grid=sort(runif(K,a,b))
       grid[i,]=tmp_grid
-      noiseless_data[i,] &lt;- mu_t(tmp_grid,alpha[i])
-      reg_noiseless_data[i,]&lt;-mu_t(reg_grid,alpha[i])
+      if(sce==1 || sce==2){
+        noiseless_data[i,] &lt;- mu_t(tmp_grid,alpha[i])
+        reg_noiseless_data[i,]&lt;-mu_t(reg_grid,alpha[i])
+      } else if(sce==3){
+        noiseless_data[i,] &lt;- mu_t(tmp_grid,alpha_sig[i,])
+        reg_noiseless_data[i,]&lt;-mu_t(reg_grid,alpha_sig[i,])
+      }
+      
     }
   }else if (com_grid==1){
     for(i in 1:samplesize){
       grid[i,]=reg_grid
-      noiseless_data[i,] &lt;- mu_t(reg_grid,alpha[i])
+      if(sce==1 || sce==2){
+        noiseless_data[i,] &lt;- mu_t(reg_grid,alpha[i])
+      }else if(sce==3){
+        noiseless_data[i,] &lt;- mu_t(reg_grid,alpha_sig[i,])
+      }
     }
     reg_noiseless_data=noiseless_data
   }
+  
     
   mean_signal= apply(reg_noiseless_data,2,mean)
   var_signal= (1/(samplesize*K))*sum((reg_noiseless_data-matrix(mean_signal,ncol=K,nrow=samplesize,byrow=TRUE))^2)
@@ -347,8 +482,6 @@ sim_functional_data&lt;-function(sce,samplesize=100,K=30,a=-4,b=4,SNR=1,reg_samp
   }
     return(list(&#39;noiseless_data&#39;=noiseless_data,&#39;noisy_data&#39;=noisy_data,&#39;analytic_geo&#39;=analytic_geo,&#39;grid&#39;=grid,&#39;reg_grid&#39;=reg_grid))
 }</code></pre>
-<p>bla bla</p>
-</div>
 
 
 

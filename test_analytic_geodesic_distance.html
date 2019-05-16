@@ -71,9 +71,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -98,6 +96,9 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
@@ -112,7 +113,6 @@ body {
   padding-top: 56px;
   margin-top: -56px;
 }
-
 .section h2 {
   padding-top: 56px;
   margin-top: -56px;
@@ -132,6 +132,43 @@ body {
 .section h6 {
   padding-top: 56px;
   margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -153,19 +190,85 @@ $(document).ready(function () {
 });
 </script>
 
-
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
 });
 </script>
 
 <!-- code folding -->
 
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
 
 
 
@@ -214,7 +317,7 @@ $(document).ready(function () {
 <pre class="r"><code>source(&#39;sim_functional_data.R&#39;)</code></pre>
 <p>The function sim_functional_data.R allows specification of several simulatin scenarios. The samplesize is purposefully set very high for reasons explained below.</p>
 <pre class="r"><code># Generate data
-sim &lt;- sim_functional_data(sce=2,samplesize=100)</code></pre>
+sim &lt;- sim_functional_data(sce=3,samplesize=100)</code></pre>
 <p><img src="test_analytic_geodesic_distance_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 <p>The output actually contains more than just the simulated functional data. In particular, it contains the in-sample pairwise geodesic distance matrix (analytic_geo) via analytic derivation. The purpose of this notebook is to see if our analytic derivations match numerical results.</p>
 <pre class="r"><code>names(sim)</code></pre>
@@ -225,7 +328,7 @@ sim &lt;- sim_functional_data(sce=2,samplesize=100)</code></pre>
 # sometimes reticulate requires specific instruction on where to find your python
 # first call Sys.which(&quot;python&quot;) and then copy that path into 
 #use_python(&#39;/Users/suswei/anaconda3/bin/python&#39;,required=TRUE)
-use_python(&#39;/anaconda3/bin/python&#39;,required=TRUE)
+use_python(&#39;/Users/UQAM/anaconda3/bin/python&#39;,required=TRUE)
 get_min_num_neighbors = import_from_path(&quot;get_min_num_neighbors&quot;,path=&#39;.&#39;)
 getIsomapGdist = import_from_path(&quot;getIsomapGdist&quot;,path=&#39;.&#39;)
 
@@ -259,14 +362,14 @@ image.plot(estim_geo_noiseless_data,main=&#39;geo estimation&#39;)</code></pre>
 source(&#39;assess_goodness_estimation.R&#39;)
 assess_goodness_estimation(estim_geo_noiseless_data,sim$analytic_geo)</code></pre>
 <pre><code>## $rmse
-## [1] 0.01690903
+## [1] 0.02128164
 ## 
 ## $epsilon_isometry_auc
-## [1] 0.9848711
+## [1] 0.984879
 ## 
 ## $pearson_corr
-## cor 
-##   1</code></pre>
+##       cor 
+## 0.9991665</code></pre>
 
 
 
