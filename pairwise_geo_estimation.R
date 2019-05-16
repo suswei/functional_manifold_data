@@ -1,0 +1,315 @@
+# TODO Marie: this function should call assess_goodness_estimation
+# TODO Marie: this function should actually be renamed to reflect that it is an oracle estimation procedure
+# TODO Marie/Susan: if it turns out random projection method g is still worth considering, implement parallel for loops
+##### Estimation of geodesic distances
+
+
+# We estimate the geodesic matrix obtained via
+# NN Floyd's Algorithm on noiseless data (just to make sure that the theoretical geo. is calculated correctly)
+# RD Floyd's Algorithm on noisy data
+# SS Floyd's Algorithm on smooth data 
+# pI p-isomap of Muller on smooth data
+# OUR mds of smooth data + scms + Floyd's Algorithm (only for FD)
+# RP : random proj. of smooth data + scms + Floyd's Algorithm (only for FD)
+
+
+## Note that a) and b) can only be used if the data are observed on a common grid
+## Note that c) can only be used for functional data
+## In the case of Eucledian data, d), e) and f) use directly the raw data
+
+## Input
+# method : list of dimension 6 indicating which estimation methods should be run. Warning : NN and RD only works if common_grid_true=1
+# true_data : samplesize x K matrix containing the original data (no noise)
+# discrete_data : samplesize x K matrix containing the observed data
+# true_geo : samplesize x samplesize matrix containing true pairwise geo disctance
+# s : dimension use for mds and random projections
+# plot_true : if TRUE plot of geo estimation for each method
+# FD_true : if TRUE functional data, otherwise euclidean data
+# grid : samplesize x K matrix containing the grid on which each data is observed (required only if FD_true =1)
+# common_grid_true : if 1 grid is common for every curve, if 0 different grid for every curve
+
+## Output
+# list of estimated geodesic distance :
+# estim_geo_true_data = method NN
+# estim_geo_noisy_data = method RD
+# estim_geo_smooth_data = method SS
+# estim_geo_penalized_isomap = method pI
+# estim_geo_mds_scms = method OUR
+# estim_geo_RP_scms = method RP
+
+
+#Example of call for FD
+#data<- sim_functional_data(sce=2,samplesize=100)
+# Estim<- pairwise_geo_estimation(list("NN" = TRUE,"RD" = TRUE,"SS" = TRUE,"pI" = FALSE,"OUR" = TRUE,"RP" = FALSE ),data$noiseless_data,data$noisy_data,data$analytic_geo,TRUE,TRUE,20,data$grid,data$reg_grid,1)
+
+
+library(reticulate)
+
+# TODO Marie/Susan: consider replacing python Isomap with R implementation of Floyd's algorithm? https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm
+pyIso = import_from_path("getIsomapGdist",path='.')
+py_min_neigh = import_from_path("get_min_num_neighbors",path='.')
+# TODO Marie/Susan: consider replacing python scms with R version, see https://sites.google.com/site/yenchicr/algorithm
+scms = import_from_path("scms",path='.')
+
+pairwise_geo_estimation <- function(method,true_data,discrete_data,true_geo,plot_true,FD_true,nb_proj,grid,reg_grid,common_grid_true){
+  
+  samplesize = nrow(true_data)
+  K = ncol(true_data)
+  norm_true_geo = sqrt(sum(true_geo^2))
+  list_to_return<- list()
+  #names(list_to_return)<- c("estim_geo_true_data","estim_geo_noisy_data","estim_geo_smooth_data","estim_geo_penalized_isomap","estim_geo_mds_scms","estim_geo_RP_scms")
+  
+  smooth_data = smooth_FD_bspline(discrete_data,grid,reg_grid)
+  
+  # Normalise the data
+  a = reg_grid[1]
+  b = reg_grid[K]
+  true_data <- (sqrt((b-a)/K))*true_data
+  discrete_data <- (sqrt((b-a)/K))*discrete_data
+  smooth_data <- (sqrt((b-a)/K))*smooth_data
+  
+  ## Apply method a) and b) for FD observed on a common grid or Euclidean data
+  if(method$NN){
+    
+    ### Estimation from noiseless data
+    
+    print("Floyd's Algorithm on noiseless data")
+    
+    # Find a grid of possible values for the number of neigbors
+    num_neigh_min=py_min_neigh$get_min_num_neighbors(true_data)
+    num_neigh_true=seq(num_neigh_min,samplesize/2,by=2)
+    
+    # Calculate the geo matrix for each number of neighbors and keep the one that gives the minimal error
+    Error_true_mani_K= rep(0,length(num_neigh_true))
+    for(j in 1:length(num_neigh_true)){
+      IsomapGdist = pyIso$getIsomapGdist(true_data,num_neigh_true[j])
+      Error_true_mani_K[j]=sqrt(sum((IsomapGdist -true_geo )^2))/norm_true_geo
+    }
+    ind_op_true=min(which(Error_true_mani_K==min(Error_true_mani_K)))
+    estim_geo_true_data = pyIso$getIsomapGdist(true_data,num_neigh_true[ind_op_true])
+    
+    list_to_return[["estim_geo_true_data"]] <- estim_geo_true_data
+    
+    if(plot_true){
+      par(mfrow=c(1,1))
+    image.plot(estim_geo_true_data,main=paste('Err noiseless data = ',signif(min(Error_true_mani_K),digits =4),', nb nei. =',num_neigh_true[ind_op_true],sep=''))
+    }
+  }
+  
+  if(method$RD){
+    ### Direct estimation from the noisy data
+    
+    print("Floyd's Algorithm on raw data")
+    
+    # Find a grid of possible values for the number of neigbors
+    num_neigh_min=py_min_neigh$get_min_num_neighbors(discrete_data)
+    num_neigh_noisy=seq(num_neigh_min,samplesize/2,by=2)
+    
+    # Calculate the geo matrix for each number of neighbors and keep the one that gives the minimal error
+    Error_noisy_mani_K= rep(0,length(num_neigh_noisy))
+    for(j in 1:length(num_neigh_noisy)){
+      IsomapGdist = pyIso$getIsomapGdist(discrete_data,num_neigh_noisy[j])
+      Error_noisy_mani_K[j]=sqrt(sum((IsomapGdist -true_geo )^2))/norm_true_geo
+    }
+    ind_op_noisy=min(which(Error_noisy_mani_K==min(Error_noisy_mani_K)))
+    estim_geo_noisy_data = pyIso$getIsomapGdist(discrete_data,num_neigh_noisy[ind_op_noisy])
+    
+    if(plot_true){
+      par(mfrow=c(1,1))
+      image.plot(estim_geo_noisy_data,main=paste('Err noisy data = ',signif(min(Error_noisy_mani_K),digits =4),', nb nei. =',num_neigh_noisy[ind_op_noisy],sep=''))
+    }
+    
+    # Update list of estimation geo
+    list_to_return[["estim_geo_noisy_data"]] <- estim_geo_noisy_data
+    
+  }
+  
+
+  if(method$SS){
+    ## Estimation from smooth data
+    
+    print("Floyd's Algorithm on smooth data")
+   
+    # Find a grid of possible values for the number of neigbors
+    num_neigh_min=py_min_neigh$get_min_num_neighbors(smooth_data)
+    num_neigh_smooth=seq(num_neigh_min,samplesize/2,by=2)
+    
+    # Calculate the geo matrix for each number of neighbors and keep the one that gives the minimal error
+    Error_smooth_mani_K= rep(0,length(num_neigh_smooth))
+    for(j in 1:length(num_neigh_smooth)){
+      IsomapGdist = pyIso$getIsomapGdist(smooth_data,num_neigh_smooth[j])
+      Error_smooth_mani_K[j]=sqrt(sum((IsomapGdist -true_geo )^2))/norm_true_geo
+    }
+    ind_op_smooth=min(which(Error_smooth_mani_K==min(Error_smooth_mani_K)))
+    estim_geo_smooth_data = pyIso$getIsomapGdist(smooth_data,num_neigh_smooth[ind_op_smooth])
+    
+    if(plot_true){
+      par(mfrow=c(1,2))
+      matplot(reg_grid,t(smooth_data/(sqrt((b-a)/K))),main="Smoothed data",type='l', col=rainbow(samplesize))
+      image.plot(estim_geo_smooth_data,main=paste('Err smoothed data = ',signif(min(Error_smooth_mani_K),digits = 4),'nb nei. =',num_neigh_smooth[ind_op_smooth],sep=''))
+    }
+    
+    # Update list of estimation geo
+    list_to_return[["estim_geo_smooth_data"]] <- estim_geo_smooth_data
+  }
+  
+  if(method$pI){
+    ### p-isomap of Muller
+  
+    print("p-isomap of Muller on smooth data")
+  
+    # Find a grid of possible values for the number of neigbors
+    num_neigh_min=py_min_neigh$get_min_num_neighbors(smooth_data)
+    num_neigh=seq(num_neigh_min,samplesize/2,by=2)
+  
+    #Define candidate values for delta
+    delta_can=c(0,0.02,0.05,0.1,0.2)
+  
+    write.table(delta_can,file='./possible_delta.txt',col.names = FALSE, row.names = FALSE)
+    write.table(smooth_data,file='./discrete_data.txt',col.names = FALSE, row.names = FALSE)
+    write.table(num_neigh,file="./possible_K.txt",col.names = FALSE, row.names = FALSE)
+    write.table(c(samplesize,K),file="./n_K.txt",col.names = FALSE, row.names = FALSE)
+    write.table(true_geo,file="./true_geo.txt",col.names = FALSE, row.names = FALSE)
+  
+    # Run penalized-isomap.m in matlab
+    run_matlab_script("./run_isomap_p.m")
+  
+    temp=as.vector(read.table(file='./manidis.txt',header=FALSE))
+    estim_geo_penalized_isomap=matrix(temp[,1],ncol=samplesize)
+    temp2=read.table(file='./err_delta_neigh.txt',header=FALSE)
+    err_delta_neigh=matrix(temp2[,1],ncol=length(num_neigh))
+    delta_min_tmp=which(err_delta_neigh==min(err_delta_neigh),arr.ind = TRUE)
+    delta_min=delta_can[delta_min_tmp[1,1]]
+  
+    list_to_return[["estim_geo_penalized_isomap"]]<- estim_geo_penalized_isomap
+    
+    if(plot_true){
+      image.plot(estim_geo_penalized_isomap,main=paste('err p-isomap = ',signif(min(err_delta_neigh),digits =4),', delta = ',delta_min,sep=''))
+    }
+  }
+
+
+  if(method$OUR){
+  ###   use mds to obtain a s-dim version of each data point, use SCMS to estimate the manifold
+  ###   and estimation geo with Floyd's algo.
+
+    print("mds of smooth data + scms + Floyd's Algorithm")
+    
+    err_s<- rep(0,3)
+    scms_h=seq(0.1,2,by=0.2)
+    for(s in 1:3){
+      # Projection of the data in dim s using mds
+      euc_dis_mat=dist(smooth_data)
+      mds_mat = cmdscale(euc_dis_mat,eig=TRUE, k=s)
+      projected = mds_mat$points
+  
+      Error_mds_h= matrix(0,nrow=length(scms_h),ncol=2)
+      for(bw in 1:length(scms_h)){
+        # use scms to estimate a manifold in dim s
+        denoised = scms$scms(projected, scms_h[bw])
+        # Find a grid of possible values for the number of neigbors
+        num_neigh_min=py_min_neigh$get_min_num_neighbors(denoised)
+        num_neigh=seq(num_neigh_min,samplesize/2,by=2)
+        Error_mds_K= rep(0,length(num_neigh))
+        for(j in 1:length(num_neigh)){
+          IsomapGdist_denoised = pyIso$getIsomapGdist(denoised,num_neigh[j])
+          Error_mds_K[j]=sqrt(sum((IsomapGdist_denoised -true_geo)^2))/norm_true_geo
+        }
+        ind_neigh=min(which(Error_mds_K==min(Error_mds_K)))
+        Error_mds_h[bw,]=c(Error_mds_K[ind_neigh],num_neigh[ind_neigh])
+      }
+      ind=min(which(Error_mds_h[,1]==min(Error_mds_h[,1])))
+      denoised = scms$scms(projected, scms_h[ind])
+      list_to_return[[paste("estim_geo_mds_scms_s",s,sep='')]] = pyIso$getIsomapGdist(denoised,Error_mds_h[ind,2])
+      err_s[s]<-min(Error_mds_h[,1])
+    }
+  
+    if(plot_true){
+      par(mfrow=c(1,3))
+      image.plot(list_to_return$estim_geo_mds_scms_s1,main=paste('err mds + scms (s=1) = ',signif(err_s[1],digits = 4),sep=''))
+      image.plot(list_to_return$estim_geo_mds_scms_s2,main=paste('err mds + scms (s=2) = ',signif(err_s[2],digits = 4),sep=''))
+      image.plot(list_to_return$estim_geo_mds_scms_s3,main=paste('err mds + scms (s=3) = ',signif(err_s[3],digits = 4),sep=''))
+    }
+  }
+  
+
+  ###  use random projection to obtain a s-d version of each data point, use SCMS to estimate the manifold
+  ###    and estimation geo with Floyd's algo.
+  if(method$RP){
+    print("Random proj. + scms + Floyd's Algorithm")
+    scms_h=seq(0.1,2,by=0.2)
+    err_RP_s<- rep(0,3)
+    for(s in 1:3){
+      geo_proj<-matrix(0,nrow=nb_proj,ncol=samplesize*(samplesize-1)/2)
+      op_h_proj<-rep(0,nb_proj)
+      op_num_nei_proj<-rep(0,nb_proj)
+      err_proj<-rep(0,nb_proj)
+    
+      for(proj in 1:nb_proj){
+        # use random projection to represent data in dim s
+        randprojmat = matrix(rnorm(s*K,mean=0,sd=1/sqrt(s)), nrow=s, ncol=K)
+        projected = randprojmat %*% t(smooth_data)
+        Error_RP_h= matrix(0,nrow=length(scms_h),ncol=2)
+        for(bw in 1:length(scms_h)){
+          # use scms to estimate a manifold in dim s
+          denoised = scms$scms(t(projected), scms_h[bw])
+          # Find a grid of possible values for the number of neigbors
+          num_neigh_min=py_min_neigh$get_min_num_neighbors(denoised)
+          num_neigh=seq(num_neigh_min,samplesize/2,by=2)
+          Error_RP_K= rep(0,length(num_neigh))
+          for(j in 1:length(num_neigh)){
+            IsomapGdist_denoised = pyIso$getIsomapGdist(denoised,num_neigh[j])
+            Error_RP_K[j]=sqrt(sum((IsomapGdist_denoised -true_geo)^2))/norm_true_geo
+          }
+          ind_neigh=min(which(Error_RP_K==min(Error_RP_K)))
+          Error_RP_h[bw,]=c(Error_RP_K[ind_neigh],num_neigh[ind_neigh])
+        }
+        ind=min(which(Error_RP_h[,1]==min(Error_RP_h[,1])))
+        denoised = scms$scms(t(projected), scms_h[ind])
+        IsomapGdist_denoised = pyIso$getIsomapGdist(denoised,Error_RP_h[ind,2])
+        geo_proj[proj,]<-IsomapGdist_denoised[lower.tri(IsomapGdist_denoised, diag = FALSE)]
+        op_h_proj[proj]=scms_h[ind]
+        op_num_nei_proj[proj]=Error_RP_h[ind,2]
+        err_proj[proj]=sqrt(sum((IsomapGdist_denoised -true_geo )^2))/norm_true_geo
+      }
+    
+      ensemble_geo<-apply(geo_proj,2,median)
+      ens_geo_mat<-matrix(0,samplesize,samplesize)
+      ens_geo_mat[lower.tri(ens_geo_mat, diag = FALSE)]=ensemble_geo
+      estim_geo_RP_scms <- ens_geo_mat + t(ens_geo_mat)
+      list_to_return[[paste("estim_geo_RP_scms_s",s,sep='')]] = estim_geo_RP_scms
+      err_RP_s[s]<-sqrt(sum((estim_geo_RP_scms -true_geo )^2))/norm_true_geo
+    }
+    if(plot_true){
+      par(mfrow=c(1,3))
+      image.plot(list_to_return$estim_geo_RP_scms_s1,main=paste('err RP + scms (s=1) = ',signif(err_RP_s[1],digits = 4),sep=''))
+      image.plot(list_to_return$estim_geo_RP_scms_s2,main=paste('err RP + scms (s=2) = ',signif(err_RP_s[2],digits = 4),sep=''))
+      image.plot(list_to_return$estim_geo_RP_scms_s3,main=paste('err RP + scms (s=3) = ',signif(err_RP_s[3],digits = 4),sep=''))
+    }
+  }
+  
+  return(list_to_return)
+}
+
+##### Smooth data one curve at the time with bspline and penatlty on second derivative
+
+smooth_FD_bspline <- function(discrete_data,grid,reg_grid){
+  
+  K = ncol(discrete_data)
+  nbasis <- K+2
+  basis_obj <- create.bspline.basis(c(reg_grid[1],reg_grid[K]),nbasis)
+  loglambda <- seq(-10,-1,by=0.5)
+  gcv<-rep(0,length(loglambda))
+  for(i in 1:length(loglambda)){
+    fd_par_obj <- fdPar(fdobj=basis_obj,Lfdobj=2,lambda=10^loglambda[i])
+    smooth_res <- smooth.basis(t(grid),t(discrete_data),fd_par_obj)
+    gcv[i]=mean(smooth_res$gcv)
+  }
+  ind_m=which(gcv==min(gcv))
+  fd_par_obj <- fdPar(fdobj=basis_obj,Lfdobj=2,lambda=10^loglambda[ind_m])
+  smooth_res <- smooth.basis(t(grid),t(discrete_data),fd_par_obj)
+  smooth_curve_tmp <- smooth_res$fd
+  smooth_curve <- eval.fd(reg_grid,smooth_curve_tmp)
+  return(t(smooth_curve))
+  
+}
