@@ -7,9 +7,9 @@ output:
     df_print: paged
 ---
 
-```{r setup, include=FALSE}
-#knitr::opts_chunk$set(cache = TRUE)
-```
+# ```{r setup, include=FALSE}
+# #knitr::opts_chunk$set(cache = TRUE)
+# ```
 
 ```{r}
 source('sim_functional_data.R')
@@ -35,8 +35,8 @@ We would like to compare sim$analytic_geo to geodesic distance estimation via Fl
 library(reticulate)
 # sometimes reticulate requires specific instruction on where to find your python
 # first call Sys.which("python") and then copy that path into 
-#use_python('/Users/suswei/anaconda3/bin/python',required=TRUE)
-use_python('/anaconda3/bin/python',required=TRUE)
+use_python('/Users/suswei/anaconda3/bin/python',required=TRUE)
+#use_python('/anaconda3/bin/python',required=TRUE)
 get_min_num_neighbors = import_from_path("get_min_num_neighbors",path='.')
 getIsomapGdist = import_from_path("getIsomapGdist",path='.')
 
