@@ -25,9 +25,9 @@
 #SBATCH --mail-user=susan.wei@unimelb.edu.au
 
 # The maximum running time of the job in days-hours:mins:sec
-#SBATCH --time=0-2:00:00
+#SBATCH --time=1-0:00:00
 
-#SBATCH --array=1-2400%60         ### Array index | %50: number of simultaneously tasks
+#SBATCH --array=1-2400         ### Array index | %50: number of simultaneously tasks
 
 # Get Array ID
 i=${SLURM_ARRAY_TASK_ID}
@@ -41,8 +41,8 @@ fi
 # Run the job from the directory where it was launched (default)
 
 # The modules to load:
-module load MATLAB
+# module load MATLAB
 
 # The job command(s):
 # R --vanilla < spartanSim.R ${i} #this isn't necessary since we get the environment
-R --vanilla < spartanSim.R
+R --vanilla < compare_methods.R

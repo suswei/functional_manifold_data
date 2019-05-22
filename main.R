@@ -1,3 +1,8 @@
+library(reticulate)
+# use right version of python
+# use_python('/Users/UQAM/anaconda3/bin/python',required=TRUE)
+use_python('/Users/suswei/anaconda3/bin/python',required=TRUE)
+
 rm(list = ls())
 
 source('EuclideanExamples.R')
@@ -10,14 +15,10 @@ source('assess_goodness_estimation.R')
 
 library(DescTools)
 library(fields)
-library(reticulate)
 library(fda)
 library(matlabr)
 
-# TODO: it doesn't make ansy sense to define these outside of Geo_estimation?
-# use right version of python
-use_python('/Users/UQAM/anaconda3/bin/python',required=TRUE)
-# use_python('/Users/suswei/anaconda3/bin/python',required=TRUE)
+
 pyIso = import_from_path("getIsomapGdist",path='.')
 py_min_neigh = import_from_path("get_min_num_neighbors",path='.')
 scms = import_from_path("scms",path='.')

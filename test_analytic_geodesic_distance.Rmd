@@ -2,15 +2,19 @@
 title: Test if analytic derivation of geodesic distance for curves from sim_functional_data.R
   is correct
 output:
-  pdf_document: default
   html_document:
     df_print: paged
+  pdf_document: default
 ---
 
+```{r}
+library(reticulate)
+# sometimes reticulate requires specific instruction on where to find your python
+# first call Sys.which("python") and then copy that path into 
 
-
-
-
+use_python('/Users/suswei/anaconda3/bin/python',required=TRUE)
+#use_python('/Users/UQAM/anaconda3/bin/python',required=TRUE)
+```
 
 
 ```{r}
@@ -34,14 +38,6 @@ names(sim)
 We would like to compare sim$analytic_geo to geodesic distance estimation via Floyd's algorithm for the noiseless (discretised) curve. This algorithm is guaranteed to do well if we sample the manifold densely enough? (That's why we set the samplesize to be quite high initially.)
 
 ```{r}
-library(reticulate)
-# sometimes reticulate requires specific instruction on where to find your python
-# first call Sys.which("python") and then copy that path into 
-
-#use_python('/Users/suswei/anaconda3/bin/python',required=TRUE)
-use_python('/Users/UQAM/anaconda3/bin/python',required=TRUE)
-
-
 get_min_num_neighbors = import_from_path("get_min_num_neighbors",path='.')
 getIsomapGdist = import_from_path("getIsomapGdist",path='.')
 
