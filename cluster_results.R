@@ -33,9 +33,14 @@ create_boxplot<- function(sce_details,mat_ind){
             ".pdf",sep=""),width=15,height=5)
   
   par(mfrow=c(1,3))
-  boxplot(t(results[,1:6]),main="relative MSE",names=c("NN","RD","SS","OurS1","OurS2","OurS3"))
-  boxplot(t(results[,7:12]),main="AUC of entrywise epsilon-isometry",names=c("NN","RD","SS","OurS1","OurS2","OurS3"))
-  boxplot(t(results[,13:18]),main="Pearson correlation",names=c("NN","RD","SS","OurS1","OurS2","OurS3"))
+  par(oma=c(2,2,2,2))
+
+  boxplot(results[,1:6],main="relative MSE",names=c("NN","RD","SS","OurS1","OurS2","OurS3"))
+  boxplot(results[,7:12],main="AUC of entrywise epsilon-isometry",names=c("NN","RD","SS","OurS1","OurS2","OurS3"))
+  boxplot(results[,13:18],main="Pearson correlation",names=c("NN","RD","SS","OurS1","OurS2","OurS3"))
+  mtext(paste("sce=",sce_details[1],"_samplesize=",sce_details[2],
+              "_SNR=",sce_details[3],
+              "_reg_sampling=",sce_details[4],sep=""),outer=TRUE,cex=1.5)
   dev.off()
   }
 }
