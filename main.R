@@ -1,14 +1,14 @@
 library(reticulate)
 # use right version of python
-<<<<<<< HEAD
+
 #use_python('/usr/bin/python',required=TRUE)
 use_python('/anaconda3/envs/r-reticulate/bin/python',required=TRUE)
 #use_python('/Users/suswei/anaconda3/bin/python',required=TRUE)
-=======
-use_python('/usr/local/bin/python3.7',required=TRUE)
+
+#use_python('/usr/local/bin/python3.7',required=TRUE)
 # use_python('/Users/UQAM/anaconda3/bin/python',required=TRUE)
 # use_python('/Users/suswei/anaconda3/bin/python',required=TRUE)
->>>>>>> 39152b73ebd99e4b86c0fefd3bae160a01a95262
+
 
 rm(list = ls())
 
@@ -27,9 +27,9 @@ library(fda)
 library(matlabr)
 library(igraph)
 
-pyIso = import_from_path("getIsomapGdist",path='.')
-py_min_neigh = import_from_path("get_min_num_neighbors",path='.')
-scms = import_from_path("scms",path='.')
+# pyIso = import_from_path("getIsomapGdist",path='.')
+# py_min_neigh = import_from_path("get_min_num_neighbors",path='.')
+# scms = import_from_path("scms",path='.')
 
 
 #### Analysis of Functional data
@@ -45,7 +45,8 @@ reg_sampling=TRUE # regular sampling of the point on the manifold or uniformly r
 plotTrue= TRUE 
 com_grid = 1 # 1 or 0 to indicate if yes or no each curve is observed on a common grid
 nb_proj = 20 # number of random projection
-meth <- list("NN" = TRUE,"RD_o" = TRUE,"RD" = TRUE,"SS_o" = TRUE,"SS" = TRUE,"pI" = FALSE,"RI"=TRUE,"OUR" = TRUE,"OUR2" = TRUE,"RP" = FALSE )# see pairwise_geo_estimation for more info
+meth <- list("NN" = TRUE,"RD_o" = TRUE,"RD" = TRUE,"SS_o" = TRUE,"SS" = TRUE,"pI" = FALSE,"OUR" = TRUE,"OUR2" = FALSE,"OUR3"=TRUE,"RP" = FALSE )# see pairwise_geo_estimation for more info
+
 
 # Generate data
 data<- sim_functional_data(sce,samplesize,K,SNR,reg_sampling,com_grid,plotTrue)
