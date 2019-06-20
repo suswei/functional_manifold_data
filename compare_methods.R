@@ -12,7 +12,7 @@ K = 30 # number of grid points (each curve is observed on K points on [a,b])
 com_grid = 1 # 1 or 0 to indicate if yes or no each curve is observed on a common grid
 plotTrue = FALSE
 FD_true = TRUE
-meth<- list("NN" = TRUE,"RD" = TRUE,"SS" = TRUE,"pI" = FALSE,"OUR" = TRUE,"RP" = FALSE)
+meth <- list("NN" = TRUE,"RD_o" = TRUE,"RD" = TRUE,"SS_o" = TRUE,"SS" = TRUE,"pI" = FALSE,"OUR" = TRUE,"OUR2" = FALSE,"OUR3"=TRUE,"RP" = FALSE )
 
 # parameters under study
 # scenario
@@ -20,7 +20,7 @@ meth<- list("NN" = TRUE,"RD" = TRUE,"SS" = TRUE,"pI" = FALSE,"OUR" = TRUE,"RP" =
 # SNR # signal to noise ratio (in Chen and Muller is 0.1 or 0.5)
 # reg_sampling {True,False} # regular sampling of the point on the manifold or uniformly random
 
-sces = 1:3
+sces = c(1,2,4)
 samplesizes = c(100,250)
 SNRs = c(0.1,0.5)
 reg_samplings = c(TRUE,FALSE)
