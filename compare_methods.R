@@ -1,8 +1,25 @@
-# Title     : spartanSim.R
+# Title     : compare_methods.R
 # Objective : This is modeled after Marie's main.R but designed for submission to Spartan HPC. Performs sweep of certain parameters.
 # Created by: suswei
 # Created on: 3/12/18
 
+# library(DescTools)
+library(reticulate)
+library(fields)
+library(fda)
+library(matlabr)
+library(igraph)
+
+source('EuclideanExamples.R')
+source('full_geo_from_adj_geo.R')
+source('sim_functional_data.R')
+source('Geo_estimation.R')
+source('pairwise_geo_estimation.R')
+source('sim_Euclidean_data.R')
+source('assess_goodness_estimation.R')
+source('robust_isomap.R')
+
+# get sweeping id
 slurm_arrayid <- Sys.getenv('SLURM_ARRAY_TASK_ID')
 slurm_arrayid = as.numeric(slurm_arrayid)
 print(slurm_arrayid)
@@ -12,7 +29,6 @@ K = 30 # number of grid points (each curve is observed on K points on [a,b])
 com_grid = 1 # 1 or 0 to indicate if yes or no each curve is observed on a common grid
 plotTrue = FALSE
 FD_true = TRUE
-meth <- list("NN" = TRUE,"RD_o" = TRUE,"RD" = TRUE,"SS_o" = TRUE,"SS" = TRUE,"pI" = FALSE,"OUR" = TRUE,"OUR2" = FALSE,"OUR3"=TRUE,"RP" = FALSE )
 
 # parameters under study
 # scenario
@@ -36,25 +52,11 @@ reg_sampling = reg_samplings[unravel[1,4]]
 mc = mcs[unravel[1,5]]
 
 
-source('EuclideanExamples.R')
-source('full_geo_from_adj_geo.R')
-source('sim_functional_data.R')
-source('Geo_estimation.R')
-source('pairwise_geo_estimation.R')
-source('sim_Euclidean_data.R')
-source('assess_goodness_estimation.R')
-
-library(DescTools)
-library(fields)
-library(fda)
-library(matlabr)
-library(reticulate)
-
-
 # Generate data
 data<- sim_functional_data(sce, samplesize, K, SNR, reg_sampling, com_grid, plotTrue)
 
 # Estimation of geodesic distances with different methods
+meth <- list("NN" = TRUE,"RD_o" = TRUE,"RD" = TRUE,"SS_o" = TRUE,"SS" = TRUE,"pI" = FALSE,"OUR" = TRUE,"OUR2" = FALSE,"OUR3"=TRUE,"RP" = FALSE )# see pairwise_geo_estimation for more info
 Estim<- pairwise_geo_estimation(meth,data$noiseless_data,data$noisy_data,data$analytic_geo,plotTrue,FD_true,nb_proj,data$grid,data$reg_grid,com_grid)
 # TODO: decide if we need to save Estim?
 # saveRDS(Estim, file = sprintf("sce=%d_samplesize=%d_SNR=%d_reg_sampling=%d_s=%d_mc=%d",sce,samplesize,SNR,reg_sampling,s,mc))
