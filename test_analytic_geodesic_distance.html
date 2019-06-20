@@ -212,13 +212,20 @@ $(document).ready(function () {
 
 
 <pre class="r"><code>library(reticulate)
-# sometimes reticulate requires specific instruction on where to find your python
-# first call Sys.which(&quot;python&quot;) and then copy that path into 
 
-use_python(&#39;/Users/suswei/anaconda3/bin/python&#39;,required=TRUE)
+use_python(&#39;/usr/local/bin/python3.7&#39;,required=TRUE)
 #use_python(&#39;/Users/UQAM/anaconda3/bin/python&#39;,required=TRUE)</code></pre>
+<p>Check with py_config()</p>
+<pre class="r"><code>py_config()</code></pre>
+<pre><code>## python:         /usr/local/bin/python3.7
+## libpython:      /Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/config-3.7m-darwin/libpython3.7.dylib
+## pythonhome:     /Library/Frameworks/Python.framework/Versions/3.7:/Library/Frameworks/Python.framework/Versions/3.7
+## version:        3.7.0 (v3.7.0:1bf9cc5093, Jun 26 2018, 23:26:24)  [Clang 6.0 (clang-600.0.57)]
+## numpy:          /Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/site-packages/numpy
+## numpy_version:  1.15.1
+## 
+## NOTE: Python version was forced by use_python function</code></pre>
 <pre class="r"><code>source(&#39;sim_functional_data.R&#39;)</code></pre>
-<pre><code>## Warning: package &#39;fields&#39; was built under R version 3.5.2</code></pre>
 <pre><code>## Loading required package: spam</code></pre>
 <pre><code>## Loading required package: dotCall64</code></pre>
 <pre><code>## Loading required package: grid</code></pre>
@@ -233,12 +240,12 @@ use_python(&#39;/Users/suswei/anaconda3/bin/python&#39;,required=TRUE)
 ## 
 ##     backsolve, forwardsolve</code></pre>
 <pre><code>## Loading required package: maps</code></pre>
-<pre><code>## See https://github.com/NCAR/Fields for
-##  an extensive vignette, other supplements and source code</code></pre>
+<pre><code>## See www.image.ucar.edu/~nychka/Fields for
+##  a vignette and other supplements.</code></pre>
 <p>The function sim_functional_data.R allows specification of several simulatin scenarios. The samplesize is purposefully set very high for reasons explained below.</p>
 <pre class="r"><code># Generate data
 sim &lt;- sim_functional_data(sce=3,samplesize=100)</code></pre>
-<p><img src="test_analytic_geodesic_distance_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p><img src="test_analytic_geodesic_distance_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <p>The output actually contains more than just the simulated functional data. In particular, it contains the in-sample pairwise geodesic distance matrix (analytic_geo) via analytic derivation. The purpose of this notebook is to see if our analytic derivations match numerical results.</p>
 <pre class="r"><code>names(sim)</code></pre>
 <pre><code>## [1] &quot;noiseless_data&quot; &quot;noisy_data&quot;     &quot;analytic_geo&quot;   &quot;grid&quot;          
@@ -268,10 +275,9 @@ for(j in 1:length(num_neigh_true)){
 ind_op_true=min(which(Error_true_mani_K==min(Error_true_mani_K)))
 estim_geo_noiseless_data = getIsomapGdist$getIsomapGdist(noiseless_data_tmp,num_neigh_true[ind_op_true])
 image.plot(estim_geo_noiseless_data,main=&#39;geo estimation&#39;)</code></pre>
-<p><img src="test_analytic_geodesic_distance_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
-<p>If the analytic derviation is correct, then estim_geo_noiseless_data should be extremely similar to analytic_geo. We can assess their closeness using assess_goodness_estimation.R. Running this notebook for sce=1 gives rmse on the order of e-16.</p>
+<p><img src="test_analytic_geodesic_distance_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>If the analytic derviation is correct, then estim_geo_noiseless_data should be extremely similar to analytic_geo. We can assess their closeness using assess_goodness_estimation.R. Three assessment metrics are returned. If the calculation is correct, rmse should be close to zero and epsilon_isometry_auc and pearson_corr should both be close to 1. Note that running this notebook for sce=1 gives rmse on the order of e-16.</p>
 <pre class="r"><code>library(MESS)</code></pre>
-<pre><code>## Warning: package &#39;MESS&#39; was built under R version 3.5.2</code></pre>
 <pre><code>## Loading required package: geepack</code></pre>
 <pre><code>## Loading required package: geeM</code></pre>
 <pre><code>## Loading required package: Matrix</code></pre>
@@ -283,14 +289,14 @@ image.plot(estim_geo_noiseless_data,main=&#39;geo estimation&#39;)</code></pre>
 <pre class="r"><code>source(&#39;assess_goodness_estimation.R&#39;)
 assess_goodness_estimation(estim_geo_noiseless_data,sim$analytic_geo)</code></pre>
 <pre><code>## $rmse
-## [1] 0.02128164
+## [1] 0.01070586
 ## 
 ## $epsilon_isometry_auc
-## [1] 0.984879
+## [1] 0.9919957
 ## 
 ## $pearson_corr
 ##       cor 
-## 0.9991665</code></pre>
+## 0.9998055</code></pre>
 
 
 

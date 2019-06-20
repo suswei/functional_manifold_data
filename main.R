@@ -1,8 +1,14 @@
 library(reticulate)
 # use right version of python
+<<<<<<< HEAD
 #use_python('/usr/bin/python',required=TRUE)
 use_python('/anaconda3/envs/r-reticulate/bin/python',required=TRUE)
 #use_python('/Users/suswei/anaconda3/bin/python',required=TRUE)
+=======
+use_python('/usr/local/bin/python3.7',required=TRUE)
+# use_python('/Users/UQAM/anaconda3/bin/python',required=TRUE)
+# use_python('/Users/suswei/anaconda3/bin/python',required=TRUE)
+>>>>>>> 39152b73ebd99e4b86c0fefd3bae160a01a95262
 
 rm(list = ls())
 
