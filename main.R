@@ -1,7 +1,8 @@
 library(reticulate)
 # use right version of python
-# use_python('/Users/UQAM/anaconda3/bin/python',required=TRUE)
-use_python('/Users/suswei/anaconda3/bin/python',required=TRUE)
+#use_python('/usr/bin/python',required=TRUE)
+use_python('/anaconda3/envs/r-reticulate/bin/python',required=TRUE)
+#use_python('/Users/suswei/anaconda3/bin/python',required=TRUE)
 
 rm(list = ls())
 
@@ -12,12 +13,13 @@ source('Geo_estimation.R')
 source('pairwise_geo_estimation.R')
 source('sim_Euclidean_data.R')
 source('assess_goodness_estimation.R')
+source('robust_isomap.R')
 
 library(DescTools)
 library(fields)
 library(fda)
 library(matlabr)
-
+library(igraph)
 
 pyIso = import_from_path("getIsomapGdist",path='.')
 py_min_neigh = import_from_path("get_min_num_neighbors",path='.')
@@ -29,7 +31,7 @@ scms = import_from_path("scms",path='.')
 FD_true =TRUE
 
 # set up parameters
-sce =3 # 1, 2 or 3 (for more info see sim_functional_data.R)
+sce =2 # 1, 2 or 3 (for more info see sim_functional_data.R)
 K = 30 # number of grid points (each curve is observed on K points on [a,b])
 samplesize = 100 # number of points on the manifold
 SNR = 0.1 # signal to noise ratio (in Chen and Muller is 0.1 or 0.5)
@@ -37,7 +39,7 @@ reg_sampling=TRUE # regular sampling of the point on the manifold or uniformly r
 plotTrue= TRUE 
 com_grid = 1 # 1 or 0 to indicate if yes or no each curve is observed on a common grid
 nb_proj = 20 # number of random projection
-meth<- list("NN" = TRUE,"RD" = TRUE,"SS" = TRUE,"pI" = FALSE,"OUR" = TRUE,"RP" = TRUE ) # see pairwise_geo_estimation for more info
+meth <- list("NN" = TRUE,"RD_o" = TRUE,"RD" = TRUE,"SS_o" = TRUE,"SS" = TRUE,"pI" = FALSE,"RI"=TRUE,"OUR" = TRUE,"OUR2" = TRUE,"RP" = FALSE )# see pairwise_geo_estimation for more info
 
 # Generate data
 data<- sim_functional_data(sce,samplesize,K,SNR,reg_sampling,com_grid,plotTrue)
