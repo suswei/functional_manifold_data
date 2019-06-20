@@ -1,7 +1,8 @@
 library(reticulate)
 # use right version of python
+use_python('/usr/local/bin/python3.7',required=TRUE)
 # use_python('/Users/UQAM/anaconda3/bin/python',required=TRUE)
-use_python('/Users/suswei/anaconda3/bin/python',required=TRUE)
+# use_python('/Users/suswei/anaconda3/bin/python',required=TRUE)
 
 rm(list = ls())
 

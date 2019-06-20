@@ -9,11 +9,17 @@ output:
 
 ```{r}
 library(reticulate)
-# sometimes reticulate requires specific instruction on where to find your python
-# first call Sys.which("python") and then copy that path into 
 
-use_python('/Users/suswei/anaconda3/bin/python',required=TRUE)
-#use_python('/Users/UQAM/anaconda3/bin/python',required=TRUE)
+use_python('/usr/local/bin/python3.7',required=TRUE)
+# use_python('/Users/UQAM/anaconda3/bin/python',required=TRUE)
+# use_python('/Users/suswei/anaconda3/bin/python',required=TRUE)
+
+```
+
+Check with py_config()
+
+```{r}
+py_config()
 ```
 
 
@@ -21,11 +27,11 @@ use_python('/Users/suswei/anaconda3/bin/python',required=TRUE)
 source('sim_functional_data.R')
 ```
 
-The function sim_functional_data.R allows specification of several simulatin scenarios. The samplesize is purposefully set very high for reasons explained below.
+The function sim_functional_data.R allows specification of several simulatin scenarios. The samplesize should be set very high so that Floyd's algorithm works well on the noiseless data. The number of time grid points K also should be high so that the vector data really represents the functional curve.
 
 ```{r}
 # Generate data
-sim <- sim_functional_data(sce=3,samplesize=100)
+sim <- sim_functional_data(sce=4,samplesize=1500,K=150,plot_true=1)
 ```
 
 The output actually contains more than just the simulated functional data. In particular, it contains the in-sample pairwise geodesic distance matrix (analytic_geo) via analytic derivation. The purpose of this notebook is to see if our analytic derivations match numerical results.
@@ -64,7 +70,7 @@ estim_geo_noiseless_data = getIsomapGdist$getIsomapGdist(noiseless_data_tmp,num_
 image.plot(estim_geo_noiseless_data,main='geo estimation')
 ```
 
-If the analytic derviation is correct, then estim_geo_noiseless_data should be extremely similar to analytic_geo. We can assess their closeness using assess_goodness_estimation.R. Running this notebook for sce=1 gives rmse on the order of e-16.
+If the analytic derviation is correct, then estim_geo_noiseless_data should be extremely similar to analytic_geo. We can assess their closeness using assess_goodness_estimation.R. Three assessment metrics are returned. If the calculation is correct, rmse should be close to zero and epsilon_isometry_auc and pearson_corr should both be close to 1. Note that running this notebook for sce=1 gives rmse on the order of e-16.
 ```{r}
 library(MESS)
 source('assess_goodness_estimation.R')

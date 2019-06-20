@@ -17,11 +17,10 @@ output:
 
 ## Abstract
 
-Title: Geodesic distance estimation for functional data residing near a nonlinear manifold.
+Title: Pairwise geodesic distance estimation for functional data residing near a nonlinear manifold.
 
-Abstract: Certain functional data of interest reside in non-linear spaces; the class of probability density functions provides one such example. Since these spaces are not vector spaces, basic operations such as addition and subtraction require special consideration and treatment. In this work we set ourselves the task of calculating a geodesic distance between two functions living near a non-linear manifold due to noise. This setting cannot be tackled by classic manifold learning techniques which require data to live exactly on a manifold. Good estimation of the geodesic distance has implications for many downstream tasks such as clustering, classification, and nonparametric functional regression.
+Abstract: Certain functional data of interest reside in non-linear spaces; the class of probability density functions provides one such example. Since these spaces are not vector spaces, even basic operations such as addition and subtraction require special consideration and treatment. In this work we set ourselves the task of calculating the geodesic distance between two functions living near a non-linear manifold due to noise. This setting cannot be tackled by classic manifold learning techniques which require data to live exactly on a manifold. Good estimation of the geodesic distance has implications for many downstream tasks in functional data analysis, including functional clustering, and nonparametric functional regression.
 
-*I wrote this for the IMS China 2019 conference.*
 
 ## Introduction
 
@@ -85,19 +84,19 @@ $$
 
 Since the ridge estimation obtained from noisy measurements of a manifold should approximate well the manifold (ref. Genevose and al. 2014), we expect the points $\tilde X^{s,\hat \M}_1,\ldots,\tilde X^{s,\hat \M}_n$ to lie close to the real manifold $\M$ and then $d_{\hat \M}$ to be close to $d_\M$. Ridge estimation suffers from the curse of dimensionality, this is why we first reduce the dimension of our data with MDS and then apply the shift-mean algorithm to estimate the ridge.
 
-## Comparison to other methods
+## Simulaton Study
 
 We perform a simulation study to ascertain the efficacy of our method for estimating pairwise geodesic distances for discretely-observed noisy functional data. ???Describe simulation scenarios in sim_functional_data.R???
 
-We compare our method to the following ones:
+# Comparison to other methods
 
-* **RD** Apply IsoGeo on the raw data $Y_1,\ldots,Y_n$ to obtain an estimator $\hat G_{\textrm{RD}}$. Note that this procedure can only be used if the grid $T_i$ is the same for each $i$.
-* **SS** Transform each vector $Y_i$ into a function $\tilde X_i$ by spline smoothing. Apply IsoGeo on the vectors $\{(\tilde X_i(t_1), \ldots, X_i(t_K)\}_{i=1}^n$, where $t_1,\ldots,t_K$ is a regular grid of $[a,b]$, to obtain an estimator $\hat G_{\textrm{SS}}$.
-* **pI** Transform each vector $Y_i$ into a function $\tilde X_i$ by spline smoothing. Calculate the weighted graph of step I of Isomap with a penalty (describe the penalty of Chen and Muller). Apply step II of Isomap to obtain $\hat G_{\textrm{pI}}$.
-* **RP**  same method as our but change step 2 by : obtain $s$-dimensional representation by random projection and setp 4 by obtain $\hat G$ using a ensemble method.
+* **(Raw Data) RD** Apply IsoGeo on the raw data $Y_1,\ldots,Y_n$ to obtain an estimator $\hat G_{\textrm{RD}}$. Note that this procedure can only be used if the grid $T_i$ is the same for each $i$.
+* **(Spline Smoothing) SS** Transform each vector $Y_i$ into a function $\tilde X_i$ by spline smoothing. Apply IsoGeo on the vectors $\{(\tilde X_i(t_1), \ldots, X_i(t_K)\}_{i=1}^n$, where $t_1,\ldots,t_K$ is a regular grid of $[a,b]$, to obtain an estimator $\hat G_{\textrm{SS}}$.
+* **(Penalized-Isomap) pI** Transform each vector $Y_i$ into a function $\tilde X_i$ by spline smoothing. Calculate the weighted graph of step I of Isomap with a penalty (describe the penalty of Chen and Muller). Apply step II of Isomap to obtain $\hat G_{\textrm{pI}}$.
+* **(Random Projection) RP**  same method as our but change step 2 by : obtain $s$-dimensional representation by random projection and setp 4 by obtain $\hat G$ using a ensemble method.
 
 # Assessment of geodesic distance estimates
-We introduce a new tool to assess pairwise geodesic distance estimation. This is the ROC curve with $\epsilon$ on the $x$-axis and degree to which near-$\epsilon$ isometry holds, i.e.\ the percentage of estimated pairwise distances between $1-\epsilon$ and $1+\epsilon$ of the truth pairwise distance.  
+We introduce a new metric for assessing the quality of a pairwise geodesic distance estimator. This is the ROC curve with $\epsilon$ on the $x$-axis and degree to which near-$\epsilon$ isometry holds, i.e.\ the percentage of estimated pairwise distances between $1-\epsilon$ and $1+\epsilon$ of the truth pairwise distance.  
 
 ## TODOs
 
