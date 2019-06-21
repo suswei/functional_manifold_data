@@ -3,15 +3,12 @@ import numpy as np
 
 def make_anisotropic_gaussian_kernel(Hdiag):
     """
-    Makes an isotropic gaussian kernel function with bandwidth sigma.
+    Makes anisotropic gaussian kernel (but still diagonal bandwidth matrix) function with bandwidth sigma.
     """
 
-    # the kernel function is a function of ||x-y||^2, the squared Euclidean
-    # distance between x and y
-
-    # hardcode bandwidth matrix H according to Silverman's
     H = np.diag(Hdiag)
-
+    
+    # this retunrs K_H(x) (2\pi)^(-d/2) |H|^(-1/2) exp( (-1/2) x^T H^(-1) x )
     def kernel(diff):
         # diff should be dim by sample size
         diff = np.transpose(diff)
@@ -30,9 +27,6 @@ def kernel_density_estimate(x, data, kernel):
     Estimates the probability density at x, given the data and the kernel.
     This obviously does not use data-dependent kernels.
     """
-    # first, we calculate the interpoint distances
-    d_squared = np.sum((data - x) ** 2, axis=1)
-
     # and evaluate the kernel at each distance
     weights = kernel(data-x)
 
@@ -52,7 +46,6 @@ def gradient(x, data, kernel, Hdiag):
     u = np.matmul((data - x),np.diag(1./Hdiag))
 
     # now we form the c_i
-    d_squared = np.sum((data - x) ** 2, axis=1)
     c = kernel(data-x)
 
     return -1. * np.mean(c * u.T, axis=1)
@@ -69,7 +62,6 @@ def hessian(x, data, kernel, Hdiag):
     u = np.matmul((data - x),np.diag(1./Hdiag))
 
     # now we form the c_i
-    # d_squared = np.sum((data - x) ** 2, axis=1)
     c = kernel(data-x)
 
     Z = np.diag(1./Hdiag)
@@ -93,9 +85,7 @@ def mean_shift_update(x, data, kernel):
     Applies a kernel mean shift update to the point x, given the data and a
     1-d kernel function of the squared distance.
     """
-    # first, calculate the interpoint distance
-    d_squared = np.sum((data - x) ** 2, axis=1)
-
+    
     # eqvaluate the kernel at each distance
     weights = kernel(data-x)
 
@@ -132,17 +122,19 @@ def subspace_constrained_mean_shift_update(x, data, kernel, Hdiag):
 def scms(data, sigma=None, n_iterations=5):
     """
     Performs subspace constrained mean shift on the entire data set using
-    a Gaussian kernel with bandwidth of sigma.
+    a Gaussian kernel with bandwidth matrix Hdiag described below
     """
     denoised = data.copy()
     n, d = data.shape
     if sigma is None:
         variance_min = min(np.var(denoised,axis=0))
+        # this version of the bandwidth matrix follows Equation A1 (without A_0) of Chen et al. 2015 in MNRAS
         Hdiag = (4/(d+2))**(1/(d+4)) * n **(-1/(d+4)) * np.sqrt(variance_min *np.ones(d))
     else:
         Hdiag = sigma * np.ones(d)
 
     Hdiag = Hdiag ** 2
+    # note that we are currently not using an anisotripic bandwidth matrix even though the original scms paper indicates the possibility to do so
     kernel = make_anisotropic_gaussian_kernel(Hdiag)
 
     for j in range(n_iterations):

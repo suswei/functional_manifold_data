@@ -1,13 +1,19 @@
+# library(DescTools)
 library(reticulate)
-# use right version of python
+library(fields)
+library(fda)
+library(matlabr)
+library(igraph)
 
-#use_python('/usr/bin/python',required=TRUE)
-use_python('/anaconda3/envs/r-reticulate/bin/python',required=TRUE)
-#use_python('/Users/suswei/anaconda3/bin/python',required=TRUE)
-
-#use_python('/usr/local/bin/python3.7',required=TRUE)
-# use_python('/Users/UQAM/anaconda3/bin/python',required=TRUE)
+# this may need to be set at the beginning of the session 
+# Susan's
+# use_python('/usr/bin/python',required=TRUE)
+# use_python('/usr/local/bin/python3.7',required=TRUE)
 # use_python('/Users/suswei/anaconda3/bin/python',required=TRUE)
+
+# Marie's
+# use_python('/anaconda3/envs/r-reticulate/bin/python',required=TRUE)
+# use_python('/Users/UQAM/anaconda3/bin/python',required=TRUE)
 
 
 rm(list = ls())
@@ -20,16 +26,6 @@ source('pairwise_geo_estimation.R')
 source('sim_Euclidean_data.R')
 source('assess_goodness_estimation.R')
 source('robust_isomap.R')
-
-library(DescTools)
-library(fields)
-library(fda)
-library(matlabr)
-library(igraph)
-
-# pyIso = import_from_path("getIsomapGdist",path='.')
-# py_min_neigh = import_from_path("get_min_num_neighbors",path='.')
-# scms = import_from_path("scms",path='.')
 
 
 #### Analysis of Functional data
