@@ -47,7 +47,7 @@
 #Example of call for FD
 #data<- sim_functional_data(sce=2,samplesize=100)
 # meth <- list("NN" = TRUE,"RD_o" = TRUE,"RD" = TRUE,"SS_o" = TRUE,"SS" = TRUE,"pI" = FALSE,"OUR" = TRUE,"OUR2" = FALSE,"OUR3"=TRUE,"RP" = FALSE )
-# Estim<- pairwise_geo_estimation(meth,data$noiseless_data,data$noisy_data,data$analytic_geo,TRUE,TRUE,20,data$grid,data$reg_grid,1)
+# Estim<- pairwise_geo_estimation(meth,data$noiseless_data,data$noisy_data,data$analytic_geo,TRUE,TRUE,20,data$grid,data$reg_grid,1,FALSE)
 
 
 #library(reticulate)
@@ -58,11 +58,10 @@ py_min_neigh = import_from_path("get_min_num_neighbors",path='.')
 # TODO Marie/Susan: consider replacing python scms with R version, see https://sites.google.com/site/yenchicr/algorithm
 scms = import_from_path("scms",path='.')
 
-pairwise_geo_estimation <- function(method,true_data,discrete_data,true_geo,plot_true,FD_true,nb_proj,grid,reg_grid,common_grid_true){
+pairwise_geo_estimation <- function(method,true_data,discrete_data,true_geo,plot_true,FD_true,nb_proj,grid,reg_grid,common_grid_true,Analytic_geo_available=TRUE){
   
-  samplesize = nrow(true_data)
-  K = ncol(true_data)
-  norm_true_geo = sqrt(sum(true_geo^2))
+  samplesize = nrow(discrete_data)
+  K = ncol(discrete_data)
   list_to_return<- list()
 
   smooth_data = smooth_FD_bspline(discrete_data,grid,reg_grid)
@@ -70,9 +69,12 @@ pairwise_geo_estimation <- function(method,true_data,discrete_data,true_geo,plot
   # Normalise the data
   a = reg_grid[1]
   b = reg_grid[K]
-  true_data <- (sqrt((b-a)/K))*true_data
   discrete_data <- (sqrt((b-a)/K))*discrete_data
   smooth_data <- (sqrt((b-a)/K))*smooth_data
+  
+  if(Analytic_geo_available){
+    norm_true_geo = sqrt(sum(true_geo^2))
+  }
   
   
   if(method$NN){
@@ -80,7 +82,7 @@ pairwise_geo_estimation <- function(method,true_data,discrete_data,true_geo,plot
     ### Estimation from noiseless data
     
     print("Floyd's Algorithm on noiseless data")
-    
+    true_data <- (sqrt((b-a)/K))*true_data
     # Find a grid of possible values for the number of neigbors
     num_neigh_min=py_min_neigh$get_min_num_neighbors(true_data)
     num_neigh_true=seq(num_neigh_min,samplesize/2,by=2)
@@ -134,12 +136,11 @@ pairwise_geo_estimation <- function(method,true_data,discrete_data,true_geo,plot
     ### Direct estimation from the noisy data
     
     print("Floyd's Algorithm on raw data (no oracle)")
-    
     estim_geo_noisy_data<-robust_iso(discrete_data)
-    err<- sqrt(sum((estim_geo_noisy_data -true_geo)^2))/norm_true_geo
     
     if(plot_true){
       par(mfrow=c(1,1))
+      err<- sqrt(sum((estim_geo_noisy_data -true_geo)^2))/norm_true_geo
       image.plot(estim_geo_noisy_data,main=paste('Err noisy data = ',signif(err,digits =4),sep=''))
     }
     
@@ -181,11 +182,11 @@ pairwise_geo_estimation <- function(method,true_data,discrete_data,true_geo,plot
     ## Estimation from smooth data
     
     print("Floyd's Algorithm on smooth data (no oracle)")
-    
     estim_geo_smooth_data = robust_iso(smooth_data)
-    err<- sqrt(sum((estim_geo_smooth_data -true_geo )^2))/norm_true_geo
+    
     if(plot_true){
       par(mfrow=c(1,2))
+      err<- sqrt(sum((estim_geo_smooth_data -true_geo )^2))/norm_true_geo
       matplot(reg_grid,t(smooth_data/(sqrt((b-a)/K))),main="Smoothed data",type='l', col=rainbow(samplesize))
       image.plot(estim_geo_smooth_data,main=paste('Err smoothed data = ',signif(err,digits = 4),sep=''))
     }
@@ -228,21 +229,6 @@ pairwise_geo_estimation <- function(method,true_data,discrete_data,true_geo,plot
       image.plot(estim_geo_penalized_isomap,main=paste('err p-isomap = ',signif(min(err_delta_neigh),digits =4),', delta = ',delta_min,sep=''))
     }
   }
-
-  # if(method$RI){
-  #   ### Robust isomap of Dimeglio, Gallon, Loubes, Maza
-  #   
-  #   print("robust isomap of Dimeglio on smooth data")
-  #   
-  #   estim_geo_rob_iso<- robust_iso(smooth_data)
-  #   list_to_return[["estim_geo_rob_iso"]]<- estim_geo_rob_iso
-  #   
-  #   
-  #   if(plot_true){
-  #     err_rob_iso<- sqrt(sum((estim_geo_rob_iso -true_geo )^2))/norm_true_geo
-  #     image.plot(estim_geo_rob_iso,main=paste('err robust isomap = ',signif(err_rob_iso,digits =4),sep=''))
-  #   }
-  # }
 
   
   if(method$OUR){
@@ -324,49 +310,6 @@ pairwise_geo_estimation <- function(method,true_data,discrete_data,true_geo,plot
     }
   }
   
-  # if(method$OUR){
-  # ###   use mds to obtain a s-dim version of each data point, use SCMS to estimate the manifold
-  # ###   and estimation geo with Floyd's algo.
-  # 
-  #   print("mds of smooth data + scms + Floyd's Algorithm")
-  #   
-  #   err_s<- rep(0,3)
-  #   scms_h=seq(0.1,2,by=0.2)
-  #   for(s in 1:3){
-  #     # Projection of the data in dim s using mds
-  #     euc_dis_mat=dist(smooth_data)
-  #     mds_mat = cmdscale(euc_dis_mat,eig=TRUE, k=s)
-  #     projected = mds_mat$points
-  # 
-  #     Error_mds_h= matrix(0,nrow=length(scms_h),ncol=2)
-  #     for(bw in 1:length(scms_h)){
-  #       # use scms to estimate a manifold in dim s
-  #       denoised = scms$scms(projected, scms_h[bw])
-  #       # Find a grid of possible values for the number of neigbors
-  #       num_neigh_min=py_min_neigh$get_min_num_neighbors(denoised)
-  #       num_neigh=seq(num_neigh_min,samplesize/2,by=2)
-  #       Error_mds_K= rep(0,length(num_neigh))
-  #       for(j in 1:length(num_neigh)){
-  #         IsomapGdist_denoised = pyIso$getIsomapGdist(denoised,num_neigh[j])
-  #         Error_mds_K[j]=sqrt(sum((IsomapGdist_denoised -true_geo)^2))/norm_true_geo
-  #       }
-  #       ind_neigh=min(which(Error_mds_K==min(Error_mds_K)))
-  #       Error_mds_h[bw,]=c(Error_mds_K[ind_neigh],num_neigh[ind_neigh])
-  #     }
-  #     ind=min(which(Error_mds_h[,1]==min(Error_mds_h[,1])))
-  #     denoised = scms$scms(projected, scms_h[ind])
-  #     list_to_return[[paste("estim_geo_mds_scms_s",s,sep='')]] = pyIso$getIsomapGdist(denoised,Error_mds_h[ind,2])
-  #     err_s[s]<-min(Error_mds_h[,1])
-  #   }
-  # 
-  #   if(plot_true){
-  #     par(mfrow=c(1,3))
-  #     image.plot(list_to_return$estim_geo_mds_scms_s1,main=paste('err mds + scms (s=1) = ',signif(err_s[1],digits = 4),sep=''))
-  #     image.plot(list_to_return$estim_geo_mds_scms_s2,main=paste('err mds + scms (s=2) = ',signif(err_s[2],digits = 4),sep=''))
-  #     image.plot(list_to_return$estim_geo_mds_scms_s3,main=paste('err mds + scms (s=3) = ',signif(err_s[3],digits = 4),sep=''))
-  #   }
-  # }
-  
   if(method$OUR3){
     ###   use mds to obtain a s-dim version of each data point, use SCMS to estimate the manifold
     ###   and estimation geo with robust isomap.
@@ -381,12 +324,16 @@ pairwise_geo_estimation <- function(method,true_data,discrete_data,true_geo,plot
       projected = mds_mat$points
       denoised = scms$scms(projected)
       estim_geo_mds_scms_RI<-robust_iso(denoised)
-      err<- sqrt(sum((estim_geo_mds_scms_RI -true_geo)^2))/norm_true_geo
       list_to_return[[paste("estim_geo_mds_scms_RI_h_heuri_s",s,sep='')]] = estim_geo_mds_scms_RI
-      err_s[s]<-err
+      if(Analytic_geo_available) {
+        err<- sqrt(sum((estim_geo_mds_scms_RI -true_geo)^2))/norm_true_geo
+        err_s[s]<-err
+      }
+      
     }
     
     if(plot_true){
+      
       par(mfrow=c(1,3))
       image.plot(list_to_return$estim_geo_mds_scms_RI_h_heuri_s1,main=paste('OUR3 (s=1) = ',signif(err_s[1],digits = 4),sep=''))
       image.plot(list_to_return$estim_geo_mds_scms_RI_h_heuri_s2,main=paste('OUR3 (s=2) = ',signif(err_s[2],digits = 4),sep=''))

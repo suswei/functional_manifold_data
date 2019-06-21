@@ -1,52 +1,66 @@
-#### Analysis of growth data 
+#### Classification of growth curves dataset based on orginal data and velocity
 ## We estimate the geodesic distance matrix with 4 methods
 ## a) using raw data
 ## b) using smoothed data
 ## c) using scms on reduced dim. of smoothed data obtain with random projections
 ## d) using scms reduced dim. of smoothed data obtain with mds
 
-#### Oracle for number of neigbors and bandwidth h are obtained by minimising the classification errors 
 
-setwd("/Users/marie_uqam/Dropbox/Marie-Moi/Susan_project/manifold learning/Geo_dist_calculation")
 
 library(reticulate)
 library(fda)
 library(scatterplot3d)
 library(kmed)
 library(fields)
-source('Modif_Isomap.R')
-source('Isomap.R')
-source('smooth_FD_bspline.R')
-
-# use right version of python
-use_python('/anaconda3/bin/python',required=TRUE)
-pyIso = import_from_path("getIsomapGdist",path='.')
-py_min_neigh = import_from_path("get_min_num_neighbors",path='.')
-scms = import_from_path("scms",path='.')
-
-discrete_data <- t(cbind(growth$hgtm,growth$hgtf))
-grid <- growth$age
-samplesize <- nrow(discrete_data)
-K <- length(grid)
-true_cluster<- c(rep(1,39),rep(2,54))
-nb_proj<-5 # nb projection for RP
-s=3 # reduced dimension for mds and random projection
+library(igraph)
+source('robust_isomap.R')
+source('pairwise_geo_estimation.R')
 
 
-###  a) Direct estimation from the noisy data
-num_neigh_min=py_min_neigh$get_min_num_neighbors(discrete_data)
-num_neigh=seq(num_neigh_min,samplesize/2,by=2)
-misclass_noisy_mani_K<-rep(0,length(num_neigh))
-for(j in 1:length(num_neigh)){
-  IsomapGdist = pyIso$getIsomapGdist(discrete_data,num_neigh[j])
-  res<-fastkmed( IsomapGdist, ncluster = 2, iterate = 50)
-  temp=table(res$cluster,true_cluster)
-  misclass_noisy_mani_K[j]=min(1-(sum(diag(temp))/samplesize),sum(diag(temp))/samplesize)
+### Reading the data
+
+growth_data <- t(cbind(growth$hgtm,growth$hgtf))
+growth_grid <- growth$age
+true_group<- c(rep(0,39),rep(1,54)) # 0 = boy and 1 = girl
+
+# We apply our method to obtain the pairwise geodesic distance (and floyd on smooth data)
+meth <- list("NN" = FALSE,"RD_o" = FALSE,"RD" = FALSE,"SS_o" = FALSE,"SS" = TRUE,"pI" = FALSE,"OUR" = FALSE,"OUR2" = FALSE,"OUR3"=TRUE,"RP" = FALSE )
+Estim<- pairwise_geo_estimation(meth,NA,growth_data,NA,FALSE,TRUE,NA,matrix(rep(growth_grid,93),nrow=93,byrow = TRUE),growth_grid,1,FALSE)
+
+class_err<-rep(0,500)
+for(split in 1:500){
+  train_ind<- sort(sample(1:93,50))
+  test_ind_temp<- 1:93 
+  test_ind<- test_ind_temp[-train_ind]
+  
+  # We classify the data using functional version of the Nadaraya–Watson kernel estimator for the class membership probabilities
+  h<- 10
+  deno <- colSums(dnorm(h^(-1)*Estim$estim_geo_mds_scms_RI_h_heuri_s3[train_ind,test_ind]))
+  num_prob_gars<- colSums(dnorm(h^(-1)*Estim$estim_geo_mds_scms_RI_h_heuri_s3[train_ind[which(train_ind<40)],test_ind]))
+  
+  prob_gars<- num_prob_gars / deno
+  pred<- rep(0,43)
+  pred[which(prob_gars<0.5)]<- 1
+  class_err[split]<- mean(abs(true_group[test_ind] - pred ))
 }
-err_noisy=min(misclass_noisy_mani_K)
-ind_op=min(which(misclass_noisy_mani_K==err_noisy))
-Isomap_R = Isomap(discrete_data,2,num_neigh[ind_op])
-Iso_data <- Isomap_R[[1]][[1]]
+
+mean(class_err)
+# iteration split
+
+test_ind<- test_ind_temp[-train_ind]
+
+# We classify the data using functional version of the Nadaraya–Watson kernel estimator for the class membership probabilities
+h<- 10
+deno <- colSums(dnorm(h^(-1)*Estim$estim_geo_mds_scms_RI_h_heuri_s3[train_ind,test_ind]))
+num_prob_gars<- colSums(dnorm(h^(-1)*Estim$estim_geo_mds_scms_RI_h_heuri_s3[train_ind[which(train_ind<40)],test_ind]))
+
+prob_gars<- num_prob_gars / deno
+pred<- rep(0,43)
+pred[which(prob_gars<0.5)]<- 1
+class_err<- mean(abs(true_group[test_ind] - pred ))
+
+
+# Clustering
 res<-fastkmed( Isomap_R[[2]], ncluster = 2, iterate = 50)
 
 par(mfrow=c(2,2))
