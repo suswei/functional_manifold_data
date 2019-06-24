@@ -8,7 +8,7 @@ choose_el2<-function(ind_vec,list_in1){
   lapply(list_in1,choose_el,ind1=ind_vec[1],ind2=ind_vec[2])
 }
 
-create_boxplot<- function(sce_details,mat_ind){
+create_boxplot<- function(sce_details,mat_ind,method_names,nr_methods){
   
   data_sce = list.files(pattern=paste("_sce=",sce_details[1],
                                       "_samplesize=",sce_details[2],
@@ -35,12 +35,6 @@ create_boxplot<- function(sce_details,mat_ind){
   par(mfrow=c(1,3))
   par(oma=c(2,2,2,2))
 
-  meth <- list("NN" = TRUE,"RD_o" = TRUE,"RD" = TRUE,"SS_o" = TRUE,"SS" = TRUE,"pI" = FALSE,"OUR" = TRUE,"OUR2" = FALSE,"OUR3"=TRUE,"RP" = FALSE )# see pairwise_geo_estimation for more info
-  
-  # TODO: this needs to be passed into the script from compare_methods.R?
-  method_names=c("NN","RD_o", "RD", "SS_o","SS","OurS1","OurS2","OurS3","Our3_S1","Our3_S2","Our3_S3")
-  nr_methods = length(method_names)
-  
   # TODO: VERY annoying that these are hardcoded, have to customise them according to compare_methods.
   boxplot(results[,1:nr_methods],main="relative MSE",names=method_names)
   boxplot(results[,(1+nr_methods):(2*nr_methods)],main="AUC of entrywise epsilon-isometry",names=method_names)
@@ -52,11 +46,17 @@ create_boxplot<- function(sce_details,mat_ind){
   }
 }
 
+
+# TODO: this needs to be passed into the script from compare_methods.R?
+method_names=c("NN","RD_o", "RD", "SS_o","SS","OurS1","OurS2","OurS3","Our3_S1","Our3_S2","Our3_S3")
+nr_methods = length(method_names)
+
+
 # TODO: a bit annoying that these are hardcoded, have to customise them according to compare_methods.R
 combination_res_assess<- cbind(rep(1:nr_methods,3),rep(1:3,each=nr_methods)) # 7*3 combinations of methods and assesment measures
 combination_para <- expand.grid(c(1,2,4),c(100,250),c(0.1,0.5),c(0,1)) # combinations of the parameters
 
-apply(combination_para,1,create_boxplot,mat_ind=combination_res_assess)
+apply(combination_para,1,create_boxplot,mat_ind=combination_res_assess,method_names=method_names,nr_methods=nr_methods)
 
 
 
