@@ -23,7 +23,7 @@ create_boxplot<- function(sce_details,mat_ind,method_names,nr_methods){
   
   temp_res<-apply(mat_ind,1,choose_el2,list_in1=raw_results)
   temp_res2<- lapply(temp_res,unlist,use.names=FALSE)
-  results<- matrix(unlist(temp_res2,use.names=FALSE),ncol=18)
+  results<- matrix(unlist(temp_res2,use.names=FALSE),ncol=3*nr_methods)
   
   ### We plot one boxplot per method and per assesment measure
   pdf(paste("sce=",sce_details[1],
@@ -33,7 +33,7 @@ create_boxplot<- function(sce_details,mat_ind,method_names,nr_methods){
             ".pdf",sep=""),width=15,height=5)
   
   par(mfrow=c(1,3))
-  par(oma=c(2,2,2,2))
+  par(oma=c(3,3,3,3))
 
   # TODO: VERY annoying that these are hardcoded, have to customise them according to compare_methods.
   boxplot(results[,1:nr_methods],main="relative MSE",names=method_names)
@@ -48,7 +48,7 @@ create_boxplot<- function(sce_details,mat_ind,method_names,nr_methods){
 
 
 # TODO: this needs to be passed into the script from compare_methods.R?
-method_names=c("NN","RD_o", "RD", "SS_o","SS","OurS1","OurS2","OurS3","Our3_S1","Our3_S2","Our3_S3")
+method_names=c("NN","RD_o", "RD", "SS_o","SS","OurS1","OurS2","OurS3","Our3S1","Our3S2","Our3S3")
 nr_methods = length(method_names)
 
 
