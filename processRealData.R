@@ -1,4 +1,3 @@
-library("rlist")
 processRealData = function(){
   
   list_of_lists = list()

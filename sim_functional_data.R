@@ -78,7 +78,7 @@
 
 
 #Example of call
-# data<- sim_functional_data(1,20,15,-3,3,0.5,1,1,1)
+# data<- sim_functional_data(1,100,15,0.5,1,1,1)
 
 library(fields)
 source('full_geo_from_adj_geo.R')

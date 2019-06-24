@@ -1,4 +1,4 @@
-##### Estimation of pairwise geodesic distances
+##### Estimation of pairwise geodesic distances for functional data
 
 # We estimate the geodesic matrix obtained via
 # NN: Floyd's Algorithm on noiseless data (just to make sure that the theoretical geo. is calculated correctly)
@@ -11,6 +11,9 @@
 # OUR2: mds of smooth data + scms + robust isomap (oracle for h)
 # OUR3: mds of smooth data + scms h heuri + robust isomap (no oracle)
 # RP : random proj. of smooth data + scms + Floyd's Algorithm 
+# L2 : pairwise L2 distances on smooth data
+# w_L2 : weigthed L2 defined in Chen et al (Biometrics)
+
 
 # TODO: what if data are not observed on a common grid and NN, RD, RD_o are called? Are there warnings?
 ## Note that NN, RD, RD_o can only be used if the data are observed on a common grid
@@ -22,56 +25,74 @@
 # true_geo [optional, bypass with NA]: samplesize x samplesize matrix containing true pairwise geo disctance
 # s : dimension use for mds and random projections
 # plot_true : if TRUE plot of geo estimation for each method
-# FD_true : if TRUE functional data, otherwise euclidean data
-# grid : samplesize x K matrix containing the grid on which each data is observed (required only if FD_true =1)
+# nb_proj : number of projection used for RP method
+# grid : samplesize x K matrix containing the grid on which each data is observed 
+# reg_grid : vector of dim K containing a regular grid of K points on [a,b] 
 # common_grid_true : if 1 grid is common for every curve, if 0 different grid for every curve
+# Analytic_geo_available : indicate if we have access to the true pairwise geodesic distances
+# is_data_smoothed : TRUE data has already been smoothed, otherwise false
 
-# TODO: all of these "estim_geo_XXX" variable names should be changed, e.g. estim_geo_true_data should be renamed estim_geo_NN
+# TODO MH : add the possibility of a denser grid?
+# K_dense : if 0 the smooth curves are observe on reg_grid, otherwise they are observed on a regular grid of K_dense points
+
+
 ## Output
 # list of estimated geodesic distance :
-# estim_geo_true_data = method NN
-# estim_geo_noisy_data_o = method RD_o
-# estim_geo_noisy_data = method RD
-# estim_geo_smooth_data_o = method SS_o
-# estim_geo_smooth_data = method SS
-# estim_geo_penalized_isomap = method pI
-# estim_geo_mds_scms = method OUR
-# estim_geo_mds_scms_RI = method OUR2
-# estim_geo_mds_scms_RI_h_heuri = method OUR3
-# estim_geo_RP_scms = method RP
+# estim_geo_NN = method NN
+# estim_geo_RD_o = method RD_o
+# estim_geo_RD = method RD
+# estim_geo_SS_o = method SS_o
+# estim_geo_SS = method SS
+# estim_geo_pI = method pI
+# estim_geo_OUR = method OUR
+# estim_geo_OUR2 = method OUR2
+# estim_geo_OUR3 = method OUR3
+# estim_geo_RP = method RP
+# estim_L2 =  method L2 
+# estim_w_L2 = method w_L2
 
 
 # Example of call for functional data
 # data<- sim_functional_data(sce=2,samplesize=100)
-# meth <- list("NN" = TRUE,"RD_o" = TRUE,"RD" = TRUE,"SS_o" = TRUE,"SS" = TRUE,"pI" = FALSE,"OUR" = TRUE,"OUR2" = FALSE,"OUR3"=TRUE,"RP" = FALSE )
-# Estim<- pairwise_geo_estimation(meth,data$noiseless_data,data$noisy_data,data$analytic_geo,TRUE,TRUE,20,data$grid,data$reg_grid,1,FALSE)
+# meth <- list("NN" = TRUE,"RD_o" = TRUE,"RD" = TRUE,"SS_o" = TRUE,"SS" = TRUE,"pI" = FALSE,"OUR" = TRUE,"OUR2" = FALSE,"OUR3"=TRUE,"RP" = FALSE, "L2" = TRUE, "w_L2" = TRUE )
+# Estim<- pairwise_geo_estimation(meth,data$noiseless_data,data$noisy_data,data$analytic_geo,TRUE,TRUE,20,data$grid,data$reg_grid,1,FALSE,FALSE)
 
 
 pyIso = import_from_path("getIsomapGdist",path='.') # TODO: consider replacing python Isomap with R implementation of Floyd's algorithm? https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm
 py_min_neigh = import_from_path("get_min_num_neighbors",path='.')
 scms = import_from_path("scms",path='.') # TODO: consider replacing python scms with R version, see https://sites.google.com/site/yenchicr/algorithm
 
-pairwise_geo_estimation <- function(method,true_data,discrete_data,true_geo,plot_true,FD_true,nb_proj,grid,reg_grid,common_grid_true,Analytic_geo_available=TRUE,is_data_smoothed = FALSE){
+pairwise_geo_estimation <- function(method,true_data,discrete_data,true_geo,plot_true,nb_proj,grid,reg_grid,common_grid_true,Analytic_geo_available=TRUE,is_data_smoothed = FALSE){
   
   samplesize = nrow(discrete_data)
   K = ncol(discrete_data)
+  a = reg_grid[1]
+  b = reg_grid[K]
+
   list_to_return<- list()
 
+  
   if(is_data_smoothed) {
     smooth_data = discrete_data
   } else {
-    smooth_data = smooth_FD_bspline(discrete_data,grid,reg_grid)
+    smooth_data<- smooth_FD_bspline(discrete_data,grid,reg_grid)
+  }
+  
+  # plot noisy and smooth data
+  if(plot_true){
+      matplot(reg_grid,t(smooth_data),main="Smoothed data",type='l', col=rainbow(samplesize))
   }
   
   # Normalise the data
-  a = reg_grid[1]
-  b = reg_grid[K]
   discrete_data <- (sqrt((b-a)/K))*discrete_data
   smooth_data <- (sqrt((b-a)/K))*smooth_data
+  
+  
   
   if(Analytic_geo_available){
     norm_true_geo = sqrt(sum(true_geo^2))
   }
+  
   
   
   if(method$NN){
@@ -93,11 +114,10 @@ pairwise_geo_estimation <- function(method,true_data,discrete_data,true_geo,plot
     ind_op_true=min(which(Error_true_mani_K==min(Error_true_mani_K)))
     estim_geo_true_data = pyIso$getIsomapGdist(true_data,num_neigh_true[ind_op_true])
     
-    list_to_return[["estim_geo_true_data"]] <- estim_geo_true_data
+    list_to_return[["estim_geo_NN"]] <- estim_geo_true_data
     
     if(plot_true){
-      par(mfrow=c(1,1))
-    image.plot(estim_geo_true_data,main=paste('Err noiseless data = ',signif(min(Error_true_mani_K),digits =4),', nb nei. =',num_neigh_true[ind_op_true],sep=''))
+      image.plot(estim_geo_true_data,main=paste('Err noiseless data = ',signif(min(Error_true_mani_K),digits =4),', nb nei. =',num_neigh_true[ind_op_true],sep=''))
     }
   }
   
@@ -120,12 +140,11 @@ pairwise_geo_estimation <- function(method,true_data,discrete_data,true_geo,plot
     estim_geo_noisy_data = pyIso$getIsomapGdist(discrete_data,num_neigh_noisy[ind_op_noisy])
     
     if(plot_true){
-      par(mfrow=c(1,1))
       image.plot(estim_geo_noisy_data,main=paste('Err noisy data = ',signif(min(Error_noisy_mani_K),digits =4),', nb nei. =',num_neigh_noisy[ind_op_noisy],sep=''))
     }
     
     # Update list of estimation geo
-    list_to_return[["estim_geo_noisy_data_o"]] <- estim_geo_noisy_data
+    list_to_return[["estim_geo_RD_o"]] <- estim_geo_noisy_data
     
   }
   
@@ -136,13 +155,12 @@ pairwise_geo_estimation <- function(method,true_data,discrete_data,true_geo,plot
     estim_geo_noisy_data<-robust_iso(discrete_data)
     
     if(plot_true){
-      par(mfrow=c(1,1))
       err<- sqrt(sum((estim_geo_noisy_data -true_geo)^2))/norm_true_geo
       image.plot(estim_geo_noisy_data,main=paste('Err noisy data = ',signif(err,digits =4),sep=''))
     }
     
     # Update list of estimation geo
-    list_to_return[["estim_geo_noisy_data"]] <- estim_geo_noisy_data
+    list_to_return[["estim_geo_RD"]] <- estim_geo_noisy_data
     
   }
   
@@ -166,13 +184,11 @@ pairwise_geo_estimation <- function(method,true_data,discrete_data,true_geo,plot
     estim_geo_smooth_data = pyIso$getIsomapGdist(smooth_data,num_neigh_smooth[ind_op_smooth])
     
     if(plot_true){
-      par(mfrow=c(1,2))
-      matplot(reg_grid,t(smooth_data/(sqrt((b-a)/K))),main="Smoothed data",type='l', col=rainbow(samplesize))
       image.plot(estim_geo_smooth_data,main=paste('Err smoothed data = ',signif(min(Error_smooth_mani_K),digits = 4),'nb nei. =',num_neigh_smooth[ind_op_smooth],sep=''))
     }
     
     # Update list of estimation geo
-    list_to_return[["estim_geo_smooth_data_o"]] <- estim_geo_smooth_data
+    list_to_return[["estim_geo_SS_o"]] <- estim_geo_smooth_data
   }
   
   if(method$SS){
@@ -182,14 +198,12 @@ pairwise_geo_estimation <- function(method,true_data,discrete_data,true_geo,plot
     estim_geo_smooth_data = robust_iso(smooth_data)
     
     if(plot_true){
-      par(mfrow=c(1,2))
       err<- sqrt(sum((estim_geo_smooth_data -true_geo )^2))/norm_true_geo
-      matplot(reg_grid,t(smooth_data/(sqrt((b-a)/K))),main="Smoothed data",type='l', col=rainbow(samplesize))
       image.plot(estim_geo_smooth_data,main=paste('Err smoothed data = ',signif(err,digits = 4),sep=''))
     }
     
     # Update list of estimation geo
-    list_to_return[["estim_geo_smooth_data"]] <- estim_geo_smooth_data
+    list_to_return[["estim_geo_SS"]] <- estim_geo_smooth_data
   }
   
   if(method$pI){
@@ -220,7 +234,7 @@ pairwise_geo_estimation <- function(method,true_data,discrete_data,true_geo,plot
     delta_min_tmp=which(err_delta_neigh==min(err_delta_neigh),arr.ind = TRUE)
     delta_min=delta_can[delta_min_tmp[1,1]]
   
-    list_to_return[["estim_geo_penalized_isomap"]]<- estim_geo_penalized_isomap
+    list_to_return[["estim_geo_pI"]]<- estim_geo_penalized_isomap
     
     if(plot_true){
       image.plot(estim_geo_penalized_isomap,main=paste('err p-isomap = ',signif(min(err_delta_neigh),digits =4),', delta = ',delta_min,sep=''))
@@ -259,7 +273,7 @@ pairwise_geo_estimation <- function(method,true_data,discrete_data,true_geo,plot
       }
       ind=min(which(Error_mds_h[,1]==min(Error_mds_h[,1])))
       denoised = scms$scms(projected, scms_h[ind])
-      list_to_return[[paste("estim_geo_mds_scms_s",s,sep='')]] = pyIso$getIsomapGdist(denoised,Error_mds_h[ind,2])
+      list_to_return[[paste("estim_geo_OUR_s",s,sep='')]] = pyIso$getIsomapGdist(denoised,Error_mds_h[ind,2])
       err_s[s]<-min(Error_mds_h[,1])
     }
 
@@ -295,7 +309,7 @@ pairwise_geo_estimation <- function(method,true_data,discrete_data,true_geo,plot
         }
         ind=min(which.min(Error_mds_h))
         denoised = scms$scms(projected, scms_h[ind])
-        list_to_return[[paste("estim_geo_mds_scms_RI_s",s,sep='')]] = robust_iso(denoised)
+        list_to_return[[paste("estim_geo_OUR2_s",s,sep='')]] = robust_iso(denoised)
         err_s[s]<-min(Error_mds_h)
       }
     
@@ -321,7 +335,7 @@ pairwise_geo_estimation <- function(method,true_data,discrete_data,true_geo,plot
       projected = mds_mat$points
       denoised = scms$scms(projected)
       estim_geo_mds_scms_RI<-robust_iso(denoised)
-      list_to_return[[paste("estim_geo_mds_scms_RI_h_heuri_s",s,sep='')]] = estim_geo_mds_scms_RI
+      list_to_return[[paste("estim_geo_OUR3_s",s,sep='')]] = estim_geo_mds_scms_RI
       if(Analytic_geo_available) {
         err<- sqrt(sum((estim_geo_mds_scms_RI -true_geo)^2))/norm_true_geo
         err_s[s]<-err
@@ -383,7 +397,7 @@ pairwise_geo_estimation <- function(method,true_data,discrete_data,true_geo,plot
       ens_geo_mat<-matrix(0,samplesize,samplesize)
       ens_geo_mat[lower.tri(ens_geo_mat, diag = FALSE)]=ensemble_geo
       estim_geo_RP_scms <- ens_geo_mat + t(ens_geo_mat)
-      list_to_return[[paste("estim_geo_RP_scms_s",s,sep='')]] = estim_geo_RP_scms
+      list_to_return[[paste("estim_geo_RP_s",s,sep='')]] = estim_geo_RP_scms
       err_RP_s[s]<-sqrt(sum((estim_geo_RP_scms -true_geo )^2))/norm_true_geo
     }
     if(plot_true){
@@ -394,6 +408,64 @@ pairwise_geo_estimation <- function(method,true_data,discrete_data,true_geo,plot
     }
   }
   
+  if(method$L2){
+    ## L2 distance from smooth data
+    
+    print("pairwise L2 distances of smooth data")
+    
+    estim_L2<-as.matrix(dist(smooth_data,diag=TRUE,upper=TRUE))
+    
+    if(plot_true){
+      par(mfrow=c(1,1))
+      image.plot(estim_L2,main='L2 distances')
+    }
+
+    # Update list of estimation geo
+    list_to_return[["estim_L2"]] <- estim_L2
+  }
+  
+  if(method$w_L2){
+    ## weigthed L2 distance from smooth data
+    
+    nbas=15
+    nbasis.w=10
+    
+    print("pairwise weigthed L2 distances of smooth data")
+    y<- t(discrete_data)
+    bsb = create.bspline.basis(range(reg_grid), nbasis=nbas)
+    B = eval.basis(reg_grid, bsb)
+    P = getbasispenalty(bsb)
+    delta=1/K
+
+    arrayVp=array(NA, c(nbas,nbas, samplesize))
+    coef=matrix(NA, nbas, samplesize)
+    
+    for (i in 1:samplesize){
+      swmod = gam(y[,i]~B-1,paraPen=list(B=list(P)), method="REML")
+      arrayVp[,,i]=swmod$Vp
+      coef[,i]=swmod$coefficients
+    }
+    
+   
+    bsb.w = create.bspline.basis(range(reg_grid), nbasis=nbasis.w)
+    B.grid.w=eval.basis(reg_grid, bsb.w)
+    
+    fit=weight.minCV(coef=coef, arrayVp=arrayVp, B.grid=B, B.grid.weight=B.grid.w, t.grid=reg_grid)
+    weight=fit$weight
+    #plot(reg_grid, weight, type='l')
+    estim_w_L2<-as.matrix(dist(t(sqrt(weight)*t(smooth_data)),diag=TRUE,upper=TRUE))
+    
+    
+
+    if(plot_true){
+      par(mfrow=c(1,1))
+      image.plot(estim_w_L2,main='weigthed L2 distances')
+    }
+    
+    # Update list of estimation geo
+    list_to_return[["estim_w_L2"]] <- estim_w_L2
+  }
+  
   return(list_to_return)
 
 }
@@ -402,7 +474,7 @@ pairwise_geo_estimation <- function(method,true_data,discrete_data,true_geo,plot
 
 smooth_FD_bspline <- function(discrete_data,grid,reg_grid){
   
-  K = ncol(discrete_data)
+  K<- ncol(discrete_data)
   nbasis <- K+2
   basis_obj <- create.bspline.basis(c(reg_grid[1],reg_grid[K]),nbasis)
   loglambda <- seq(-10,-1,by=0.5)
@@ -417,6 +489,9 @@ smooth_FD_bspline <- function(discrete_data,grid,reg_grid){
   smooth_res <- smooth.basis(t(grid),t(discrete_data),fd_par_obj)
   smooth_curve_tmp <- smooth_res$fd
   smooth_curve <- eval.fd(reg_grid,smooth_curve_tmp)
+  
+  
+  
   return(t(smooth_curve))
   
 }
