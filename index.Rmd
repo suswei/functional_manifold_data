@@ -105,13 +105,13 @@ We perform a simulation study to ascertain the efficacy of our method for estima
 
 
 ## Performance metrics
-We introduce a new metric for assessing the quality of a pairwise geodesic distance estimator. This is the ROC curve with $\epsilon$ on the $x$-axis and degree to which near-$\epsilon$ isometry holds, i.e.\ the percentage of estimated pairwise distances between $1-\epsilon$ and $1+\epsilon$ of the truth pairwise distance.  
+We describe three different metrics we use to assess the quality of a pairwise geodesic distance estimator. This is the ROC curve with $\epsilon$ on the $x$-axis and degree to which near-$\epsilon$ isometry holds, i.e.\ the percentage of estimated pairwise distances between $1-\epsilon$ and $1+\epsilon$ of the truth pairwise distance.  
 
 ## Results
 
 # Study on "misspecification"
 
-Suppose we take scenario 1 where the geodesic distance coincides with the $L_2$ distance. Then what is the cost of employing our distance estimator compared to smoothing the data and doing numerical integration to find the $L_2$ distance.
+Suppose we take scenario 1 where the geodesic distance coincides with the $L_2$ distance. Then what is the cost of employing our distance estimator compared to smoothing the data and doing numerical integration to find the $L_2$ distance?
 
 # Downstream tasks
 
@@ -143,8 +143,9 @@ Datasets used by functional classification papers
 * Wheat, rainfall and phoneme in Aurore's paper "Achieving near-perfect classification for functional data"
 * Berkeley growth curves in Chen et. al 2014, Biometrics.
 * Tecator and phoneme in Mahalanobis technometrics paper.
+* yeast cell cycle gene expression (can't find this publicly) in Leng and Muller's "Classification using functional data analysis for temporal gene expression data"
 
 Datasets used in functional manifold papers
-* Berkeley growth, yeast cell cycle gene expression in Chen and Muller
+* Berkeley growth, yeast cell cycle gene expression (can't find this publicly) in Chen and Muller
 * Tecator in Lin and Yao's contamination paper
 * Berkeley growth, gait cycle in Jean-Michel Loubes' robust isomap paper
