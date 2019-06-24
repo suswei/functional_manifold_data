@@ -1,9 +1,9 @@
-name: "Functional manifold data"
+name: "The hidden manifold distance for functional manifold data"
 output_dir: "."
 navbar:
-  title: "Functional manifold data"
+  title: "The hidden manifold distance for functional manifold data"
   left:
-    - text: "Project description"
+    - text: "Paper"
       href: index.html
     - text: "Functional manifold simulation scenarios"
       href: sim_functional_data.html      

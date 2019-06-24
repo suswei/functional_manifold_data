@@ -1,47 +1,92 @@
 #### Classification of growth curves dataset based on orginal data and velocity
 ## We estimate the geodesic distance matrix with 4 methods
 
-
-
 library(reticulate)
 library(fda)
 library(scatterplot3d)
 library(kmed)
 library(fields)
 library(igraph)
+library(ROCR)
+library(caret)
 source('robust_isomap.R')
 source('pairwise_geo_estimation.R')
 
+# input: lists of discrete_data, reg_grid, and true_group
+# discrete_datas_list
+# reg_grid_list
+# true_group_list
 
-### Reading the data
+# call processRealData which returns return(list("discrete_datas_list" = discrete_datas_list, "reg_grid_list" = reg_grid_list, "true_group_list"=true_group_list))
 
-growth_data <- t(cbind(growth$hgtm,growth$hgtf))
-growth_grid <- growth$age
-true_group<- c(rep(0,39),rep(1,54)) # 0 = boy and 1 = girl
+data = processRealData()
+discrete_datas_list = data[[1]] # etc
 
 # We apply our method to obtain the pairwise geodesic distance (and floyd on smooth data)
 meth <- list("NN" = FALSE,"RD_o" = FALSE,"RD" = FALSE,"SS_o" = FALSE,"SS" = TRUE,"pI" = FALSE,"OUR" = FALSE,"OUR2" = FALSE,"OUR3"=TRUE,"RP" = FALSE )
-Estim<- pairwise_geo_estimation(meth,NA,growth_data,NA,FALSE,TRUE,NA,matrix(rep(growth_grid,93),nrow=93,byrow = TRUE),growth_grid,1,FALSE)
 
-class_err<-rep(0,500)
-for(split in 1:500){
-  train_ind<- sort(sample(1:93,50))
-  test_ind_temp<- 1:93 
-  test_ind<- test_ind_temp[-train_ind]
+estimate_distance <- function(discrete_data,reg_grid){
   
-  # We classify the data using functional version of the Nadaraya–Watson kernel estimator for the class membership probabilities
-  h<- 10
-  deno <- colSums(dnorm(h^(-1)*Estim$estim_geo_mds_scms_RI_h_heuri_s3[train_ind,test_ind]))
-  num_prob_gars<- colSums(dnorm(h^(-1)*Estim$estim_geo_mds_scms_RI_h_heuri_s3[train_ind[which(train_ind<40)],test_ind]))
   
-  prob_gars<- num_prob_gars / deno
-  pred<- rep(0,43)
-  pred[which(prob_gars<0.5)]<- 1
-  class_err[split]<- mean(abs(true_group[test_ind] - pred ))
+  geo_estim = pairwise_geo_estimation(method=meth,
+                          true_data=NA,
+                          discrete_data=discrete_data,
+                          true_geo=NA,
+                          plot_true=FALSE,
+                          FD_true=TRUE,
+                          nb_proj=NA,
+                          grid=matrix(rep(agefine,93),nrow=93,byrow = TRUE),
+                          reg_grid=reg_grid,
+                          common_grid_true=TRUE,
+                          Analytic_geo_available=FALSE,
+                          is_data_smoothed=TRUE)
+  return(geo_estim)
 }
 
-mean(class_err)
 
+
+
+our_geo_estims = lapply(discrete_datas_list, estimate_distance)
+
+
+## Assess classificaton performance
+
+nr_train_test_splits = 500
+
+# Create balanced train-test partition taking into account the proportion of binary labels in the data
+# train.rows[,i] contains the training indices i-th split
+train.rows = createDataPartition(true_group, times = nr_train_test_splits, p = 0.53, list = FALSE)
+
+
+mean_auc <- function(train.rows,pairwise_distance_estimate,true_group,h){
+  
+  # train.rows created by createDataPartition
+  # pairwise_distance_matrix samplesize by samplesize estimates of distance
+  # true_group vector of length samplesize of binary class label
+  nr_train_test_splits = dim(train.rows)[2]
+  indices = 1:length(true_group)
+  group1_indices = indices[true_group]
+  aucs<-rep(0,nr_train_test_splits)
+  class_err<-rep(0,nr_train_test_splits)
+  
+  for(split in 1:nr_train_test_splits){
+    
+    train_ind = train.rows[,split]
+    
+    # We classify the data using functional version of the Nadaraya–Watson kernel estimator for the class membership probabilities
+    deno <- colSums(dnorm(h^(-1)*pairwise_distance_estimate[train_ind,-train_ind]))
+    class1_count_hat<- colSums(dnorm(h^(-1)*pairwise_distance_estimate[train_ind[is.element(train_ind,group1_indices)],-train_ind]))
+    class1_prob_hat<- class1_count_hat / deno
+  
+    predobj <- prediction(class1_prob_hat, true_group[-train_ind]*1)
+    perf <- performance(predobj,"auc")
+    aucs[split] = perf@y.values[[1]]
+  }
+  
+  return(mean(aucs))
+}
+
+lapply(our_geo_estims[[1]],mean_auc,train.rows=train.rows,true_group=true_group,h=2)
 
 
 # 

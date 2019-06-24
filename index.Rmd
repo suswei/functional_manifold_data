@@ -1,8 +1,9 @@
 ---
-title: "Project Description"
+title: "The hidden manifold distance for functional manifold data"
 output:
   html_document:
     df_print: paged
+    number_sections: true
 ---
 
 \newcommand {\To}{\rightarrow}
@@ -15,18 +16,16 @@ output:
 \newcommand {\1}{\textrm{\textbf{1}}}
 \newcommand{\M}{\mathcal{M}}
 
-## Abstract
+# Abstract
 
-Title: Pairwise geodesic distance estimation for functional data residing near a nonlinear manifold.
-
-Abstract: Certain functional data of interest reside in non-linear spaces; the class of probability density functions provides one such example. Since these spaces are not vector spaces, even basic operations such as addition and subtraction require special consideration and treatment. In this work we set ourselves the task of calculating the geodesic distance between two functions living near a non-linear manifold due to noise. This setting cannot be tackled by classic manifold learning techniques which require data to live exactly on a manifold. Good estimation of the geodesic distance has implications for many downstream tasks in functional data analysis, including functional clustering, and nonparametric functional regression.
+Certain functional data of interest reside in non-linear spaces; the class of probability density functions provides one such example. Since these spaces are not vector spaces, even basic operations such as addition and subtraction require special consideration and treatment. In this work we set ourselves the task of calculating the geodesic distance between two functions living near a non-linear manifold due to noise. This setting cannot be tackled by classic manifold learning techniques which require data to live exactly on a manifold. Good estimation of the geodesic distance has implications for many downstream tasks in functional data analysis, including functional clustering, and nonparametric functional regression.
 
 
-## Introduction
+# Introduction
 
-The classical setup in FDA assumes we observe a sample of $n$ independant realizations $X_1,\ldots,X_n$ of a random variable $X$ that takes value in the Hilbert space $L^2([a,b],\R)$. In the classical approach to analysing such data, we first obtain a functional version $\tilde X_1,\ldots,\tilde X_n$ of the raw data (by either smoothing or using PACE), next perform FPCA to reduce the dimension of the data, and then proceed by employing multivariate techniques.
-
-However, it might very well happen that the function $X$ belongs to $\M \subset L^2([a,b],\R)$ a low-dimensional nonlinear manifold (gives examples and references). If it is indeed the case, it may no longer be appropriate to use $L^2$ distance between two curves as a measure of distance. Scenario 2 in [sim_functional_data](sim_functional_data.html) is one such example. One may want to consider using some geodesic distance which takes into account the intrinsic structure of $\M$.
+The classical setup in FDA assumes we observe a sample of $n$ independant realizations $X_1,\ldots,X_n$ of a random variable $X$ that takes value in the Hilbert space $L^2([a,b],\R)$. However, it might very well happen that the function $X$ belongs to $\M \subset L^2([a,b],\R)$ a low-dimensional nonlinear manifold (gives examples and references). If it is indeed the case, it may no longer be appropriate to use $L^2$ distance between two curves as a measure of distance. 
+<!-- Scenario 2 in [sim_functional_data](sim_functional_data.html) is one such example.  -->
+One may want to consider using some geodesic distance which takes into account the intrinsic structure of $\M$.
 
 Before continuing, some diambiguities are called for. Contrast existing work on functional data where either the domain is a manifold or the range is a manifold, or both. 
 
@@ -40,11 +39,16 @@ With this challenge in mind, we put forth a technique for the specific task of e
 
 Briefly outline the methodology: MDS plus density ridge are used in a cool way to estimate (consistently?, let's hope..) pairwise geodesic distances. 
 
-## Preliminaries
+## Setting
+Describe preprocessing of discretely observed functional data: In the classical approach to analysing such data, we first obtain a functional version $\tilde X_1,\ldots,\tilde X_n$ of the raw data (by either smoothing or using PACE), next perform FPCA to reduce the dimension of the data, and then proceed by employing multivariate techniques.
+
+What type of noise structures are allowed/considered? What type of time sampling frequency is assumed? Do not need time-aligned curves!
+
+# Preliminaries
 
 We first rigorously define the concepts of geodesic and geodesic distance. We will also describe an important helper algorithm which we call IsoGeo.
 
-### Basic differential geometry
+## Basic differential geometry
 This is take from a paper on [metric learning](http://proceedings.mlr.press/v32/linb14.pdf).
 Let $(\M,g)$ be a $d$-dimensional Riemannian manifold, where $g$ is a Riemannian metric tensor on $\M$. This metric tensor can be used to assign a metric on the manifold. For each point $p$ on the manifold, the Riemannian metric tensor $g$ has an inner product $g_p$ on the tangent space $T_p \M$. The norm of a tangent vector $v \in T_p \M$ is defined as $$||v|| = \sqrt{g_p(v,v)}$$
 If $\gamma: [a,b] \subset \R \to \M$ is a smooth curve, its length is then defined as
@@ -52,7 +56,7 @@ $$ l(\gamma) := \int_a^b || \frac{\,d\gamma}{\,d t}(t) || \,dt $$
 The geodesic distance between two points $p,q$ on the manifold $\M$, based on this metric tensor $g$, is defined as
 $$ d_g(p,q):=\inf \{l(\gamma): \gamma:[a,b] \to \M \text{ piecewise smooth}, \gamma(a) = p, \gamma(b) = q]  \}.$$
 
-### IsoGeo
+## IsoGeo
 
 Isomap is a three steps procedure that takes as input a set of points $x_1,\ldots,x_n\in \R^D$ and produces an embedding of the input data in the space $\R^d$ with $d<D$, that preserves pairwise geodesic distances. 
 * The first step consists in constructing a weighted graph $G$ with nodes corresponding to the input data and for which the weight of an edge between two nodes $x_i$ and $x_j$ is equal to $||x_i-x_j ||_{\R^D}$. The graph $G$ is constructed such that a node is connected to a fix number $N$ of neighbors or to all nodes that are at a distance smaller than a given value $\epsilon$. 
@@ -62,7 +66,7 @@ are estimated based on $G$. The geodesic distance between two nodes is simply th
 
 In what follows, we call IsoGeo the procedure of estimating pairwise geodesic distances with the two first steps of Isomap. Note that Floyd or Dijkstra are methods to find the smallest path given a weigthed graph but they are not related to how to calculate that graph (which is the difficult part, depend on number of neighbors, many method out there to calculate that graph in a robust way, p-isomap is one of these). 
 
-## Proposed method for estimating geodesic distances
+# Proposed method for estimating geodesic distances
 
 Let $X_1,\ldots,X_n$ be independent realizations of a random function $X\in\M \subset L^2([a,b],\R)$, where $\M$ is an unknown manifold. Suppose that each curve $X_i$ is observed with measurements errors on a grid $T_i=(t_{i1},\ldots,t_{iK})$, i.e. we observe a sample of $K$-dimensional vectors $Y_1,\ldots,Y_n$ with $Y_{ij} = X_i(t_{ij}) + \epsilon_{ij}$, where the random variables $\epsilon_{ij}$ are of mean zero and uncorrelated with each other. We assume that the grids $T_1,\ldots,T_n$ are dense.
 
@@ -84,30 +88,58 @@ $$
 
 Since the ridge estimation obtained from noisy measurements of a manifold should approximate well the manifold (ref. Genevose and al. 2014), we expect the points $\tilde X^{s,\hat \M}_1,\ldots,\tilde X^{s,\hat \M}_n$ to lie close to the real manifold $\M$ and then $d_{\hat \M}$ to be close to $d_\M$. Ridge estimation suffers from the curse of dimensionality, this is why we first reduce the dimension of our data with MDS and then apply the shift-mean algorithm to estimate the ridge.
 
-## Simulaton Study
+## Selection of tuning parameters
 
-We perform a simulation study to ascertain the efficacy of our method for estimating pairwise geodesic distances for discretely-observed noisy functional data. ???Describe simulation scenarios in sim_functional_data.R???
+# Simulation study
 
-# Comparison to other methods
+We perform a simulation study to ascertain the efficacy of our method for estimating pairwise geodesic distances for discretely-observed noisy functional data. 
+
+## Alternative estimators of geodesic distance
 
 * **(Raw Data) RD** Apply IsoGeo on the raw data $Y_1,\ldots,Y_n$ to obtain an estimator $\hat G_{\textrm{RD}}$. Note that this procedure can only be used if the grid $T_i$ is the same for each $i$.
 * **(Spline Smoothing) SS** Transform each vector $Y_i$ into a function $\tilde X_i$ by spline smoothing. Apply IsoGeo on the vectors $\{(\tilde X_i(t_1), \ldots, X_i(t_K)\}_{i=1}^n$, where $t_1,\ldots,t_K$ is a regular grid of $[a,b]$, to obtain an estimator $\hat G_{\textrm{SS}}$.
 * **(Penalized-Isomap) pI** Transform each vector $Y_i$ into a function $\tilde X_i$ by spline smoothing. Calculate the weighted graph of step I of Isomap with a penalty (describe the penalty of Chen and Muller). Apply step II of Isomap to obtain $\hat G_{\textrm{pI}}$.
 * **(Random Projection) RP**  same method as our but change step 2 by : obtain $s$-dimensional representation by random projection and setp 4 by obtain $\hat G$ using a ensemble method.
 
-# Assessment of geodesic distance estimates
+## Simulation scenarios
+
+
+## Performance metrics
 We introduce a new metric for assessing the quality of a pairwise geodesic distance estimator. This is the ROC curve with $\epsilon$ on the $x$-axis and degree to which near-$\epsilon$ isometry holds, i.e.\ the percentage of estimated pairwise distances between $1-\epsilon$ and $1+\epsilon$ of the truth pairwise distance.  
 
-## TODOs
+## Results
 
-* Related to tuning parameter
-    + Choose the number of neighbors $N$ in IsoGeo.
-    + Choose projection dimension for avoiding curse of dimensionality in performing density ridge scms routine
-    + Choose the bandwidth $h$ in scms.
-* Related to spartanSim.R simulations results
-    + Why do some Monte Carlo simulations fail?
-    + Is P-isomap always choosing zero penalty automatically?
-    + Shouldn’t the smoothing method be doing better? Thought the smooth was close to the true curve.
-* Next time we submit spartanSim.R, make sure to hold dataset constant for different projection dimensions
-* Read Marie's suggested paper on [robust ISOMAP](https://arxiv.org/abs/1306.3373)
-* Revisit Mueller manifold examples. Need to write down some differential equations to solve the geodesic minimisation problem?
+# Study on "misspecification"
+
+Suppose we take scenario 1 where the geodesic distance coincides with the $L_2$ distance. Then what is the cost of employing our distance estimator compared to smoothing the data and doing numerical integration to find the $L_2$ distance.
+
+# Downstream tasks
+
+In this section, we explore whether our geodesic distance estimator has benefits for downstream analysis task. There are many tasks we could consider here, but we will focus on distanced-based functional clustering and distance-based functional classification. It must be noted that while curve alignment, also known as curve registration, is necessarily performed as a preprocessing technique prior to clustering and classification, our geodesic distance estimator allows one to forsake this step. 
+
+In both tasks below, we compare our method to using $L_2$ distance, possibly weighted, and with curve registration already accomplished.
+
+## Distance-based functional clustering
+
+Describe the $k$-medoids clustering method.
+
+### Simulated data
+
+###  Real data
+
+## Distance-based functional classification
+
+For simplicity, assume the task is bianry classification. Associated to each functional object $x$ is a binary $y$ indicating class membership.
+Consider the classifier proposed in Ferraty and Vieu (2003,2006) which is a functional version of the Nadaraya-Watson kernel estimator of class membership probabilities:
+$$
+\hat p(y = 0 | x) \frac{ \sum_{i=1}^n K[h^{-1} d(x,x_i)] 1(y_i = 0) }{ \sum_{i=1}^n K[h^{-1} d(x,x_i)] }
+$$
+
+### Simulated data
+
+###  Real data
+A few examples of the datasets used by functional classification papers
+
+* Wheat, rainfall and phoneme in "Achieving near-perfect classification for functional data"
+* Berkeley growth curves in Chen et. al 2014, Biometrics.
+* Tecator and phoneme in technometrics paper.

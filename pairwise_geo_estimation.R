@@ -1,35 +1,32 @@
-# TODO Marie: this function should call assess_goodness_estimation
-# TODO Marie: this function should actually be renamed to reflect that it is an oracle estimation procedure
-# TODO Marie/Susan: if it turns out random projection method g is still worth considering, implement parallel for loops
-##### Estimation of geodesic distances
-
+##### Estimation of pairwise geodesic distances
 
 # We estimate the geodesic matrix obtained via
-# NN Floyd's Algorithm on noiseless data (just to make sure that the theoretical geo. is calculated correctly)
-# RD_o Floyd's Algorithm on noisy data (oracle for num neigh)
-# RD Floyd's Algorithm on noisy data (no oracle)
-# SS_o Floyd's Algorithm on smooth data (oracle for num neigh)
-# SS Floyd's Algorithm on smooth data (no oracle)
-# pI p-isomap of Muller on smooth data
-# OUR mds of smooth data + scms + Floyd's Algorithm (oracle for h and num neigh)
-# OUR2 mds of smooth data + scms + robust isomap (oracle for h)
-# OUR3 mds of smooth data + scms h heuri + robust isomap (no oracle)
+# NN: Floyd's Algorithm on noiseless data (just to make sure that the theoretical geo. is calculated correctly)
+# RD_o: Floyd's Algorithm on noisy data (oracle for num neigh)
+# RD: Floyd's Algorithm on noisy data (no oracle)
+# SS_o: Floyd's Algorithm on smooth data (oracle for num neigh)
+# SS: Floyd's Algorithm on smooth data (no oracle)
+# pI: p-isomap of Muller on smooth data
+# OUR: mds of smooth data + scms + Floyd's Algorithm (oracle for h and num neigh)
+# OUR2: mds of smooth data + scms + robust isomap (oracle for h)
+# OUR3: mds of smooth data + scms h heuri + robust isomap (no oracle)
 # RP : random proj. of smooth data + scms + Floyd's Algorithm 
 
-
-## Note that NN and RD can only be used if the data are observed on a common grid
+# TODO: what if data are not observed on a common grid and NN, RD, RD_o are called? Are there warnings?
+## Note that NN, RD, RD_o can only be used if the data are observed on a common grid
 
 ## Input
 # method : list of dimension 8 indicating which estimation methods should be run. Warning : NN and RD only works if common_grid_true=1
-# true_data : samplesize x K matrix containing the original data (no noise)
+# true_data [optional, bypass with NA]: samplesize x K matrix containing the original data (no noise)
 # discrete_data : samplesize x K matrix containing the observed data
-# true_geo : samplesize x samplesize matrix containing true pairwise geo disctance
+# true_geo [optional, bypass with NA]: samplesize x samplesize matrix containing true pairwise geo disctance
 # s : dimension use for mds and random projections
 # plot_true : if TRUE plot of geo estimation for each method
 # FD_true : if TRUE functional data, otherwise euclidean data
 # grid : samplesize x K matrix containing the grid on which each data is observed (required only if FD_true =1)
 # common_grid_true : if 1 grid is common for every curve, if 0 different grid for every curve
 
+# TODO: all of these "estim_geo_XXX" variable names should be changed, e.g. estim_geo_true_data should be renamed estim_geo_NN
 ## Output
 # list of estimated geodesic distance :
 # estim_geo_true_data = method NN
@@ -44,27 +41,27 @@
 # estim_geo_RP_scms = method RP
 
 
-#Example of call for FD
-#data<- sim_functional_data(sce=2,samplesize=100)
+# Example of call for functional data
+# data<- sim_functional_data(sce=2,samplesize=100)
 # meth <- list("NN" = TRUE,"RD_o" = TRUE,"RD" = TRUE,"SS_o" = TRUE,"SS" = TRUE,"pI" = FALSE,"OUR" = TRUE,"OUR2" = FALSE,"OUR3"=TRUE,"RP" = FALSE )
 # Estim<- pairwise_geo_estimation(meth,data$noiseless_data,data$noisy_data,data$analytic_geo,TRUE,TRUE,20,data$grid,data$reg_grid,1,FALSE)
 
 
-#library(reticulate)
-
-# TODO Marie/Susan: consider replacing python Isomap with R implementation of Floyd's algorithm? https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm
-pyIso = import_from_path("getIsomapGdist",path='.')
+pyIso = import_from_path("getIsomapGdist",path='.') # TODO: consider replacing python Isomap with R implementation of Floyd's algorithm? https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm
 py_min_neigh = import_from_path("get_min_num_neighbors",path='.')
-# TODO Marie/Susan: consider replacing python scms with R version, see https://sites.google.com/site/yenchicr/algorithm
-scms = import_from_path("scms",path='.')
+scms = import_from_path("scms",path='.') # TODO: consider replacing python scms with R version, see https://sites.google.com/site/yenchicr/algorithm
 
-pairwise_geo_estimation <- function(method,true_data,discrete_data,true_geo,plot_true,FD_true,nb_proj,grid,reg_grid,common_grid_true,Analytic_geo_available=TRUE){
+pairwise_geo_estimation <- function(method,true_data,discrete_data,true_geo,plot_true,FD_true,nb_proj,grid,reg_grid,common_grid_true,Analytic_geo_available=TRUE,is_data_smoothed = FALSE){
   
   samplesize = nrow(discrete_data)
   K = ncol(discrete_data)
   list_to_return<- list()
 
-  smooth_data = smooth_FD_bspline(discrete_data,grid,reg_grid)
+  if(is_data_smoothed) {
+    smooth_data = discrete_data
+  } else {
+    smooth_data = smooth_FD_bspline(discrete_data,grid,reg_grid)
+  }
   
   # Normalise the data
   a = reg_grid[1]
