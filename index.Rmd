@@ -138,8 +138,13 @@ $$
 ### Simulated data
 
 ###  Real data
-A few examples of the datasets used by functional classification papers
+Datasets used by functional classification papers
 
-* Wheat, rainfall and phoneme in "Achieving near-perfect classification for functional data"
+* Wheat, rainfall and phoneme in Aurore's paper "Achieving near-perfect classification for functional data"
 * Berkeley growth curves in Chen et. al 2014, Biometrics.
-* Tecator and phoneme in technometrics paper.
+* Tecator and phoneme in Mahalanobis technometrics paper.
+
+Datasets used in functional manifold papers
+* Berkeley growth, yeast cell cycle gene expression in Chen and Muller
+* Tecator in Lin and Yao's contamination paper
+* Berkeley growth, gait cycle in Jean-Michel Loubes' robust isomap paper
