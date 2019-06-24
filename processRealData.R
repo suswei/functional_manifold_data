@@ -1,8 +1,11 @@
+<<<<<<< HEAD
+=======
 library(fda) # for growth dataset
 library("fda.usc") # for tecator dataset
 
 # returns a list of lists where every element describes a different dataset. all datasets are smoothed
 
+>>>>>>> 53321e987c82d6c0191b763d8d190cf0421a41c5
 processRealData = function(){
   
   list_of_lists = list()
