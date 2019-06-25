@@ -2,7 +2,7 @@
 #' title: Functional manifold data examples
 #' ---
 
-#' \newcommand {\To}{\rightarrow}
+#'\newcommand {\To}{\rightarrow}
 #'\newcommand {\TO}{\Rightarrow}
 #'\newcommand {\R}{\mathbb{R}}
 #'\newcommand {\Prob}{\mathbb{P}}
@@ -64,7 +64,7 @@
 # samplesize: number of functional data 
 # K: number of time grid points
 # SNR (signal to noise ratio)
-# reg_sampling : 0 if manifold parameters are drawn randomly and 1 if deterministically
+# reg_sampling : 0 if manifold parameters are drawn uniformly and 1 if manifold parameters are drawn from a concentrated measure. SHOULD ALWAYS SET THIS TO 1
 # com_grid : if 1 each curve is observed on the same grid and if 0 the grid for each curve is randomly genarated from unif[a,b]
 # plot_true : if 1 plot the true data, the observed data and the true geodesic matrix
 
@@ -91,7 +91,9 @@ sim_functional_data<-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,com_g
       alpha<- runif(samplesize,-1,1)
       alpha=sort(alpha)
     } else if(reg_sampling==1){
-      alpha <- seq(-1,1,length.out=samplesize)
+      # alpha <- seq(-1,1,length.out=samplesize)
+      alpha<- rnorm(samplesize,0,0.2)
+      alpha=sort(alpha)      
     }
     
     mu_t <- function(t,al){
@@ -110,7 +112,9 @@ sim_functional_data<-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,com_g
       alpha<- runif(samplesize,-1,1)
       alpha=sort(alpha)
     } else if(reg_sampling==1){
-      alpha <- seq(-1,1,length.out=samplesize)
+      # alpha <- seq(-1,1,length.out=samplesize)
+      alpha<- rnorm(samplesize,0,0.1)
+      alpha=sort(alpha)
     }
     
     mu_t <- function(t,al){
@@ -128,22 +132,25 @@ sim_functional_data<-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,com_g
     nb_alpha<- 10
     nb_beta<- samplesize/10
     if(reg_sampling==0){
-      alpha<- runif(samplesize,-1,1)
+      alpha<- runif(nb_alpha,-1,1)
       alpha=sort(alpha)
       sig<- runif(nb_beta,0.5,1.5)
       sig<-sort(sig)
     } else if(reg_sampling==1){
-      alpha <- seq(-1,1,length.out=nb_alpha)
-      sig<- seq(0.5,1.5,length.out=nb_beta)
+      # alpha <- seq(-1,1,length.out=nb_alpha)
+      # sig<- seq(0.5,1.5,length.out=nb_beta)
+      alpha <- rnorm(nb_alpha,0,0.2)
+      alpha = sort(alpha)
+      beta <- rnorm(nb_beta,1,0.2)
+      beta <- sort(beta)
     }
-    alpha_beta<- expand.grid(alpha,sig)
+    alpha_beta<- expand.grid(alpha,beta)
     
     mu_t <- function(t,alpha_beta){
       fct <- dnorm(t,alpha_beta[,1],alpha_beta[,2])
     }
     
     analytic_geo <- matrix(0,samplesize,samplesize)
-    grid_int <- seq(a,b,0.01)
     for(comb1 in 1:(samplesize-1)){
       for(comb2 in comb1:(samplesize)){
         
@@ -164,13 +171,17 @@ sim_functional_data<-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,com_g
     nb_alpha<- 10
     nb_beta<- samplesize/10
     if(reg_sampling==0){
-      alpha<- runif(samplesize,1,5)
+      alpha<- runif(nb_alpha,1,5)
       alpha=sort(alpha)
       beta<- runif(nb_beta,2,5)
-      beta<-sort(sig)
+      beta<-sort(beta)
     } else if(reg_sampling==1){
-      alpha <- seq(1,5,length.out=nb_alpha)
-      beta<- seq(2,5,length.out=nb_beta)
+      # alpha <- seq(1,5,length.out=nb_alpha)
+      # beta<- seq(2,5,length.out=nb_beta)
+      alpha<- rnorm(nb_alpha,3,0.2)
+      alpha=sort(alpha)
+      beta<- rnorm(nb_beta,2,0.2)
+      beta<-sort(beta)
     }
     alpha_beta<- expand.grid(alpha,beta)
     
@@ -179,7 +190,6 @@ sim_functional_data<-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,com_g
     }
     
     analytic_geo <- matrix(0,samplesize,samplesize)
-    grid_int <- seq(a,b,0.01)
     for(comb1 in 1:(samplesize-1)){
       for(comb2 in (comb1+1):samplesize){
         
@@ -187,11 +197,13 @@ sim_functional_data<-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,com_g
           sqrt(dbeta(x,alpha_beta[comb1,1],alpha_beta[comb1,2])) * sqrt(dbeta(x,alpha_beta[comb2,1],alpha_beta[comb2,2]))
         }
         
+        inprod = integrate(f,lower=a,upper=b)$value
         analytic_geo[comb1,comb2]<-  
-          acos(integrate(f,lower=a,upper=b)$value)
+          acos(pmin(pmax(inprod,-1.0),1.0))
       }
     }
     analytic_geo <- analytic_geo + t(analytic_geo)
+    # which(is.na(analytic_geo), TRUE)
   }
   
   noiseless_data <- matrix(ncol=K,nrow=samplesize)

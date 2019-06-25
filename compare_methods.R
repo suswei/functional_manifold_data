@@ -29,6 +29,7 @@ K = 30 # number of grid points (each curve is observed on K points on [a,b])
 com_grid = 1 # 1 or 0 to indicate if yes or no each curve is observed on a common grid
 plotTrue = FALSE
 FD_true = TRUE
+reg_sampling = TRUE
 
 # parameters under study
 # scenario
@@ -39,21 +40,19 @@ FD_true = TRUE
 sces = c(1,2,4)
 samplesizes = c(100,250)
 SNRs = c(0.1,0.5)
-reg_samplings = c(TRUE,FALSE)
 mcs = 1:100
 
-unravel=arrayInd(slurm_arrayid,c(length(sces),length(samplesizes), length(SNRs), length(reg_samplings), length(mcs)))
+unravel=arrayInd(slurm_arrayid,c(length(sces),length(samplesizes), length(SNRs), length(mcs)))
 
 # actual parameters for this run
 sce = sces[unravel[1,1]]
 samplesize = samplesizes[unravel[1,2]]
 SNR = SNRs[unravel[1,3]]
-reg_sampling = reg_samplings[unravel[1,4]]
-mc = mcs[unravel[1,5]]
+mc = mcs[unravel[1,4]]
 
 
 # Generate data
-data<- sim_functional_data(sce, samplesize, K, SNR, reg_sampling, com_grid, plotTrue)
+data<- sim_functional_data(sce, samplesize, K, SNR, com_grid, plotTrue)
 
 # Estimation of geodesic distances with different methods
 meth <- list("NN" = TRUE,"RD_o" = TRUE,"RD" = TRUE,"SS_o" = TRUE,"SS" = TRUE,"pI" = FALSE,"OUR" = TRUE,"OUR2" = FALSE,"OUR3"=TRUE,"RP" = FALSE )# see pairwise_geo_estimation for more info

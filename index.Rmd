@@ -102,7 +102,7 @@ We perform a simulation study to ascertain the efficacy of our method for estima
 * **(Random Projection) RP**  same method as our but change step 2 by : obtain $s$-dimensional representation by random projection and setp 4 by obtain $\hat G$ using a ensemble method.
 
 ## Simulation scenarios
-
+Acknowledge that we are sampling on a very concentrated measure to make sure functional manifold is well sampled. Cite Diaconis et. al's "Sampling from a manifold". How to sample properly from a functional manifold could be interesting future work. 
 
 ## Performance metrics
 We describe three different metrics we use to assess the quality of a pairwise geodesic distance estimator. This is the ROC curve with $\epsilon$ on the $x$-axis and degree to which near-$\epsilon$ isometry holds, i.e.\ the percentage of estimated pairwise distances between $1-\epsilon$ and $1+\epsilon$ of the truth pairwise distance.  
