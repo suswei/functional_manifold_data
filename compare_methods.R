@@ -25,40 +25,33 @@ slurm_arrayid = as.numeric(slurm_arrayid)
 print(slurm_arrayid)
 
 # parameters that will be fixed during the sim study
-K = 30 # number of grid points (each curve is observed on K points on [a,b])
 com_grid = 1 # 1 or 0 to indicate if yes or no each curve is observed on a common grid
 plotTrue = FALSE
 FD_true = TRUE
 reg_sampling = TRUE
+samplesize = 100
+
+unravel=arrayInd(slurm_arrayid,c(length(sces), length(SNRs), length(Ks), length(mcs)))
 
 # parameters under study
-# scenario
-# samplesize # number of points on the manifold
-# SNR # signal to noise ratio (in Chen and Muller is 0.1 or 0.5)
-# reg_sampling {True,False} # regular sampling of the point on the manifold or uniformly random
-
-sces = c(1,2,4)
-samplesizes = c(100,250)
+sces = c(5,2,4)
 SNRs = c(0.1,0.5)
+Ks = c(100,30)
 mcs = 1:100
-
-unravel=arrayInd(slurm_arrayid,c(length(sces),length(samplesizes), length(SNRs), length(mcs)))
 
 # actual parameters for this run
 sce = sces[unravel[1,1]]
-samplesize = samplesizes[unravel[1,2]]
-SNR = SNRs[unravel[1,3]]
+SNR = SNRs[unravel[1,2]]
+K = Ks[unravel[1,3]]
 mc = mcs[unravel[1,4]]
 
 
 # Generate data
 data<- sim_functional_data(sce, samplesize, K, SNR, com_grid, plotTrue)
-
+  
 # Estimation of geodesic distances with different methods
-meth <- list("NN" = TRUE,"RD_o" = TRUE,"RD" = TRUE,"SS_o" = TRUE,"SS" = TRUE,"pI" = FALSE,"OUR" = TRUE,"OUR2" = FALSE,"OUR3"=TRUE,"RP" = FALSE )# see pairwise_geo_estimation for more info
-Estim<- pairwise_geo_estimation(meth,data$noiseless_data,data$noisy_data,data$analytic_geo,plotTrue,FD_true,nb_proj,data$grid,data$reg_grid,com_grid)
-# TODO: decide if we need to save Estim?
-# saveRDS(Estim, file = sprintf("sce=%d_samplesize=%d_SNR=%d_reg_sampling=%d_s=%d_mc=%d",sce,samplesize,SNR,reg_sampling,s,mc))
+meth <- list("NN" = FALSE,"RD_o" = FALSE,"RD" = FALSE,"SS_o" = FALSE,"SS" = TRUE,"pI" = FALSE,"OUR" = FALSE,"OUR2" = FALSE,"OUR3"=TRUE,"RP" = FALSE,"L2" = TRUE, "w_L2" = FALSE )# see pairwise_geo_estimation for more info
+Estim<- pairwise_geo_estimation(meth,data$noiseless_data,data$noisy_data,data$analytic_geo,plotTrue,nb_proj,data$grid,data$reg_grid,com_grid)
 
 # Assessment of the estimation of a spscific method
 Rel_errs = lapply(Estim, assess_goodness_estimation, true_geo = data$analytic_geo)

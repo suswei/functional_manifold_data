@@ -61,7 +61,7 @@ for(ind_data in 1:length(dataset)){
   AUC_res <- matrix(unlist(temp,use.names=FALSE),ncol=length(geo_estim))
   boxplot(AUC_res,names=names(geo_estim),main=dataset[[ind_data]]$name,las=2,ylab="AUC")
   
-  AUC_full_res[[dataset[[ind_data]]$name]]<-  AUC_res
+  AUC_full_res[[dataset[[ind_data]]$name]]<-AUC_res
 }
 
 dev.off()

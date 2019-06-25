@@ -48,7 +48,8 @@ create_boxplot<- function(sce_details,mat_ind,method_names,nr_methods){
 
 
 # TODO: this needs to be passed into the script from compare_methods.R?
-method_names=c("NN","RD_o", "RD", "SS_o","SS","OurS1","OurS2","OurS3","Our3S1","Our3S2","Our3S3")
+method_names=c("SS","Our3S1","Our3S2","Our3S3","L2")
+
 nr_methods = length(method_names)
 
 

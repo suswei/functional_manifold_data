@@ -36,6 +36,7 @@
 #' Note that the "straight" line connecting $X_{\beta_1}$ and $X_{\beta_2}$ in $\M$ does not always stay inside of $\M$, so we cannot employ the calculation technique of Scenario 1. 
 #'
 #' ##Scenario 3: 
+#' THIS DOESN'T WORK RIGHT NOW. A CONVEX COMBINATION OF GAUSSIAN DENSITIES IS NOT GAUSSIAN.
 #' Fix $\mu_1,\sigma_1^2, \mu_2, \sigma_2^2$. Let $f_1$ be the normal density with mean $\mu_1$ and variance $\sigma_1^2$. Define $f_2$ analogously.
 #' Consider the manifold $$ \M = \{ X_c: 0 \le c \le 1 \} $$ with the $L_2$ inner product as the metric tensor where
 #' $X_c: [a,b] \to \R$ is given by $X_c(t) = c f_1(t) + (1-c) f_2(t)$.
@@ -57,7 +58,19 @@
 #' We will specifically examine the square root of $Beta(\alpha,\beta)$ distributions which is supported on $[0,1]$. That is, 
 #' $$ M = \{ \psi_{\alpha,\beta}: 1 \le \alpha \le 5, 2 \le \beta \le 5\} $$
 #' where $\psi_{\alpha,\beta}: [0,1] \to \R$ is the pdf of $Beta(\alpha,\beta)$.
-
+#' 
+#' ##Scenario 5: 
+#' This is based on Equations (17) and (18) of https://statistics.uni-bonn.de/fileadmin/Fachbereich_Wirtschaft/Einrichtungen/Statistik/WS0910/Topics_in_Econometrics_and_Statistics/Register2PCA.pdf
+#' but with $z_{i1}, z_{i2}$ set to $1$. (Equation 17 has a typo where the exponentials are missing negative signs).
+#' Let $X_\alpha(t) = \mu(h_\alpha(t))$ defined on $[-3,3]$ where
+#' $$ \mu(t) = \exp\{(t-1.5)^2/2\} + \exp\{(t+1.5)^2/2\}$$
+#' and 
+#' $$ h_\alpha(t) = 6 \frac{ \exp\{\alpha(t+3)/6\} - 1}{\exp\{\alpha\}-1}, \alpha \ne 0 $$
+#' and $h_\alpha(t) = t$ if $\alpha = 0$. 
+#' Consider the manifold
+#' $$ M = \{X_\alpha: -1 \le \alpha \le 1\} $$. The geodesic distance is then
+#' $$ d(X_{\alpha_1},X_{\alpha_2}) = \int_{\alpha_1}^{\alpha_2} \left \| \frac{d X_\alpha (t)}{d\alpha} \right\|_{L^2} d\alpha$$
+#' We do not actually sample $\alpha$ uniformly from $[-1,1]$ but instead we sample it very concentrated on a particular value. See code below for details.
 
 ## Input 
 # sce: scenario number
@@ -76,14 +89,14 @@
 # reg_grid : vector of dim K containing a common grid to use for smoothing
 
 
-
-#Example of call
+# Example of call
 # data<- sim_functional_data(1,100,15,0.5,1,1,1)
 
 library(fields)
 source('full_geo_from_adj_geo.R')
 
 sim_functional_data<-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,com_grid=1,plot_true=1){
+  
   if(sce == 1){
     a<- -4
     b<- 4
@@ -124,6 +137,7 @@ sim_functional_data<-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,com_g
     adja_geo <- (alpha[-1]- alpha[-samplesize])/(2*pi^(1/4))
     ### Calculate the analytic geodesic matrix
     analytic_geo <- full_geo(adja_geo,samplesize)
+    
   }else if(sce==3){
     a <- -4
     b <- 4
@@ -203,7 +217,82 @@ sim_functional_data<-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,com_g
       }
     }
     analytic_geo <- analytic_geo + t(analytic_geo)
-    # which(is.na(analytic_geo), TRUE)
+    
+  }else if(sce==5){
+    
+    a = -3
+    b = 3
+    
+    if(reg_sampling==0){
+      alpha<- runif(samplesize,0.2,1)
+      alpha=sort(alpha)
+    } else if(reg_sampling==1){
+      # alpha <- seq(-1,1,length.out=samplesize)
+      alpha<- rnorm(samplesize,0.6,0.05)
+      alpha=sort(alpha)      
+    }
+    
+    mu_t <- function(t){
+      exp(-(t-1.5)^2/2) + exp(-(t+1.5)^2/2)
+    }
+    
+    dmu_dt <- function(t){
+      -(t-1.5)*exp(-(t-1.5)^2/2) - (t+1.5)*exp(-(t+1.5)^2/2)
+    }
+    
+    h_alpha_t <- function(t,alph){
+      # if (alph!=0){
+        return(6*( exp(alph*(t+3)/6) - 1)/(exp(alph) - 1) -3)
+      # } else{
+      #   return(t)
+      # }
+    }
+    
+    dh_dalpha <- function(t,alph){
+      # if (alph!=0){
+        numerator = (t-3)/6 * exp(alph*(t+9)/6) - (t+3)/6 * exp(alph*(t+3)/6) + exp(alph)
+        denom = (exp(alph)-1)^2
+        return(6*numerator/denom)
+      # } else{
+      #   return(0)
+      # }
+
+    }
+    
+    X_alpha_t <- function(t,alph){
+      fct<- mu_t(h_alpha_t(t,alph))
+    }
+    
+    # returns the L2 norm of X(t). X is passed in as a function
+    L2norm <- function(X,lower,upper){
+      integrand <- function(s){
+        X(s)^2
+      }
+      return(sqrt(integrate(integrand,lower=lower,upper=upper)$value))
+    }
+    
+    # returns dX_alpha/dalpha as a function
+    dX_dalpha <- function(t,alph){
+      dmu_dt(h_alpha_t(t,alph))*dh_dalpha(t,alph)
+    }
+    
+    # L2 norm of dX_\alpha/d\alpha
+    analytic_geo_integrand <- function(alph){
+      
+      dX_dalpha_fix_alpha <- function(t){
+        dX_dalpha(t,alph)
+      }
+      
+      return(rep(L2norm(dX_dalpha_fix_alpha,lower=a,upper=b),length(alph)) )
+    }    
+    
+    analytic_geo <- matrix(0,samplesize,samplesize)
+    for(comb1 in 1:(samplesize-1)){
+      for(comb2 in (comb1+1):samplesize){
+        analytic_geo[comb1,comb2]<- integrate(analytic_geo_integrand,lower=alpha[comb1],upper=alpha[comb2])$value
+      }
+    }
+    analytic_geo <- analytic_geo + t(analytic_geo)
   }
   
   noiseless_data <- matrix(ncol=K,nrow=samplesize)
@@ -220,6 +309,9 @@ sim_functional_data<-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,com_g
       } else if(sce==3 || sce==4){
         noiseless_data[i,] <- mu_t(tmp_grid,alpha_beta[i,])
         reg_noiseless_data[i,]<-mu_t(reg_grid,alpha_beta[i,])
+      } else if(sce == 5) {
+        noiseless_data[i,] <- X_alpha_t(tmp_grid,alpha[i])
+        reg_noiseless_data[i,]<-X_alpha_t(reg_grid,alpha[i])
       }
       
     }
@@ -230,6 +322,8 @@ sim_functional_data<-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,com_g
         noiseless_data[i,] <- mu_t(reg_grid,alpha[i])
       }else if(sce==3 || sce==4){
         noiseless_data[i,] <- mu_t(reg_grid,alpha_beta[i,])
+      } else if(sce == 5) {
+        noiseless_data[i,]<-X_alpha_t(reg_grid,alpha[i])
       }
     }
     reg_noiseless_data=noiseless_data

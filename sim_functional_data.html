@@ -177,15 +177,12 @@ $(document).ready(function () {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">Functional manifold data</a>
+      <a class="navbar-brand" href="index.html">The hidden manifold distance for functional manifold data</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="index.html">Project description</a>
-</li>
-<li>
-  <a href="simstudy.html">Simulation study</a>
+  <a href="index.html">Paper</a>
 </li>
 <li>
   <a href="sim_functional_data.html">Functional manifold simulation scenarios</a>
@@ -210,7 +207,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Functional manifold data examples</h1>
 <h4 class="author"><em>suswei</em></h4>
-<h4 class="date"><em>Fri Jun 21 11:28:27 2019</em></h4>
+<h4 class="date"><em>Tue Jun 25 16:30:09 2019</em></h4>
 
 </div>
 
@@ -238,12 +235,16 @@ d(X_{\beta_1},X_{\beta_2}) &amp;=&amp; \int_{\beta_1}^{\beta_2} \left \| \frac{d
 <div id="scenario-4" class="section level2">
 <h2>Scenario 4:</h2>
 <p>It was shown in <a href="https://www-sop.inria.fr/ariana/Projets/Shapes/ThirdYearReport/JoshietalCVPR07b.pdf">Srivastava2007</a> that the square root representation of probability density functions has a nice closed form geodesic. They consider the manifold <span class="math display">\[ {\mathcal{M}}= \{ \psi:[0,1] \to {\mathbb{R}}: \psi \ge 0, \int_0^1 \psi^2(s) \,ds = 1 \}\]</span> with the metric tensor given by the Fisher-Rao metric tensor <span class="math display">\[ &lt;v_1,v_2&gt; = \int_0^1 v_1(s) v_2(s) \,ds \]</span> for two tangent vectors <span class="math inline">\(v_1,v_2 \in T_\psi({\mathcal{M}})\)</span>. Note that this concides with the <span class="math inline">\(L_2[0,1]\)</span> inner product. [Srivastava2007] showed that the geodesic distance between any two <span class="math inline">\(\psi_1\)</span> and <span class="math inline">\(\psi_2\)</span> in <span class="math inline">\({\mathcal{M}}\)</span> is simply <span class="math display">\[d(\psi_1,\psi_2) = \cos^{-1}&lt;\psi_1,\psi_2&gt;\]</span>. We will specifically examine the square root of <span class="math inline">\(Beta(\alpha,\beta)\)</span> distributions which is supported on <span class="math inline">\([0,1]\)</span>. That is, <span class="math display">\[ M = \{ \psi_{\alpha,\beta}: 1 \le \alpha \le 5, 2 \le \beta \le 5\} \]</span> where <span class="math inline">\(\psi_{\alpha,\beta}: [0,1] \to {\mathbb{R}}\)</span> is the pdf of <span class="math inline">\(Beta(\alpha,\beta)\)</span>.</p>
+</div>
+<div id="scenario-5" class="section level2">
+<h2>Scenario 5:</h2>
+<p>This is based on Equations (17) and (18) of <a href="https://statistics.uni-bonn.de/fileadmin/Fachbereich_Wirtschaft/Einrichtungen/Statistik/WS0910/Topics_in_Econometrics_and_Statistics/Register2PCA.pdf" class="uri">https://statistics.uni-bonn.de/fileadmin/Fachbereich_Wirtschaft/Einrichtungen/Statistik/WS0910/Topics_in_Econometrics_and_Statistics/Register2PCA.pdf</a> but with <span class="math inline">\(z_{i1}, z_{i2}\)</span> set to <span class="math inline">\(1\)</span>. Let <span class="math inline">\(X_\alpha(t) = \mu(h_\alpha(t))\)</span> defined on <span class="math inline">\([-3,3]\)</span> where <span class="math display">\[ \mu(t) = \exp\{(t-1.5)^2/2\} + \exp\{(t+1.5)^2/2\}\]</span> and <span class="math display">\[ h_\alpha(t) = 6 \frac{ \exp\{\alpha(t+3)/6\} - 1}{\exp\{\alpha\}-1} \]</span> Consider the manifold <span class="math display">\[ M = \{X_\alpha: -1 \le \alpha \le 1\} \]</span>. The geodesic distance is then <span class="math display">\[ d(X_{\alpha_1},X_{\alpha_2}) = \int_{\alpha_1}^{\alpha_2} \left \| \frac{d X_\alpha (t)}{d\alpha} \right\|_{L^2} d\alpha\]</span></p>
 <pre class="r"><code>## Input 
 # sce: scenario number
 # samplesize: number of functional data 
 # K: number of time grid points
 # SNR (signal to noise ratio)
-# reg_sampling : 0 if manifold parameters are drawn randomly and 1 if deterministically
+# reg_sampling : 0 if manifold parameters are drawn uniformly and 1 if manifold parameters are drawn from a concentrated measure. SHOULD ALWAYS SET THIS TO 1
 # com_grid : if 1 each curve is observed on the same grid and if 0 the grid for each curve is randomly genarated from unif[a,b]
 # plot_true : if 1 plot the true data, the observed data and the true geodesic matrix
 
@@ -257,7 +258,7 @@ d(X_{\beta_1},X_{\beta_2}) &amp;=&amp; \int_{\beta_1}^{\beta_2} \left \| \frac{d
 
 
 #Example of call
-# data&lt;- sim_functional_data(1,20,15,-3,3,0.5,1,1,1)
+# data&lt;- sim_functional_data(1,100,15,0.5,1,1,1)
 
 library(fields)</code></pre>
 <pre><code>## Loading required package: spam</code></pre>
@@ -279,6 +280,7 @@ library(fields)</code></pre>
 <pre class="r"><code>source(&#39;full_geo_from_adj_geo.R&#39;)
 
 sim_functional_data&lt;-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,com_grid=1,plot_true=1){
+  
   if(sce == 1){
     a&lt;- -4
     b&lt;- 4
@@ -286,7 +288,9 @@ sim_functional_data&lt;-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,co
       alpha&lt;- runif(samplesize,-1,1)
       alpha=sort(alpha)
     } else if(reg_sampling==1){
-      alpha &lt;- seq(-1,1,length.out=samplesize)
+      # alpha &lt;- seq(-1,1,length.out=samplesize)
+      alpha&lt;- rnorm(samplesize,0,0.2)
+      alpha=sort(alpha)      
     }
     
     mu_t &lt;- function(t,al){
@@ -305,7 +309,9 @@ sim_functional_data&lt;-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,co
       alpha&lt;- runif(samplesize,-1,1)
       alpha=sort(alpha)
     } else if(reg_sampling==1){
-      alpha &lt;- seq(-1,1,length.out=samplesize)
+      # alpha &lt;- seq(-1,1,length.out=samplesize)
+      alpha&lt;- rnorm(samplesize,0,0.1)
+      alpha=sort(alpha)
     }
     
     mu_t &lt;- function(t,al){
@@ -315,6 +321,7 @@ sim_functional_data&lt;-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,co
     adja_geo &lt;- (alpha[-1]- alpha[-samplesize])/(2*pi^(1/4))
     ### Calculate the analytic geodesic matrix
     analytic_geo &lt;- full_geo(adja_geo,samplesize)
+    
   }else if(sce==3){
     a &lt;- -4
     b &lt;- 4
@@ -323,22 +330,25 @@ sim_functional_data&lt;-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,co
     nb_alpha&lt;- 10
     nb_beta&lt;- samplesize/10
     if(reg_sampling==0){
-      alpha&lt;- runif(samplesize,-1,1)
+      alpha&lt;- runif(nb_alpha,-1,1)
       alpha=sort(alpha)
       sig&lt;- runif(nb_beta,0.5,1.5)
       sig&lt;-sort(sig)
     } else if(reg_sampling==1){
-      alpha &lt;- seq(-1,1,length.out=nb_alpha)
-      sig&lt;- seq(0.5,1.5,length.out=nb_beta)
+      # alpha &lt;- seq(-1,1,length.out=nb_alpha)
+      # sig&lt;- seq(0.5,1.5,length.out=nb_beta)
+      alpha &lt;- rnorm(nb_alpha,0,0.2)
+      alpha = sort(alpha)
+      beta &lt;- rnorm(nb_beta,1,0.2)
+      beta &lt;- sort(beta)
     }
-    alpha_beta&lt;- expand.grid(alpha,sig)
+    alpha_beta&lt;- expand.grid(alpha,beta)
     
     mu_t &lt;- function(t,alpha_beta){
       fct &lt;- dnorm(t,alpha_beta[,1],alpha_beta[,2])
     }
     
     analytic_geo &lt;- matrix(0,samplesize,samplesize)
-    grid_int &lt;- seq(a,b,0.01)
     for(comb1 in 1:(samplesize-1)){
       for(comb2 in comb1:(samplesize)){
         
@@ -359,13 +369,17 @@ sim_functional_data&lt;-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,co
     nb_alpha&lt;- 10
     nb_beta&lt;- samplesize/10
     if(reg_sampling==0){
-      alpha&lt;- runif(samplesize,1,5)
+      alpha&lt;- runif(nb_alpha,1,5)
       alpha=sort(alpha)
       beta&lt;- runif(nb_beta,2,5)
-      beta&lt;-sort(sig)
+      beta&lt;-sort(beta)
     } else if(reg_sampling==1){
-      alpha &lt;- seq(1,5,length.out=nb_alpha)
-      beta&lt;- seq(2,5,length.out=nb_beta)
+      # alpha &lt;- seq(1,5,length.out=nb_alpha)
+      # beta&lt;- seq(2,5,length.out=nb_beta)
+      alpha&lt;- rnorm(nb_alpha,3,0.2)
+      alpha=sort(alpha)
+      beta&lt;- rnorm(nb_beta,2,0.2)
+      beta&lt;-sort(beta)
     }
     alpha_beta&lt;- expand.grid(alpha,beta)
     
@@ -374,7 +388,6 @@ sim_functional_data&lt;-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,co
     }
     
     analytic_geo &lt;- matrix(0,samplesize,samplesize)
-    grid_int &lt;- seq(a,b,0.01)
     for(comb1 in 1:(samplesize-1)){
       for(comb2 in (comb1+1):samplesize){
         
@@ -382,8 +395,76 @@ sim_functional_data&lt;-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,co
           sqrt(dbeta(x,alpha_beta[comb1,1],alpha_beta[comb1,2])) * sqrt(dbeta(x,alpha_beta[comb2,1],alpha_beta[comb2,2]))
         }
         
+        inprod = integrate(f,lower=a,upper=b)$value
         analytic_geo[comb1,comb2]&lt;-  
-          acos(integrate(f,lower=a,upper=b)$value)
+          acos(pmin(pmax(inprod,-1.0),1.0))
+      }
+    }
+    analytic_geo &lt;- analytic_geo + t(analytic_geo)
+    
+  }else if(sce==5){
+    
+    a = -3
+    b = 3
+    
+    if(reg_sampling==0){
+      alpha&lt;- runif(samplesize,0.5,1)
+      alpha=sort(alpha)
+    } else if(reg_sampling==1){
+      # alpha &lt;- seq(-1,1,length.out=samplesize)
+      alpha&lt;- rnorm(samplesize,0.75,0.2)
+      alpha=sort(alpha)      
+    }
+    
+    mu_t &lt;- function(t){
+      exp((t-1.5)^2/2) + exp((t+1.5)^2/2)
+    }
+    
+    dmu_dt &lt;- function(t){
+      (t-1.5)*exp((t-1.5)^2/2) + (t+1.5)*exp((t+1.5)^2/2)
+    }
+    
+    h_alpha_t &lt;- function(t,alph){
+      6*( exp(alph*(t+3)/6) - 1)/(exp(alph) - 1) -3
+    }
+    
+    dh_dalpha &lt;- function(t,alph){
+      numerator = (t-3)/6 * exp(alph*(t+9)/6) - (t+3)/6 * exp(alph*(t+3)/6) + exp(alph)
+      denom = (exp(alph)-1)^2
+      return(6*numerator/denom)
+    }
+    
+    X_alpha_t &lt;- function(t,alph){
+      return(mu_t(h_alpha_t(t,alph)))
+    }
+    
+    # returns the L2 norm of X(t). X is passed in as a function
+    L2norm &lt;- function(X,lower,upper){
+      integrand &lt;- function(s){
+        X(s)^2
+      }
+      return(sqrt(integrate(integrand,lower=lower,upper=upper)$value))
+    }
+    
+    # returns dX_alpha/dalpha as a function
+    dX_dalpha &lt;- function(t,alph){
+      dmu_dt(h_alpha_t(t,alph))*dh_dalpha(t,alph)
+    }
+    
+    # L2 norm of dX_\alpha/d\alpha
+    analytic_geo_integrand &lt;- function(alph){
+      
+      dX_dalpha_fix_alpha &lt;- function(t){
+        dX_dalpha(t,alph)
+      }
+      
+      L2norm(dX_dalpha_fix_alpha,lower=a,upper=b)
+    }    
+    
+    analytic_geo &lt;- matrix(0,samplesize,samplesize)
+    for(comb1 in 1:(samplesize-1)){
+      for(comb2 in (comb1+1):samplesize){
+        analytic_geo[comb1,comb2]&lt;- integrate(analytic_geo_integrand,lower=alpha[comb1],upper=alpha[comb2])
       }
     }
     analytic_geo &lt;- analytic_geo + t(analytic_geo)
@@ -403,6 +484,9 @@ sim_functional_data&lt;-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,co
       } else if(sce==3 || sce==4){
         noiseless_data[i,] &lt;- mu_t(tmp_grid,alpha_beta[i,])
         reg_noiseless_data[i,]&lt;-mu_t(reg_grid,alpha_beta[i,])
+      } else if(sce == 5) {
+        noiseless_data[i,] &lt;- X_alpha_t(tmp_grid,alpha[i])
+        reg_noiseless_data[i,]&lt;-X_alpha_t(reg_grid,alpha[i])
       }
       
     }
@@ -413,6 +497,8 @@ sim_functional_data&lt;-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,co
         noiseless_data[i,] &lt;- mu_t(reg_grid,alpha[i])
       }else if(sce==3 || sce==4){
         noiseless_data[i,] &lt;- mu_t(reg_grid,alpha_beta[i,])
+      } else if(sce == 5) {
+        noiseless_data[i,]&lt;-X_alpha_t(reg_grid,alpha[i])
       }
     }
     reg_noiseless_data=noiseless_data
