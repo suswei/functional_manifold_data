@@ -31,13 +31,14 @@ FD_true = TRUE
 reg_sampling = TRUE
 samplesize = 100
 
-unravel=arrayInd(slurm_arrayid,c(length(sces), length(SNRs), length(Ks), length(mcs)))
 
 # parameters under study
 sces = c(5,2,4)
 SNRs = c(0.1,0.5)
 Ks = c(100,30)
 mcs = 1:100
+
+unravel=arrayInd(slurm_arrayid,c(length(sces), length(SNRs), length(Ks), length(mcs)))
 
 # actual parameters for this run
 sce = sces[unravel[1,1]]
