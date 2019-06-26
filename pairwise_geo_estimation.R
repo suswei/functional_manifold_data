@@ -62,7 +62,17 @@ pyIso = import_from_path("getIsomapGdist",path='.') # TODO: consider replacing p
 py_min_neigh = import_from_path("get_min_num_neighbors",path='.')
 scms = import_from_path("scms",path='.') # TODO: consider replacing python scms with R version, see https://sites.google.com/site/yenchicr/algorithm
 
-pairwise_geo_estimation <- function(method,true_data,discrete_data,true_geo,plot_true,nb_proj,grid,reg_grid,common_grid_true,Analytic_geo_available=TRUE,is_data_smoothed = FALSE){
+pairwise_geo_estimation <- function(method,
+                                    true_data,
+                                    discrete_data,
+                                    true_geo,
+                                    plot_true,
+                                    nb_proj=NULL,
+                                    grid,
+                                    reg_grid,
+                                    common_grid_true,
+                                    Analytic_geo_available=TRUE,
+                                    is_data_smoothed = FALSE){
   
   samplesize = nrow(discrete_data)
   K = ncol(discrete_data)

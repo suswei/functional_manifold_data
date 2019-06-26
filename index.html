@@ -11,7 +11,7 @@
 
 
 
-<title>The hidden manifold distance for functional manifold data</title>
+<title>The hidden manifold distance for functional data</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -206,7 +206,7 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">The hidden manifold distance for functional manifold data</h1>
+<h1 class="title toc-ignore">The hidden manifold distance for functional data</h1>
 
 </div>
 
@@ -251,7 +251,7 @@ $(document).ready(function () {
 <li>Transform each vector <span class="math inline">\(Y_i\)</span> into a function <span class="math inline">\(\tilde X_i\)</span> by spline smoothing: <span class="math display">\[ \tilde X_i = \arg\min_{f\in C^2[0,1]}\left\{\sum_{j=1}^{K}\left(f(t_{ij})-Y_{ij}\right)^2+\lambda \|\partial^2_tf\|^2_{L^2}\right\}\]</span> where <span class="math inline">\(\lambda&gt;0\)</span> is a tuning parameter controlling the smoothness of <span class="math inline">\(\tilde X_i\)</span>.</li>
 <li>Obtain a <span class="math inline">\(s\)</span>-dimensional representation <span class="math inline">\(\tilde X^s_1,\ldots,\tilde X^s_n\)</span> of the functions <span class="math inline">\(\tilde X_1,\ldots,\tilde X_n\)</span> that “preserves” the pairwise <span class="math inline">\(L^2\)</span> distances by using MDS.</li>
 <li>Obtain <span class="math inline">\(\tilde X^{s,\hat {\mathcal{M}}}_1,\ldots,\tilde X^{s,\hat {\mathcal{M}}}_n\)</span> a “projection” of <span class="math inline">\(\tilde X^s_1,\ldots,\tilde X^s_n\)</span> onto a ridge <span class="math inline">\(\hat {\mathcal{M}}\)</span> which is computed with a mean shift algorithm.</li>
-<li>Use IsoGeo to approximate the pairwise geodesic distances <span class="math inline">\(\{d_{\hat {\mathcal{M}}}(\tilde X^{s,\hat {\mathcal{M}}}_i,\tilde X^{s,\hat {\mathcal{M}}}_j)\}_{i&gt;j}\)</span> and define the $n n $ matrix <span class="math inline">\(\hat G\)</span> as <span class="math display">\[
+<li>Use IsoGeo to approximate the pairwise geodesic distances <span class="math inline">\(\{d_{\hat {\mathcal{M}}}(\tilde X^{s,\hat {\mathcal{M}}}_i,\tilde X^{s,\hat {\mathcal{M}}}_j)\}_{i&gt;j}\)</span> and define the <span class="math inline">\(n\)</span> by <span class="math inline">\(n\)</span> matrix <!-- $n  n $ matrix $\hat G$ as --> <span class="math display">\[
 \hat G(i,j)=\hat G(j,i) = \left\{ \begin{array}{ll}
  d_{\hat {\mathcal{M}}}(\tilde X^{s,\hat {\mathcal{M}}}_i,\tilde X^{s,\hat {\mathcal{M}}}_j) &amp; \textrm{if $i\neq j$,}\\
  0 &amp; \textrm{otherwise.}
@@ -275,53 +275,46 @@ $(document).ready(function () {
 <li><strong>(Random Projection) RP</strong> same method as our but change step 2 by : obtain <span class="math inline">\(s\)</span>-dimensional representation by random projection and setp 4 by obtain <span class="math inline">\(\hat G\)</span> using a ensemble method.</li>
 </ul>
 </div>
-<div id="simulation-scenarios" class="section level2">
-<h2><span class="header-section-number">5.2</span> Simulation scenarios</h2>
-</div>
 <div id="performance-metrics" class="section level2">
-<h2><span class="header-section-number">5.3</span> Performance metrics</h2>
-<p>We introduce a new metric for assessing the quality of a pairwise geodesic distance estimator. This is the ROC curve with <span class="math inline">\(\epsilon\)</span> on the <span class="math inline">\(x\)</span>-axis and degree to which near-<span class="math inline">\(\epsilon\)</span> isometry holds, i.e. the percentage of estimated pairwise distances between <span class="math inline">\(1-\epsilon\)</span> and <span class="math inline">\(1+\epsilon\)</span> of the truth pairwise distance.</p>
+<h2><span class="header-section-number">5.2</span> Performance metrics</h2>
+<p>We describe three different metrics we use to assess the quality of a pairwise geodesic distance estimator. This is the ROC curve with <span class="math inline">\(\epsilon\)</span> on the <span class="math inline">\(x\)</span>-axis and degree to which near-<span class="math inline">\(\epsilon\)</span> isometry holds, i.e. the percentage of estimated pairwise distances between <span class="math inline">\(1-\epsilon\)</span> and <span class="math inline">\(1+\epsilon\)</span> of the truth pairwise distance.</p>
 </div>
-<div id="results" class="section level2">
-<h2><span class="header-section-number">5.4</span> Results</h2>
-</div>
-</div>
-<div id="study-on-misspecification" class="section level1">
-<h1><span class="header-section-number">6</span> Study on “misspecification”</h1>
-<p>Suppose we take scenario 1 where the geodesic distance coincides with the <span class="math inline">\(L_2\)</span> distance. Then what is the cost of employing our distance estimator compared to smoothing the data and doing numerical integration to find the <span class="math inline">\(L_2\)</span> distance.</p>
-</div>
-<div id="downstream-tasks" class="section level1">
-<h1><span class="header-section-number">7</span> Downstream tasks</h1>
-<p>In this section, we explore whether our geodesic distance estimator has benefits for downstream analysis task. There are many tasks we could consider here, but we will focus on distanced-based functional clustering and distance-based functional classification. It must be noted that while curve alignment, also known as curve registration, is necessarily performed as a preprocessing technique prior to clustering and classification, our geodesic distance estimator allows one to forsake this step.</p>
-<p>In both tasks below, we compare our method to using <span class="math inline">\(L_2\)</span> distance, possibly weighted, and with curve registration already accomplished.</p>
-<div id="distance-based-functional-clustering" class="section level2">
-<h2><span class="header-section-number">7.1</span> Distance-based functional clustering</h2>
-<p>Describe the <span class="math inline">\(k\)</span>-medoids clustering method.</p>
-<div id="simulated-data" class="section level3">
-<h3><span class="header-section-number">7.1.1</span> Simulated data</h3>
-</div>
-<div id="real-data" class="section level3">
-<h3><span class="header-section-number">7.1.2</span> Real data</h3>
+<div id="simulation-scenarios" class="section level2">
+<h2><span class="header-section-number">5.3</span> Simulation scenarios</h2>
+<p>Acknowledge that we are sampling on a very concentrated measure to make sure functional manifold is well sampled. Cite Diaconis et. al’s “Sampling from a manifold”. How to sample properly from a functional manifold could be interesting future work.</p>
+<div id="results" class="section level3">
+<h3><span class="header-section-number">5.3.1</span> Results</h3>
+<p>Submit compare_methods.sh as slurm job using sbatch.</p>
+<pre class="bash"><code>sbatch compare_methods.sh</code></pre>
+<p>Alternatively, we can run the local version</p>
+<pre class="r"><code>R compare_methods_local.R</code></pre>
+<p>Results are visualized by invoking cluster_results.R</p>
+<pre class="r"><code>R cluster_results.R</code></pre>
 </div>
 </div>
-<div id="distance-based-functional-classification" class="section level2">
-<h2><span class="header-section-number">7.2</span> Distance-based functional classification</h2>
+<div id="the-cost-of-employing-proposed-method-when-manifold-is-flat" class="section level2">
+<h2><span class="header-section-number">5.4</span> The cost of employing proposed method when manifold is flat</h2>
+<p>Suppose we take scenario 1 where the geodesic distance coincides with the <span class="math inline">\(L_2\)</span> distance. Then what is the cost of employing our distance estimator compared to smoothing the data and doing numerical integration to find the <span class="math inline">\(L_2\)</span> distance?</p>
+</div>
+</div>
+<div id="distance-based-functional-classification" class="section level1">
+<h1><span class="header-section-number">6</span> Distance-based functional classification</h1>
+<p>In this section, we explore whether our geodesic distance estimator has benefits for downstream analysis task. There are many tasks we could consider here such as distance-based nonparametric regression and distanced-based functional clustering, but we will focus on distance-based functional classification. It must be noted that while curve alignment, also known as curve registration, is necessarily performed as a preprocessing technique prior to clustering and classification, our geodesic distance estimator allows one to forsake this step.</p>
 <p>For simplicity, assume the task is bianry classification. Associated to each functional object <span class="math inline">\(x\)</span> is a binary <span class="math inline">\(y\)</span> indicating class membership. Consider the classifier proposed in Ferraty and Vieu (2003,2006) which is a functional version of the Nadaraya-Watson kernel estimator of class membership probabilities: <span class="math display">\[
 \hat p(y = 0 | x) \frac{ \sum_{i=1}^n K[h^{-1} d(x,x_i)] 1(y_i = 0) }{ \sum_{i=1}^n K[h^{-1} d(x,x_i)] }
-\]</span></p>
-<div id="simulated-data-1" class="section level3">
-<h3><span class="header-section-number">7.2.1</span> Simulated data</h3>
-</div>
-<div id="real-data-1" class="section level3">
-<h3><span class="header-section-number">7.2.2</span> Real data</h3>
-<p>A few examples of the datasets used by functional classification papers</p>
+\]</span> We shall compare our method to using <span class="math inline">\(L_2\)</span> distance, possibly weighted, and with curve registration already accomplished.</p>
+<p>Datasets used by functional classification papers</p>
 <ul>
-<li>Wheat, rainfall and phoneme in “Achieving near-perfect classification for functional data”</li>
+<li>Wheat, rainfall and phoneme in Aurore’s paper “Achieving near-perfect classification for functional data”</li>
 <li>Berkeley growth curves in Chen et. al 2014, Biometrics.</li>
-<li>Tecator and phoneme in technometrics paper.</li>
+<li>Tecator and phoneme in Mahalanobis technometrics paper.</li>
+<li>yeast cell cycle gene expression (can’t find this publicly) in Leng and Muller’s “Classification using functional data analysis for temporal gene expression data”</li>
 </ul>
-</div>
-</div>
+<p>Datasets used in functional manifold papers * Berkeley growth, yeast cell cycle gene expression (can’t find this publicly) in Chen and Muller * Tecator in Lin and Yao’s contamination paper * Berkeley growth, gait cycle in Jean-Michel Loubes’ robust isomap paper</p>
+<!-- ## Distance-based functional clustering -->
+<!-- Describe the $k$-medoids clustering method. -->
+<!-- ### Simulated data -->
+<!-- ###  Real data -->
 </div>
 
 

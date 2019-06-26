@@ -1,9 +1,10 @@
 ---
-title: "The hidden manifold distance for functional manifold data"
+title: "The hidden manifold distance for functional data"
 output:
   html_document:
     df_print: paged
-    number_sections: true
+    number_sections: yes
+  pdf_document: default
 ---
 
 \newcommand {\To}{\rightarrow}
@@ -77,7 +78,7 @@ $$ \tilde X_i = \arg\min_{f\in C^2[0,1]}\left\{\sum_{j=1}^{K}\left(f(t_{ij})-Y_{
 where $\lambda>0$ is a tuning parameter controlling the smoothness of $\tilde X_i$. 
 2. Obtain a $s$-dimensional representation $\tilde X^s_1,\ldots,\tilde X^s_n$ of the functions $\tilde X_1,\ldots,\tilde X_n$ that "preserves" the pairwise $L^2$ distances by using MDS.
 3. Obtain $\tilde X^{s,\hat \M}_1,\ldots,\tilde X^{s,\hat \M}_n$ a "projection" of $\tilde X^s_1,\ldots,\tilde X^s_n$ onto a ridge $\hat \M$ which is computed with a mean shift algorithm.
-4. Use  IsoGeo to approximate the pairwise geodesic distances $\{d_{\hat \M}(\tilde X^{s,\hat \M}_i,\tilde X^{s,\hat \M}_j)\}_{i>j}$ and define the $n \times n $ matrix $\hat G$ as
+4. Use  IsoGeo to approximate the pairwise geodesic distances $\{d_{\hat \M}(\tilde X^{s,\hat \M}_i,\tilde X^{s,\hat \M}_j)\}_{i>j}$ and define the $n$ by $n$ matrix 
 $$
 \hat G(i,j)=\hat G(j,i) = \left\{ \begin{array}{ll}
  d_{\hat \M}(\tilde X^{s,\hat \M}_i,\tilde X^{s,\hat \M}_j) & \textrm{if $i\neq j$,}\\
@@ -101,43 +102,47 @@ We perform a simulation study to ascertain the efficacy of our method for estima
 * **(Penalized-Isomap) pI** Transform each vector $Y_i$ into a function $\tilde X_i$ by spline smoothing. Calculate the weighted graph of step I of Isomap with a penalty (describe the penalty of Chen and Muller). Apply step II of Isomap to obtain $\hat G_{\textrm{pI}}$.
 * **(Random Projection) RP**  same method as our but change step 2 by : obtain $s$-dimensional representation by random projection and setp 4 by obtain $\hat G$ using a ensemble method.
 
-## Simulation scenarios
-Acknowledge that we are sampling on a very concentrated measure to make sure functional manifold is well sampled. Cite Diaconis et. al's "Sampling from a manifold". How to sample properly from a functional manifold could be interesting future work. 
-
 ## Performance metrics
 We describe three different metrics we use to assess the quality of a pairwise geodesic distance estimator. This is the ROC curve with $\epsilon$ on the $x$-axis and degree to which near-$\epsilon$ isometry holds, i.e.\ the percentage of estimated pairwise distances between $1-\epsilon$ and $1+\epsilon$ of the truth pairwise distance.  
 
-## Results
+## Simulation scenarios
+Acknowledge that we are sampling on a very concentrated measure to make sure functional manifold is well sampled. Cite Diaconis et. al's "Sampling from a manifold". How to sample properly from a functional manifold could be interesting future work. 
 
-# Study on "misspecification"
+* warping manifold (scenario 5 in sim_functional_data.R)
+* pdf manifold (scenario 2 in sim_functional_data.R)
+* square root pdf manifold (scenario 4 )
+### Results
+
+Submit compare_methods.sh as slurm job using sbatch.
+```{r, engine = 'bash', eval = FALSE}
+sbatch compare_methods.sh
+```
+
+Alternatively, we can run the local version
+```{r, eval=FALSE}
+R compare_methods_local.R
+```
+
+Results are visualized by invoking cluster_results.R
+```{r, eval=FALSE}
+R cluster_results.R
+```
+
+## The cost of employing proposed method when manifold is flat
 
 Suppose we take scenario 1 where the geodesic distance coincides with the $L_2$ distance. Then what is the cost of employing our distance estimator compared to smoothing the data and doing numerical integration to find the $L_2$ distance?
 
-# Downstream tasks
+# Distance-based functional classification
 
-In this section, we explore whether our geodesic distance estimator has benefits for downstream analysis task. There are many tasks we could consider here, but we will focus on distanced-based functional clustering and distance-based functional classification. It must be noted that while curve alignment, also known as curve registration, is necessarily performed as a preprocessing technique prior to clustering and classification, our geodesic distance estimator allows one to forsake this step. 
-
-In both tasks below, we compare our method to using $L_2$ distance, possibly weighted, and with curve registration already accomplished.
-
-## Distance-based functional clustering
-
-Describe the $k$-medoids clustering method.
-
-### Simulated data
-
-###  Real data
-
-## Distance-based functional classification
+In this section, we explore whether our geodesic distance estimator has benefits for downstream analysis task. There are many tasks we could consider here such as distance-based nonparametric regression and distanced-based functional clustering, but we will focus on distance-based functional classification. It must be noted that while curve alignment, also known as curve registration, is necessarily performed as a preprocessing technique prior to clustering and classification, our geodesic distance estimator allows one to forsake this step. 
 
 For simplicity, assume the task is bianry classification. Associated to each functional object $x$ is a binary $y$ indicating class membership.
 Consider the classifier proposed in Ferraty and Vieu (2003,2006) which is a functional version of the Nadaraya-Watson kernel estimator of class membership probabilities:
 $$
 \hat p(y = 0 | x) \frac{ \sum_{i=1}^n K[h^{-1} d(x,x_i)] 1(y_i = 0) }{ \sum_{i=1}^n K[h^{-1} d(x,x_i)] }
 $$
+We shall compare our method to using $L_2$ distance, possibly weighted, and with curve registration already accomplished.
 
-### Simulated data
-
-###  Real data
 Datasets used by functional classification papers
 
 * Wheat, rainfall and phoneme in Aurore's paper "Achieving near-perfect classification for functional data"
@@ -149,3 +154,12 @@ Datasets used in functional manifold papers
 * Berkeley growth, yeast cell cycle gene expression (can't find this publicly) in Chen and Muller
 * Tecator in Lin and Yao's contamination paper
 * Berkeley growth, gait cycle in Jean-Michel Loubes' robust isomap paper
+
+
+<!-- ## Distance-based functional clustering -->
+
+<!-- Describe the $k$-medoids clustering method. -->
+
+<!-- ### Simulated data -->
+
+<!-- ###  Real data -->
