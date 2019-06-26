@@ -138,7 +138,7 @@ Suppose we take scenario 1 where the geodesic distance coincides with the $L_2$ 
 
 In this section, we explore whether our geodesic distance estimator has benefits for downstream analysis task. There are many tasks we could consider here such as distance-based nonparametric regression and distanced-based functional clustering, but we will focus on distance-based functional classification. It must be noted that while curve alignment, also known as curve registration, is necessarily performed as a preprocessing technique prior to clustering and classification, our geodesic distance estimator allows one to forsake this step. 
 
-For simplicity, assume the task is bianry classification. Associated to each functional object $x$ is a binary $y$ indicating class membership.
+For simplicity, assume the task is binary classification. Associated to each functional object $x$ is a binary $y$ indicating class membership.
 Consider the classifier proposed in Ferraty and Vieu (2003,2006) which is a functional version of the Nadaraya-Watson kernel estimator of class membership probabilities:
 $$
 \hat p(y = 0 | x) \frac{ \sum_{i=1}^n K[h^{-1} d(x,x_i)] 1(y_i = 0) }{ \sum_{i=1}^n K[h^{-1} d(x,x_i)] }

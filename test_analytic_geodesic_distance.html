@@ -211,21 +211,22 @@ $(document).ready(function () {
 </div>
 
 
-<pre class="r"><code>library(reticulate)
-
-use_python(&#39;/usr/local/bin/python3.7&#39;,required=TRUE)
+<pre class="r"><code>library(reticulate)</code></pre>
+<pre><code>## Warning: package &#39;reticulate&#39; was built under R version 3.5.2</code></pre>
+<pre class="r"><code># use_python(&#39;/usr/local/bin/python3.7&#39;,required=TRUE)
 # use_python(&#39;/Users/UQAM/anaconda3/bin/python&#39;,required=TRUE)
 # use_python(&#39;/Users/suswei/anaconda3/bin/python&#39;,required=TRUE)</code></pre>
-<p>Check with py_config()</p>
 <pre class="r"><code>py_config()</code></pre>
-<pre><code>## python:         /usr/local/bin/python3.7
-## libpython:      /Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/config-3.7m-darwin/libpython3.7.dylib
-## pythonhome:     /Library/Frameworks/Python.framework/Versions/3.7:/Library/Frameworks/Python.framework/Versions/3.7
-## version:        3.7.0 (v3.7.0:1bf9cc5093, Jun 26 2018, 23:26:24)  [Clang 6.0 (clang-600.0.57)]
-## numpy:          /Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/site-packages/numpy
-## numpy_version:  1.15.1
+<pre><code>## python:         /anaconda3/envs/r-reticulate/bin/python
+## libpython:      /anaconda3/envs/r-reticulate/lib/libpython3.7m.dylib
+## pythonhome:     /anaconda3/envs/r-reticulate:/anaconda3/envs/r-reticulate
+## version:        3.7.0 | packaged by conda-forge | (default, Aug 27 2018, 17:24:52)  [Clang 6.1.0 (clang-602.0.53)]
+## numpy:          /anaconda3/envs/r-reticulate/lib/python3.7/site-packages/numpy
+## numpy_version:  1.15.4
 ## 
-## NOTE: Python version was forced by use_python function</code></pre>
+## python versions found: 
+##  /anaconda3/envs/r-reticulate/bin/python
+##  /usr/bin/python</code></pre>
 <pre class="r"><code>source(&#39;sim_functional_data.R&#39;)</code></pre>
 <pre><code>## Loading required package: spam</code></pre>
 <pre><code>## Loading required package: dotCall64</code></pre>
@@ -246,13 +247,13 @@ use_python(&#39;/usr/local/bin/python3.7&#39;,required=TRUE)
 <p>The function sim_functional_data.R allows specification of several simulatin scenarios. # The samplesize should be set very high so that Floyd’s algorithm works well on the noiseless data. The number of time grid points K also should be high so that the vector data really represents the functional curve.</p>
 <p>TODO: The reg_sampling parameter in sim_functional_data is somewhat of a misnomer. In either case when it’s 0 or 1, it does NOT mean that the manifold can be sampled evenly. Recall swiss roll euclidean example. A simple sampling of the one-dimensional manifold parameter does not mean that entire swiss roll is visited, some corners are seldom sampled. This will affect downstream Floyd’s algorithm. Indeed, Diaconis et. al in “Sampling from a Manifold” realize the drawbacks of naive sampling of Euclidean manifolds.</p>
 <pre class="r"><code># Generate data
-sim &lt;- sim_functional_data(sce=5,samplesize=100,K=30,plot_true=1,reg_sampling=1)</code></pre>
+sim &lt;- sim_functional_data(sce=2,samplesize=100,K=30,plot_true=1,reg_sampling=1)</code></pre>
 <p><img src="test_analytic_geodesic_distance_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
-<p>The output actually contains more than just the simulated functional data. In particular, it contains the in-sample pairwise geodesic distance matrix (analytic_geo) via analytic derivation. The purpose of this notebook is to see if our analytic derivations match numerical results.</p>
+<p>The output contains the in-sample pairwise geodesic distance matrix (analytic_geo) via analytic derivation. The purpose of this notebook is to see if our analytic derivations match numerical results.</p>
 <pre class="r"><code>names(sim)</code></pre>
 <pre><code>## [1] &quot;noiseless_data&quot; &quot;noisy_data&quot;     &quot;analytic_geo&quot;   &quot;grid&quot;          
 ## [5] &quot;reg_grid&quot;</code></pre>
-<p>We would like to compare sim$analytic_geo to geodesic distance estimation via Floyd’s algorithm for the noiseless (discretised) curve. This algorithm is guaranteed to do well if we sample the manifold densely enough? (That’s why we set the samplesize to be quite high initially.)</p>
+<p>Specifically, we would like to compare sim$analytic_geo to geodesic distance estimation via Floyd’s algorithm for the noiseless (discretised) curve. This algorithm is guaranteed to do well if we sample the manifold densely enough? Setting the samplesize very high is not enough for this, a concentrated sampling of the manifold is actually needed. More on this in sim_functiona_data.R documentation. The number of grid points should not be too low since then the L2 distance between the discretized curves won’t be well estimated.</p>
 <pre class="r"><code>get_min_num_neighbors = import_from_path(&quot;get_min_num_neighbors&quot;,path=&#39;.&#39;)
 getIsomapGdist = import_from_path(&quot;getIsomapGdist&quot;,path=&#39;.&#39;)
 
@@ -280,6 +281,7 @@ image.plot(estim_geo_noiseless_data,main=&#39;geo estimation&#39;)</code></pre>
 <p><img src="test_analytic_geodesic_distance_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <p>If the analytic derviation is correct, then estim_geo_noiseless_data should be extremely similar to analytic_geo. We can assess their closeness using assess_goodness_estimation.R. Three assessment metrics are returned. If the calculation is correct, rmse should be close to zero and epsilon_isometry_auc and pearson_corr should both be close to 1. Note that running this notebook for sce=1 gives rmse on the order of e-16.</p>
 <pre class="r"><code>library(MESS)</code></pre>
+<pre><code>## Warning: package &#39;MESS&#39; was built under R version 3.5.2</code></pre>
 <pre><code>## Loading required package: geepack</code></pre>
 <pre><code>## Loading required package: geeM</code></pre>
 <pre><code>## Loading required package: Matrix</code></pre>
@@ -291,14 +293,14 @@ image.plot(estim_geo_noiseless_data,main=&#39;geo estimation&#39;)</code></pre>
 <pre class="r"><code>source(&#39;assess_goodness_estimation.R&#39;)
 assess_goodness_estimation(estim_geo_noiseless_data,sim$analytic_geo)</code></pre>
 <pre><code>## $rmse
-## [1] 0.00996522
+## [1] 0.01711284
 ## 
 ## $epsilon_isometry_auc
-## [1] 0.9872286
+## [1] 0.9848711
 ## 
 ## $pearson_corr
-##       cor 
-## 0.9999864</code></pre>
+## cor 
+##   1</code></pre>
 
 
 
