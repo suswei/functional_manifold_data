@@ -63,7 +63,7 @@ processRealData = function(){
   
   data(tecator)
   absorp <- tecator$absorp.fdata
-  Fat20 <- ifelse(tecator$y$Fat < 20, 0, 1) # class membership
+  Fat20 <- ifelse(tecator$y$Fat < 20, FALSE, TRUE) # class membership
   
   # bspline parameters
   norder <- 6
@@ -92,7 +92,7 @@ processRealData = function(){
   # we predict the fat content based on the first derivative curves approximated 
   # by the difference quotient between measurements at adjacent wavelengths, shown in the left panel of Figure 2.
   tecatorLY_fd=fdata.deriv(absorp,nderiv=1,method="diff",class.out='fdata')
-  list_of_lists[[list_index]] = list(data = tecatorLY_fd$data, reg_grid = tecatorLY_fd$argvals, true_group = Fat20, name = "tecator_LYdiff1storder")
+  list_of_lists[[list_index]] = list(data = t(tecatorLY_fd$data), reg_grid = tecatorLY_fd$argvals, true_group = Fat20, name = "tecator_LYdiff1storder")
   list_index = list_index+1
   
   return(list_of_lists)
