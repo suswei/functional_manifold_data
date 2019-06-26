@@ -223,7 +223,7 @@ sim_functional_data<-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,com_g
           sqrt(dbeta(x,alpha_beta[comb1,1],alpha_beta[comb1,2])) * sqrt(dbeta(x,alpha_beta[comb2,1],alpha_beta[comb2,2]))
         }
         
-        inprod = integrate(f,lower=a,upper=b)$value
+        inprod = integrate(Vectorize(f),lower=a,upper=b)$value
         analytic_geo[comb1,comb2]<-  
           acos(pmin(pmax(inprod,-1.0),1.0))
       }
@@ -293,7 +293,18 @@ sim_functional_data<-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,com_g
       integrand <- function(s){
         X(s)^2
       }
-      return(sqrt(integrate(integrand,lower=lower,upper=upper)$value))
+      
+      out <- tryCatch(
+        {
+          sqrt( integrate(Vectorize(integrand),lower=lower,upper=upper)$value )
+        },
+        error=function(cond) {
+          message(cond)
+          # Choose a return value in case of error
+          sqrt( integrate(Vectorize(integrand),lower=lower,upper=upper,subdivisions=1000)$value )
+        }
+      )    
+      return(out)
     }
     
     # returns dX_alpha/dalpha as a function

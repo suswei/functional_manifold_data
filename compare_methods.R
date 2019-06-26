@@ -27,6 +27,7 @@ plotTrue = FALSE
 samplesize = 100
 
 ## STUDY THE EFFECT OF THE FOLLOWING PARAMETERS 
+mcs = 1:100
 # parameters in sim_functional_data
 sces = c(5,2,4)
 SNRs = c(0.1,0.5)
@@ -35,15 +36,14 @@ Ks_obs = c(100,30)
 # parameters in pairwise_geo_estimation
 Ks_smooth = c(100,30)
 
-mcs = 1:100
 total_tasks = length(sces)*length(SNRs)*length(reg_samplings)*length(Ks_obs)*length(Ks_smooth)*length(mcs)
 
 # get sweeping id, only use this block if submitting to cluster
-# slurm_arrayid <- Sys.getenv('SLURM_ARRAY_TASK_ID')
-# slurm_arrayid = as.numeric(slurm_arrayid)
-# print(slurm_arrayid)
+slurm_arrayid <- Sys.getenv('SLURM_ARRAY_TASK_ID')
+slurm_arrayid = as.numeric(slurm_arrayid)
+print(slurm_arrayid)
 
-for (slurm_arrayid in 1:total_tasks){ #use this for loop if running locally
+#for (slurm_arrayid in 1:total_tasks){ #use this for loop if running locally
   
   # Hardcode
   unravel=arrayInd(slurm_arrayid,c(length(sces), length(SNRs), length(reg_samplings), length(Ks_obs),length(Ks_smooth),length(mcs)))
@@ -66,7 +66,7 @@ for (slurm_arrayid in 1:total_tasks){ #use this for loop if running locally
                              SNR = SNR, 
                              reg_sampling = reg_sampling,
                              K = K_obs)
-  )
+  
   
   # Estimation of geodesic distances with different methods
   meth <- list("NN" = FALSE,
@@ -96,6 +96,7 @@ for (slurm_arrayid in 1:total_tasks){ #use this for loop if running locally
   Rel_errs = lapply(Estim, assess_goodness_estimation, true_geo = data$analytic_geo)
   print(Rel_errs)
   # hardcode 
-  saveRDS(Rel_errs, file = sprintf("taskid=%d_sce=%d_SNR=%.01f_Kobs=%d_Ksmooth=%d_regsamp=&d_mc=%d",slurm_arrayid,sce,SNR,K_obs,K_smooth,reg_sampling,mc))
+  saveRDS(Rel_errs, file = sprintf("taskid=%d_sce=%d_SNR=%.01f_regsamp=%d_Kobs=%d_Ksmooth=%d_mc=%d",slurm_arrayid,sce,SNR,reg_sampling,K_obs,K_smooth,mc))
+
   
-}
+#}
