@@ -16,7 +16,6 @@ use_python('/usr/local/bin/python3.7',required=TRUE)
 
 ```
 
-Check with py_config()
 
 ```{r}
 py_config()
@@ -34,7 +33,7 @@ TODO: The reg_sampling parameter in sim_functional_data is somewhat of a misnome
 
 ```{r}
 # Generate data
-sim <- sim_functional_data(sce=5,samplesize=200,K=30,plot_true=1,reg_sampling=1)
+sim <- sim_functional_data(sce=2,samplesize=100,K=30,plot_true=1,reg_sampling=1)
 ```
 
 The output contains the in-sample pairwise geodesic distance matrix (analytic_geo) via analytic derivation. The purpose of this notebook is to see if our analytic derivations match numerical results.
@@ -44,7 +43,7 @@ names(sim)
 ```
 
 
-Specifically, we would like to compare sim$analytic_geo to geodesic distance estimation via Floyd's algorithm for the noiseless (discretised) curve. This algorithm is guaranteed to do well if we sample the manifold densely enough? Setting the samplesize very high is not enough for this, a concentrated sampling of the manifold is actually needed. More on this in sim_functiona_data.R documentation. The number of grid points should not be too low since then the L2 distance between the discretized curves won't be well estimated. K=30 seems to suffice in general.
+Specifically, we would like to compare sim$analytic_geo to geodesic distance estimation via Floyd's algorithm for the noiseless (discretised) curve. This algorithm is guaranteed to do well if we sample the manifold densely enough? Setting the samplesize very high is not enough for this, a concentrated sampling of the manifold is actually needed. More on this in sim_functiona_data.R documentation. The number of grid points should not be too low since then the L2 distance between the discretized curves won't be well estimated.
 
 ```{r}
 get_min_num_neighbors = import_from_path("get_min_num_neighbors",path='.')

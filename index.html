@@ -251,7 +251,7 @@ $(document).ready(function () {
 <li>Transform each vector <span class="math inline">\(Y_i\)</span> into a function <span class="math inline">\(\tilde X_i\)</span> by spline smoothing: <span class="math display">\[ \tilde X_i = \arg\min_{f\in C^2[0,1]}\left\{\sum_{j=1}^{K}\left(f(t_{ij})-Y_{ij}\right)^2+\lambda \|\partial^2_tf\|^2_{L^2}\right\}\]</span> where <span class="math inline">\(\lambda&gt;0\)</span> is a tuning parameter controlling the smoothness of <span class="math inline">\(\tilde X_i\)</span>.</li>
 <li>Obtain a <span class="math inline">\(s\)</span>-dimensional representation <span class="math inline">\(\tilde X^s_1,\ldots,\tilde X^s_n\)</span> of the functions <span class="math inline">\(\tilde X_1,\ldots,\tilde X_n\)</span> that “preserves” the pairwise <span class="math inline">\(L^2\)</span> distances by using MDS.</li>
 <li>Obtain <span class="math inline">\(\tilde X^{s,\hat {\mathcal{M}}}_1,\ldots,\tilde X^{s,\hat {\mathcal{M}}}_n\)</span> a “projection” of <span class="math inline">\(\tilde X^s_1,\ldots,\tilde X^s_n\)</span> onto a ridge <span class="math inline">\(\hat {\mathcal{M}}\)</span> which is computed with a mean shift algorithm.</li>
-<li>Use IsoGeo to approximate the pairwise geodesic distances <span class="math inline">\(\{d_{\hat {\mathcal{M}}}(\tilde X^{s,\hat {\mathcal{M}}}_i,\tilde X^{s,\hat {\mathcal{M}}}_j)\}_{i&gt;j}\)</span> and define the <span class="math inline">\(n\)</span> by <span class="math inline">\(n\)</span> matrix <!-- $n  n $ matrix $\hat G$ as --> <span class="math display">\[
+<li>Use IsoGeo to approximate the pairwise geodesic distances <span class="math inline">\(\{d_{\hat {\mathcal{M}}}(\tilde X^{s,\hat {\mathcal{M}}}_i,\tilde X^{s,\hat {\mathcal{M}}}_j)\}_{i&gt;j}\)</span> and define the <span class="math inline">\(n\)</span> by <span class="math inline">\(n\)</span> matrix <span class="math display">\[
 \hat G(i,j)=\hat G(j,i) = \left\{ \begin{array}{ll}
  d_{\hat {\mathcal{M}}}(\tilde X^{s,\hat {\mathcal{M}}}_i,\tilde X^{s,\hat {\mathcal{M}}}_j) &amp; \textrm{if $i\neq j$,}\\
  0 &amp; \textrm{otherwise.}
@@ -282,15 +282,17 @@ $(document).ready(function () {
 <div id="simulation-scenarios" class="section level2">
 <h2><span class="header-section-number">5.3</span> Simulation scenarios</h2>
 <p>Acknowledge that we are sampling on a very concentrated measure to make sure functional manifold is well sampled. Cite Diaconis et. al’s “Sampling from a manifold”. How to sample properly from a functional manifold could be interesting future work.</p>
-<div id="results" class="section level3">
-<h3><span class="header-section-number">5.3.1</span> Results</h3>
+<ul>
+<li>warping manifold (scenario 5 in sim_functional_data.R)</li>
+<li>pdf manifold (scenario 2 in sim_functional_data.R)</li>
+<li>square root pdf manifold (scenario 4 ) ### Results</li>
+</ul>
 <p>Submit compare_methods.sh as slurm job using sbatch.</p>
 <pre class="bash"><code>sbatch compare_methods.sh</code></pre>
 <p>Alternatively, we can run the local version</p>
 <pre class="r"><code>R compare_methods_local.R</code></pre>
 <p>Results are visualized by invoking cluster_results.R</p>
 <pre class="r"><code>R cluster_results.R</code></pre>
-</div>
 </div>
 <div id="the-cost-of-employing-proposed-method-when-manifold-is-flat" class="section level2">
 <h2><span class="header-section-number">5.4</span> The cost of employing proposed method when manifold is flat</h2>

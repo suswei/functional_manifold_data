@@ -93,52 +93,61 @@
 # data<- sim_functional_data(1,100,15,0.5,1,1,1)
 
 library(fields)
+library(truncnorm)
 source('full_geo_from_adj_geo.R')
 
 sim_functional_data<-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,com_grid=1,plot_true=1){
   
   if(sce == 1){
+    
     a<- -4
     b<- 4
+    
+    alphamin = -1
+    alphamax = 1
+    
     if(reg_sampling==0){
-      alpha<- runif(samplesize,-1,1)
-      alpha=sort(alpha)
+      alpha <- runif(samplesize,alphamin,alphamax)
+      alpha = sort(alpha)
     } else if(reg_sampling==1){
-      # alpha <- seq(-1,1,length.out=samplesize)
-      alpha<- rnorm(samplesize,0,0.2)
-      alpha=sort(alpha)      
+      alpha <- rtruncnorm(samplesize,alphamin,alphamax,(alphamin+alphamax)/2,1)
+      alpha = sort(alpha)      
     }
     
     mu_t <- function(t,al){
       h_t <- t-al
     }
     
-    # TODO: Add mathematical derviation for adja_geo
     adja_geo <- (alpha[-1]- alpha[-samplesize])*sqrt(b-a)
     ### Calculate the analytic geodesic matrix
     analytic_geo <- full_geo(adja_geo,samplesize)
     
   } else if(sce ==2){
+    
     a<- -4
     b<- 4
+    
+    alphamin = -1
+    alphamax = 1
+    
     if(reg_sampling==0){
-      alpha<- runif(samplesize,-1,1)
-      alpha=sort(alpha)
+      alpha <- runif(samplesize,alphamin,alphamax)
+      alpha = sort(alpha)
     } else if(reg_sampling==1){
-      # alpha <- seq(-1,1,length.out=samplesize)
-      alpha<- rnorm(samplesize,0,0.1)
-      alpha=sort(alpha)
+      alpha <- rtruncnorm(samplesize,alphamin,alphamax,(alphamin+alphamax)/2,1) # doesn't follow Manifold 2 of Chen and Muller. It's called beta in the paper and beta ~ N(0,1). this affects our test_analytic_geodesic_distance resutls
+      alpha = sort(alpha)
     }
     
     mu_t <- function(t,al){
-      fct <- dnorm(t,al,1)
+      dnorm(t,al,1)
     }
     
     adja_geo <- (alpha[-1]- alpha[-samplesize])/(2*pi^(1/4))
     ### Calculate the analytic geodesic matrix
     analytic_geo <- full_geo(adja_geo,samplesize)
     
-  }else if(sce==3){
+  }else if(sce==3){ #IGNORE SCENARIO 3 FOR NOW
+    
     a <- -4
     b <- 4
     
@@ -161,7 +170,7 @@ sim_functional_data<-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,com_g
     alpha_beta<- expand.grid(alpha,beta)
     
     mu_t <- function(t,alpha_beta){
-      fct <- dnorm(t,alpha_beta[,1],alpha_beta[,2])
+      dnorm(t,alpha_beta[,1],alpha_beta[,2])
     }
     
     analytic_geo <- matrix(0,samplesize,samplesize)
@@ -182,25 +191,28 @@ sim_functional_data<-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,com_g
     a = 0
     b = 1
     
+    alphamin = 1
+    alphamax = 5
+    betamin = 2
+    betamax = 5
+    
     nb_alpha<- 10
     nb_beta<- samplesize/10
     if(reg_sampling==0){
-      alpha<- runif(nb_alpha,1,5)
+      alpha<- runif(nb_alpha,alphamin,alphamax)
       alpha=sort(alpha)
-      beta<- runif(nb_beta,2,5)
+      beta<- runif(nb_beta,betamin,betamax)
       beta<-sort(beta)
     } else if(reg_sampling==1){
-      # alpha <- seq(1,5,length.out=nb_alpha)
-      # beta<- seq(2,5,length.out=nb_beta)
-      alpha<- rnorm(nb_alpha,3,0.2)
+      alpha<- rtruncnorm(nb_alpha,alphamin,alphamax,(alphamax+alphamin)/2,0.3)
       alpha=sort(alpha)
-      beta<- rnorm(nb_beta,2,0.2)
+      beta<- rtruncnorm(nb_beta,betamin,betamax,(betamax+betamin)/2,0.3)
       beta<-sort(beta)
     }
     alpha_beta<- expand.grid(alpha,beta)
     
     mu_t <- function(t,alpha_beta){
-      fct <- sqrt(dbeta(t,alpha_beta[,1],alpha_beta[,2]))
+      sqrt(dbeta(t,alpha_beta[,1],alpha_beta[,2]))
     }
     
     analytic_geo <- matrix(0,samplesize,samplesize)
@@ -222,13 +234,14 @@ sim_functional_data<-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,com_g
     
     a = -3
     b = 3
+    alphamin = -1
+    alphamax = 1
     
     if(reg_sampling==0){
-      alpha<- runif(samplesize,0.2,1)
+      alpha<- runif(samplesize,alphamin,alphamax)
       alpha=sort(alpha)
     } else if(reg_sampling==1){
-      # alpha <- seq(-1,1,length.out=samplesize)
-      alpha<- rnorm(samplesize,0.6,0.05)
+      alpha<- rtruncnorm(samplesize,alphamin,alphamax,(alphamax+alphamin)/2, 1)
       alpha=sort(alpha)      
     }
     
@@ -241,26 +254,38 @@ sim_functional_data<-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,com_g
     }
     
     h_alpha_t <- function(t,alph){
-      # if (alph!=0){
-        return(6*( exp(alph*(t+3)/6) - 1)/(exp(alph) - 1) -3)
-      # } else{
-      #   return(t)
-      # }
+      
+      #a with only one element
+      temp_fun <- function(a,t){
+        if (a!=0){
+          6*( exp(a*(t+3)/6) - 1)/(exp(a) - 1) -3
+        } else{
+          t
+        }
+      }
+      
+      return(sapply(alph,temp_fun,t=t))
     }
     
     dh_dalpha <- function(t,alph){
-      # if (alph!=0){
-        numerator = (t-3)/6 * exp(alph*(t+9)/6) - (t+3)/6 * exp(alph*(t+3)/6) + exp(alph)
-        denom = (exp(alph)-1)^2
-        return(6*numerator/denom)
-      # } else{
-      #   return(0)
-      # }
-
+      
+      #a with only one element
+      temp_fun <- function(a,t){
+        if (a!=0){
+          numerator = (t-3)/6 * exp(a*(t+9)/6) - (t+3)/6 * exp(a*(t+3)/6) + exp(a)
+          denom = (exp(a)-1)^2
+          6*numerator/denom
+        } else{
+          rep(0,length(t))
+        }
+      }
+      
+      return(sapply(alph,temp_fun,t=t))
+      
     }
     
     X_alpha_t <- function(t,alph){
-      fct<- mu_t(h_alpha_t(t,alph))
+      mu_t(h_alpha_t(t,alph))
     }
     
     # returns the L2 norm of X(t). X is passed in as a function
@@ -283,13 +308,15 @@ sim_functional_data<-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,com_g
         dX_dalpha(t,alph)
       }
       
-      return(rep(L2norm(dX_dalpha_fix_alpha,lower=a,upper=b),length(alph)) )
+      #return(rep(L2norm(dX_dalpha_fix_alpha,lower=a,upper=b),length(alph)))
+      return(L2norm(dX_dalpha_fix_alpha,lower=a,upper=b))
+      
     }    
     
     analytic_geo <- matrix(0,samplesize,samplesize)
     for(comb1 in 1:(samplesize-1)){
       for(comb2 in (comb1+1):samplesize){
-        analytic_geo[comb1,comb2]<- integrate(analytic_geo_integrand,lower=alpha[comb1],upper=alpha[comb2])$value
+        analytic_geo[comb1,comb2]<- integrate(Vectorize(analytic_geo_integrand),lower=alpha[comb1],upper=alpha[comb2])$value
       }
     }
     analytic_geo <- analytic_geo + t(analytic_geo)

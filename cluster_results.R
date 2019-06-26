@@ -13,7 +13,8 @@ create_boxplot<- function(sce_details,mat_ind,method_names,nr_methods){
   # TOOD: how can we avoid hardcoding this string?
   data_sce = list.files(pattern=paste("_sce=",sce_details[1],
                                       "SNR=",sce_details[2],
-                                      "K=",sce_details[3],
+                                      "K_dense=",sce_details[3],
+                                      "regsamp=",sce_details[4],
                                       "_mc=*",sep=""))
   if (length(data_sce) == 0){
     return()
@@ -29,7 +30,8 @@ create_boxplot<- function(sce_details,mat_ind,method_names,nr_methods){
   # TOOD: how can we avoid hardcoding this string?
   pdf(paste("sce=",sce_details[1],
             "SNR=",sce_details[2],
-            "_K=",sce_details[3],
+            "K_dense=",sce_details[3],
+            "regsamp=",sce_details[4],
             ".pdf",sep=""),width=15,height=5)
   
   par(mfrow=c(1,3))
@@ -54,7 +56,7 @@ nr_methods = length(method_names)
 
 combination_res_assess<- cbind(rep(1:nr_methods,3),rep(1:3,each=nr_methods)) # nr_methods*3 combinations of methods and assesment measures
 # TODO: a bit annoying that combination_para is hardcoded, have to customise them according to compare_methods.R
-combination_para <- expand.grid(c(5,2,4),c(0.1,0.5),c(100,30)) # combinations of the parameters, copied from compare_methods.R
+combination_para <- expand.grid(c(5,2,4),c(0.1,0.5),c(TRUE,FALSE),c(100,30)) # combinations of the parameters, copied from compare_methods.R
 
 apply(combination_para,1,create_boxplot,mat_ind=combination_res_assess,method_names=method_names,nr_methods=nr_methods)
 
