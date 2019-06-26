@@ -35,7 +35,7 @@ meth <- list("NN" = FALSE,"RD_o" = FALSE,"RD" = FALSE,"SS_o" = FALSE,"SS" = TRUE
 AUC_full_res<- list()
 
 
-for(ind_data in 1:length(dataset)){
+for(ind_data in 15:length(dataset)){
    
   # estimation of geo distance with methods TRUE in meth
   geo_estim = pairwise_geo_estimation(method=meth,
@@ -44,8 +44,9 @@ for(ind_data in 1:length(dataset)){
                                       true_geo=NA,
                                       plot_true=FALSE,
                                       nb_proj=NA,
-                                      grid=matrix(rep(dataset[[ind_data]]$reg_grid,length(dataset[[ind_data]]$reg_grid)),nrow=dataset[[ind_data]]$reg_grid,byrow = TRUE),
+                                      grid=matrix(rep(dataset[[ind_data]]$reg_grid,length(dataset[[ind_data]]$reg_grid)),nrow=length(dataset[[ind_data]]$reg_grid),byrow = TRUE),
                                       reg_grid=dataset[[ind_data]]$reg_grid,
+                                      K_dense =100,
                                       common_grid_true=TRUE,
                                       Analytic_geo_available=FALSE,
                                       is_data_smoothed=TRUE)
@@ -57,14 +58,14 @@ for(ind_data in 1:length(dataset)){
   # train.rows[,i] contains the training indices i-th split
   train.rows = createDataPartition(dataset[[ind_data]]$true_group, times = nr_train_test_splits, p = 0.53, list = FALSE)
   
-  temp<- lapply(geo_estim,mean_auc,train.rows=train.rows,true_group=dataset[[ind_data]]$true_group,h=10)
+  temp<- lapply(geo_estim,mean_auc,train.rows=train.rows,true_group=dataset[[ind_data]]$true_group,h=2)
   AUC_res <- matrix(unlist(temp,use.names=FALSE),ncol=length(geo_estim))
   boxplot(AUC_res,names=names(geo_estim),main=dataset[[ind_data]]$name,las=2,ylab="AUC")
   
   AUC_full_res[[dataset[[ind_data]]$name]]<-AUC_res
 }
 
-dev.off()
+
 
 
 pdf("classification_results_grotwh_curve1.pdf",width=12,height=5)
