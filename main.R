@@ -33,22 +33,23 @@ source('weight_L2.R')
 #### Analysis of Functional data
 
 # set up parameters
-sce =1 # 1, 2 or 3 (for more info see sim_functional_data.R)
+sce =2 # 1, 2 or 3 (for more info see sim_functional_data.R)
 K = 30 # number of grid points (each curve is observed on K points on [a,b])
+K_dense = 100 # number of grid points on which smoothed curves are observed
 samplesize = 100 # number of points on the manifold
 SNR = 0.1 # signal to noise ratio (in Chen and Muller is 0.1 or 0.5)
 reg_sampling=TRUE # regular sampling of the point on the manifold or uniformly random
 plotTrue= TRUE 
 com_grid = 1 # 1 or 0 to indicate if yes or no each curve is observed on a common grid
 nb_proj = 20 # number of random projection
-meth <- list("NN" = FALSE,"RD_o" = FALSE,"RD" = FALSE,"SS_o" = FALSE,"SS" = FALSE,"pI" = FALSE,"OUR" = FALSE,"OUR2" = FALSE,"OUR3"=FALSE,"RP" = FALSE, "L2"= TRUE, "w_L2"=TRUE)# see pairwise_geo_estimation for more info
+meth <- list("NN" = FALSE,"RD_o" = FALSE,"RD" = FALSE,"SS_o" = FALSE,"SS" = FALSE,"pI" = FALSE,"OUR" = FALSE,"OUR2" = FALSE,"OUR3"=TRUE,"RP" = FALSE, "L2"= TRUE, "w_L2"=TRUE)# see pairwise_geo_estimation for more info
 
 
 # Generate data
 data<- sim_functional_data(sce,samplesize,K,SNR,reg_sampling,com_grid,plotTrue)
 
 # Estimation of geodesic distances with different methods
-Estim<- pairwise_geo_estimation(meth,data$noiseless_data,data$noisy_data,data$analytic_geo,plotTrue,nb_proj,data$grid,data$reg_grid,com_grid,FALSE,FALSE)
+Estim<- pairwise_geo_estimation(meth,data$noiseless_data,data$noisy_data,data$analytic_geo,plotTrue,nb_proj,data$grid,data$reg_grid,K_dense,com_grid,FALSE,FALSE)
 
 # Comparision of the different methods
 nom_methode <- rep(names(Estim),rep(3,length(Estim)))
