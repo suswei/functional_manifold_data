@@ -1,4 +1,41 @@
 
+### Weigthed L2 distance from Chen et al (Biometrics)
+
+pairwise_weigthed_L2<- function(discrete_data,grid,reg_grid){
+  
+  nbas=15
+  nbasis.w=10
+  samplesize<- nrow(discrete_data)
+  y<- t(discrete_data)
+  bsb = create.bspline.basis(range(grid), nbasis=nbas)
+  B = eval.basis(grid, bsb)
+  P = getbasispenalty(bsb)
+  delta=reg_grid[2]-reg_grid[1]
+  B.grid=eval.basis(reg_grid, bsb)
+  
+  arrayVp=array(NA, c(nbas,nbas, samplesize))
+  coef=matrix(NA, nbas, samplesize)
+  smooth_data<- matrix(NA, ncol=length(reg_grid),nrow=samplesize)
+  
+  for (i in 1:samplesize){
+    swmod = gam(y[,i]~B-1,paraPen=list(B=list(P)), method="REML")
+    arrayVp[,,i]=swmod$Vp
+    coef[,i]=swmod$coefficients
+    smooth_data[i,]<- predict(swmod,newdata=list(B=B.grid))
+  }
+  
+  bsb.w = create.bspline.basis(range(grid), nbasis=nbasis.w)
+  B.grid.w=eval.basis(reg_grid, bsb.w)
+  
+  fit=weight.minCV(coef=coef, arrayVp=arrayVp, B.grid=B.grid, B.grid.weight=B.grid.w, t.grid=reg_grid)
+  weight=fit$weight
+  return(list("pairwise_L2"=as.matrix(sqrt(delta)*dist(t(sqrt(weight)*t(smooth_data)),diag=TRUE,upper=TRUE)),"smooth_data"=smooth_data,"weight"=weight))
+  
+}
+
+
+
+
 ##compute the numerator and denomator matrices B and A respectively
 computAB<-function(coef=coef, arrayVp=arrayVp, B.grid=B.grid, B.grid.weight=B.grid.weight, weight=rep(1, ngrid), delta=delta){
   

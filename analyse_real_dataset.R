@@ -33,9 +33,9 @@ dataset = processRealData()
 meth <- list("NN" = FALSE,"RD_o" = FALSE,"RD" = FALSE,"SS_o" = FALSE,"SS" = TRUE,"pI" = FALSE,"OUR" = FALSE,"OUR2" = FALSE,"OUR3"=TRUE,"RP" = FALSE , "L2"=TRUE, "w_L2"= TRUE)
 
 AUC_full_res<- list()
+err_classification<- list()
 
-
-for(ind_data in 15:length(dataset)){
+for(ind_data in 1:length(dataset)){
    
   # estimation of geo distance with methods TRUE in meth
   geo_estim = pairwise_geo_estimation(method=meth,
@@ -58,20 +58,29 @@ for(ind_data in 15:length(dataset)){
   # train.rows[,i] contains the training indices i-th split
   train.rows = createDataPartition(dataset[[ind_data]]$true_group, times = nr_train_test_splits, p = 0.53, list = FALSE)
   
-  temp<- lapply(geo_estim,mean_auc,train.rows=train.rows,true_group=dataset[[ind_data]]$true_group,h=2)
-  AUC_res <- matrix(unlist(temp,use.names=FALSE),ncol=length(geo_estim))
+  temp<- lapply(geo_estim,mean_auc_err_class,train.rows=train.rows,true_group=dataset[[ind_data]]$true_group,h=2)
+  temp2<- matrix(unlist(temp,use.names=FALSE),ncol=length(geo_estim))
+  AUC_res <- temp2[1:nr_train_test_splits,]
   boxplot(AUC_res,names=names(geo_estim),main=dataset[[ind_data]]$name,las=2,ylab="AUC")
   
   AUC_full_res[[dataset[[ind_data]]$name]]<-AUC_res
+  
+  err_class_res<- temp2[(nr_train_test_splits+1):(2*nr_train_test_splits),]
+  boxplot(err_class_res,names=names(geo_estim),main=dataset[[ind_data]]$name,las=2,ylab="err_class")
+  err_classification[[dataset[[ind_data]]$name]]<-err_class_res
 }
 
 
 
 
+##### Warning hard coding
+
 pdf("classification_results_grotwh_curve1.pdf",width=12,height=5)
 par(mfrow=c(2,3))
 for(i in 1:6){
   boxplot(AUC_full_res[[i]],las=2,ylab="AUC",names=c(substr(names(geo_estim)[1:4], 11, 17),substr(names(geo_estim)[5:6], 7, 10)),main=names(AUC_full_res)[i])
+  boxplot(err_classification[[i]],las=2,ylab="err_class",names=c(substr(names(geo_estim)[1:4], 11, 17),substr(names(geo_estim)[5:6], 7, 10)),main=names(err_classification)[i])
+  
 }
 dev.off()
 
@@ -79,13 +88,23 @@ pdf("classification_results_grotwh_curve2.pdf",width=12,height=5)
 par(mfrow=c(2,3))
 for(i in 7:12){
   boxplot(AUC_full_res[[i]],las=2,ylab="AUC",names=c(substr(names(geo_estim)[1:4], 11, 17),substr(names(geo_estim)[5:6], 7, 10)),main=names(AUC_full_res)[i])
+  boxplot(err_classification[[i]],las=2,ylab="err_class",names=c(substr(names(geo_estim)[1:4], 11, 17),substr(names(geo_estim)[5:6], 7, 10)),main=names(err_classification)[i])
+  
+}
+dev.off()
+
+pdf("classification_results_tecator.pdf",width=12,height=5)
+par(mfrow=c(2,3))
+for(i in 13:16){
+  boxplot(AUC_full_res[[i]],las=2,ylab="AUC",names=c(substr(names(geo_estim)[1:4], 11, 17),substr(names(geo_estim)[5:6], 7, 10)),main=names(AUC_full_res)[i])
+  boxplot(err_classification[[i]],las=2,ylab="err_class",names=c(substr(names(geo_estim)[1:4], 11, 17),substr(names(geo_estim)[5:6], 7, 10)),main=names(err_classification)[i])
+  
 }
 dev.off()
 
 
 
-
-mean_auc <- function(train.rows,pairwise_distance_estimate,true_group,h){
+mean_auc_err_class <- function(train.rows,pairwise_distance_estimate,true_group,h){
   
   # train.rows created by createDataPartition
   # pairwise_distance_matrix samplesize by samplesize estimates of distance
@@ -106,11 +125,14 @@ mean_auc <- function(train.rows,pairwise_distance_estimate,true_group,h){
     class1_prob_hat<- class1_count_hat / deno
   
     predobj <- prediction(class1_prob_hat, true_group[-train_ind]*1)
-    perf <- performance(predobj,"auc")
-    aucs[split] = perf@y.values[[1]]
+    perf1 <- performance(predobj,"auc")
+    aucs[split] = perf1@y.values[[1]]
+    pred_thresh_05<- rep(0,length(true_group)-length(train_ind))
+    pred_thresh_05[class1_prob_hat>0.5] <- 1
+    class_err[split] <- sum(abs(pred_thresh_05-true_group[-train_ind]) )/length(pred_thresh_05)
   }
   
-  return(aucs)
+  return(list("aucs"=aucs,"class_err"=class_err))
 }
 
 

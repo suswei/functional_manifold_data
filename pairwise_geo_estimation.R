@@ -86,19 +86,19 @@ pairwise_geo_estimation <- function(method,
     smooth_data = discrete_data
     smooth_data_K <- discrete_data
     # Normalise the data
-    smooth_data <- (sqrt((b-a)/K))*smooth_data
-    smooth_data_K <- (sqrt((b-a)/K))*smooth_data
+    smooth_data <- (sqrt((b-a)/(K-1)))*smooth_data
+    smooth_data_K <- (sqrt((b-a)/(K-1)))*smooth_data
   } else {
     smooth_fd<- smooth_FD_bspline(discrete_data,grid,reg_grid)
     smooth_data <- t(eval.fd(reg_grid_dense,smooth_fd))
     smooth_data_K<- t(eval.fd(reg_grid,smooth_fd))
     # Normalise the data
-    smooth_data <- (sqrt((b-a)/K_dense))*smooth_data
-    smooth_data_K <- (sqrt((b-a)/K))*smooth_data_K
+    smooth_data <- (sqrt((b-a)/(K_dense-1)))*smooth_data
+    smooth_data_K <- (sqrt((b-a)/(K-1)))*smooth_data_K
   }
   
   # Normalise the data
-  discrete_data <- (sqrt((b-a)/K))*discrete_data
+  discrete_data <- (sqrt((b-a)/(K-1)))*discrete_data
   
   # plot noisy and smooth data
   if(plot_true){
@@ -116,7 +116,7 @@ pairwise_geo_estimation <- function(method,
     ### Estimation from noiseless data
     
     print("Floyd's Algorithm on noiseless data")
-    true_data <- (sqrt((b-a)/K))*true_data
+    true_data <- (sqrt((b-a)/(K-1)))*true_data
     # Find a grid of possible values for the number of neigbors
     num_neigh_min=py_min_neigh$get_min_num_neighbors(true_data)
     num_neigh_true=seq(num_neigh_min,samplesize/2,by=2)
@@ -443,36 +443,36 @@ pairwise_geo_estimation <- function(method,
   if(method$w_L2){
     ## weigthed L2 distance from smooth data
     
-    nbas=15
-    nbasis.w=10
+    temp<- pairwise_weigthed_L2(discrete_data,grid[1,],reg_grid)
     
-    print("pairwise weigthed L2 distances of smooth data")
-    y<- t(discrete_data)/(sqrt((b-a)/K))
-    bsb = create.bspline.basis(range(reg_grid), nbasis=nbas)
-    B = eval.basis(reg_grid, bsb)
-    P = getbasispenalty(bsb)
-    delta=1/K
-
-    arrayVp=array(NA, c(nbas,nbas, samplesize))
-    coef=matrix(NA, nbas, samplesize)
+    # nbas=15
+    # nbasis.w=10
+    # 
+    # print("pairwise weigthed L2 distances of smooth data")
+    # y<- t(discrete_data)/(sqrt((b-a)/K))
+    # bsb = create.bspline.basis(range(reg_grid), nbasis=nbas)
+    # B = eval.basis(reg_grid, bsb)
+    # P = getbasispenalty(bsb)
+    # delta=1/K
+    # 
+    # arrayVp=array(NA, c(nbas,nbas, samplesize))
+    # coef=matrix(NA, nbas, samplesize)
+    # 
+    # for (i in 1:samplesize){
+    #   swmod = gam(y[,i]~B-1,paraPen=list(B=list(P)), method="REML")
+    #   arrayVp[,,i]=swmod$Vp
+    #   coef[,i]=swmod$coefficients
+    # }
+    # 
+    # 
+    # bsb.w = create.bspline.basis(range(reg_grid), nbasis=nbasis.w)
+    # B.grid.w=eval.basis(reg_grid, bsb.w)
+    # 
+    # fit=weight.minCV(coef=coef, arrayVp=arrayVp, B.grid=B, B.grid.weight=B.grid.w, t.grid=reg_grid)
+    # weight=fit$weight
+    # #plot(reg_grid, weight, type='l')
+    estim_w_L2<-temp$pairwise_L2
     
-    for (i in 1:samplesize){
-      swmod = gam(y[,i]~B-1,paraPen=list(B=list(P)), method="REML")
-      arrayVp[,,i]=swmod$Vp
-      coef[,i]=swmod$coefficients
-    }
-    
-   
-    bsb.w = create.bspline.basis(range(reg_grid), nbasis=nbasis.w)
-    B.grid.w=eval.basis(reg_grid, bsb.w)
-    
-    fit=weight.minCV(coef=coef, arrayVp=arrayVp, B.grid=B, B.grid.weight=B.grid.w, t.grid=reg_grid)
-    weight=fit$weight
-    #plot(reg_grid, weight, type='l')
-    estim_w_L2<-as.matrix(dist(t(sqrt(weight)*t(smooth_data_K)),diag=TRUE,upper=TRUE))
-    
-    
-
     if(plot_true){
       par(mfrow=c(1,1))
       image.plot(estim_w_L2,main='weigthed L2 distances')

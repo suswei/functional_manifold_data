@@ -7,7 +7,7 @@ library("fda.usc") # for tecator dataset
 processRealData = function(){
   
   list_of_lists = list()
-  
+  list_index = 1
   ### GROWTH CURVES from fda package
   # A list containing the heights of 39 boys and 54 girls from age 1 to 18 and the ages at which they were collected.
   
@@ -20,6 +20,7 @@ processRealData = function(){
   
   attach(growth)
   true_group<- c(rep(TRUE,39),rep(FALSE,54)) # TRUE = boy, FALSE = girl
+  
   (ageRng <- range(age))
   agefine <- seq(ageRng[1],ageRng[2],length=101)
   knots  <- age
@@ -27,8 +28,21 @@ processRealData = function(){
   nbasis <- length(knots) + norder - 2
   hgtbasis <- create.bspline.basis(range(knots), nbasis, norder, knots)
   
-  list_index = 1
+  # raw_data_list<- list(data = cbind(growth$hgtm,growth$hgtf), reg_grid = age, true_group = true_group, name = "growth_raw")
+  # list_of_lists[[1]] = raw_data_list
+  # list_index = 2
   for (Lfdobj in 1:4) {
+    
+    # loglambda <- seq(-10,-1,by=0.5)
+    # gcv<-rep(0,length(loglambda))
+    # for(lam in 1:length(loglambda)){
+    #   fd_par_obj <- fdPar(fdobj=hgtbasis,Lfdobj,lambda=10^loglambda[lam])
+    #   smooth_res <- smooth.basis(growth$age, cbind(growth$hgtm,growth$hgtf),fd_par_obj)
+    #   gcv[lam]=mean(smooth_res$gcv)
+    # }
+    # ind_m=which(gcv==min(gcv))
+    # growfdPar <- fdPar(fdobj=hgtbasis,Lfdobj,lambda=10^loglambda[ind_m])
+    
     lambda <- 1e-2
     growfdPar <- fdPar(hgtbasis, Lfdobj, lambda)
     
@@ -37,6 +51,8 @@ processRealData = function(){
     growthhat <- eval.fd(agefine, hgtfd) # growth 
     velmhat <- eval.fd(agefine, hgtfd, 1) # velocity
     accmhat <- eval.fd(agefine, hgtfd, 2) # acceleration
+    
+   
     
     growthhat_list = list(data = growthhat, reg_grid = agefine, true_group = true_group, name = sprintf("growthhat_der%d",Lfdobj))
     list_of_lists[[list_index]] = growthhat_list
@@ -69,6 +85,9 @@ processRealData = function(){
   norder <- 6
   lambda <- 1e-2
   
+  raw_data_list<- list(data = absorp$data, reg_grid = absorp$argvals, true_group = Fat20, name = "tecator_raw")
+  list_of_lists[[list_index]] = raw_data_list
+  list_index = list_index+1
   
   for (nbasis in c(20,40)) {
     basis <- create.bspline.basis(tecator[["absorp.fdata"]]$rangeval, nbasis, norder)
