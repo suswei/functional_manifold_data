@@ -7,7 +7,6 @@
 library(reticulate)
 library(fields)
 library(fda)
-library(matlabr)
 library(igraph)
 
 source('EuclideanExamples.R')
@@ -25,6 +24,7 @@ source('robust_isomap.R')
 com_grid = 1 # 1 or 0 to indicate if yes or no each curve is observed on a common grid
 plotTrue = FALSE
 samplesize = 100
+Ks_smooth = 100
 
 ## STUDY THE EFFECT OF THE FOLLOWING PARAMETERS 
 mcs = 1:100
@@ -34,7 +34,6 @@ SNRs = c(0.1,0.5)
 reg_samplings = c(TRUE,FALSE)
 Ks_obs = c(100,30)
 # parameters in pairwise_geo_estimation
-Ks_smooth = c(100,30)
 
 total_tasks = length(sces)*length(SNRs)*length(reg_samplings)*length(Ks_obs)*length(Ks_smooth)*length(mcs)
 
@@ -74,7 +73,7 @@ print(slurm_arrayid)
                "RD" = FALSE,
                "SS_o" = FALSE,
                "SS" = TRUE,
-               "pI" = FALSE,
+               "pI" = TRUE,
                "OUR" = FALSE,
                "OUR2" = FALSE,
                "OUR3"=TRUE,
