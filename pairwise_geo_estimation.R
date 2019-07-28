@@ -236,26 +236,29 @@ pairwise_geo_estimation <- function(method,
     #Define candidate values for delta
     delta_can=c(0,0.02,0.05,0.1,0.2)
   
-    # TODO: need to make sure these files are not overwriting each other when submitted in parallel.
+    # need to make sure intermediate text files are not overwriting each other when submitted in parallel.
     string <- format(Sys.time(), format = "%Y-%j-%H%M%S") 
-    write.table(delta_can,file=paste0('./possible_delta',string,'.txt'),col.names = FALSE, row.names = FALSE)
-    write.table(smooth_data,file=paste0('./discrete_data',string,'.txt'),col.names = FALSE, row.names = FALSE)
-    write.table(num_neigh,file=paste0('./possible_K',string,'.txt'),col.names = FALSE, row.names = FALSE)
-    write.table(c(samplesize,K),file=paste0('./n_K',string,'.txt'),col.names = FALSE, row.names = FALSE)
-    write.table(true_geo,file=paste0('./true_geo',string,'.txt'),col.names = FALSE, row.names = FALSE)
+    dir.create(string)
+    write.table(delta_can,file=paste0('./',string,'/possible_delta.txt'),col.names = FALSE, row.names = FALSE)
+    write.table(smooth_data,file=paste0('./',string,'/discrete_data.txt'),col.names = FALSE, row.names = FALSE)
+    write.table(num_neigh,file=paste0('./',string,'/possible_K.txt'),col.names = FALSE, row.names = FALSE)
+    write.table(c(samplesize,K),file=paste0('./',string,'/n_K.txt'),col.names = FALSE, row.names = FALSE)
+    write.table(true_geo,file=paste0('./',string,'/true_geo.txt'),col.names = FALSE, row.names = FALSE)
   
-    # Run penalized-isomap.m in matlab
-    run_matlab_script("./run_isomap_p.m")
+    file.copy("./run_isomap_p.m",paste0('./',string,'/'))
+    run_matlab_script(paste0('./',string,'/run_isomap_p.m'))
   
-    temp=as.vector(read.table(file='./manidis.txt',header=FALSE))
+    temp=as.vector(read.table(file=paste0('./',string,'/manidis.txt'),header=FALSE))
     estim_geo_penalized_isomap=matrix(temp[,1],ncol=samplesize)
-    temp2=read.table(file='./err_delta_neigh.txt',header=FALSE)
+    temp2=read.table(file=paste0('./',string,'/err_delta_neigh.txt'),header=FALSE)
     err_delta_neigh=matrix(temp2[,1],ncol=length(num_neigh))
     delta_min_tmp=which(err_delta_neigh==min(err_delta_neigh),arr.ind = TRUE)
     delta_min=delta_can[delta_min_tmp[1,1]]
   
     list_to_return[["estim_geo_pI"]]<- estim_geo_penalized_isomap
     list_to_return[["delta_min"]]<- delta_min
+    
+    unlink(string,recursive=TRUE)
     
     if(plot_true){
       image.plot(estim_geo_penalized_isomap,main=paste('err p-isomap = ',signif(min(err_delta_neigh),digits =4),', delta = ',delta_min,sep=''))
