@@ -77,7 +77,7 @@
 # samplesize: number of functional data 
 # K: number of time grid points
 # SNR (signal to noise ratio)
-# reg_sampling : 0 if manifold parameters are drawn uniformly and 1 if manifold parameters are drawn from a concentrated measure. SHOULD ALWAYS SET THIS TO 1
+# reg_sampling : 0 if manifold parameters are drawn uniformly and 1 if manifold parameters are drawn from a concentrated measure.
 # com_grid : if 1 each curve is observed on the same grid and if 0 the grid for each curve is randomly genarated from unif[a,b]
 # plot_true : if 1 plot the true data, the observed data and the true geodesic matrix
 
