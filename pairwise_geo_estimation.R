@@ -56,6 +56,8 @@
 # meth <- list("NN" = TRUE,"RD_o" = TRUE,"RD" = TRUE,"SS_o" = TRUE,"SS" = TRUE,"pI" = FALSE,"OUR" = TRUE,"OUR2" = FALSE,"OUR3"=TRUE,"RP" = FALSE, "L2" = TRUE, "w_L2" = TRUE )
 # Estim<- pairwise_geo_estimation(meth,data$noiseless_data,data$noisy_data,data$analytic_geo,TRUE,TRUE,20,data$grid,data$reg_grid,100,1,FALSE,FALSE)
 
+library(matlabr)
+
 
 pyIso = import_from_path("getIsomapGdist",path='.') # TODO: consider replacing python Isomap with R implementation of Floyd's algorithm? https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm
 py_min_neigh = import_from_path("get_min_num_neighbors",path='.')
@@ -234,23 +236,29 @@ pairwise_geo_estimation <- function(method,
     #Define candidate values for delta
     delta_can=c(0,0.02,0.05,0.1,0.2)
   
-    write.table(delta_can,file='./possible_delta.txt',col.names = FALSE, row.names = FALSE)
-    write.table(smooth_data,file='./discrete_data.txt',col.names = FALSE, row.names = FALSE)
-    write.table(num_neigh,file="./possible_K.txt",col.names = FALSE, row.names = FALSE)
-    write.table(c(samplesize,K),file="./n_K.txt",col.names = FALSE, row.names = FALSE)
-    write.table(true_geo,file="./true_geo.txt",col.names = FALSE, row.names = FALSE)
+    # need to make sure intermediate text files are not overwriting each other when submitted in parallel.
+    string <- format(Sys.time(), format = "%Y-%j-%H%M%S") 
+    dir.create(string)
+    write.table(delta_can,file=paste0('./',string,'/possible_delta.txt'),col.names = FALSE, row.names = FALSE)
+    write.table(smooth_data,file=paste0('./',string,'/discrete_data.txt'),col.names = FALSE, row.names = FALSE)
+    write.table(num_neigh,file=paste0('./',string,'/possible_K.txt'),col.names = FALSE, row.names = FALSE)
+    write.table(c(samplesize,K),file=paste0('./',string,'/n_K.txt'),col.names = FALSE, row.names = FALSE)
+    write.table(true_geo,file=paste0('./',string,'/true_geo.txt'),col.names = FALSE, row.names = FALSE)
   
-    # Run penalized-isomap.m in matlab
-    run_matlab_script("./run_isomap_p.m")
+    file.copy("./run_isomap_p.m",paste0('./',string,'/'))
+    run_matlab_script(paste0('./',string,'/run_isomap_p.m'))
   
-    temp=as.vector(read.table(file='./manidis.txt',header=FALSE))
+    temp=as.vector(read.table(file=paste0('./',string,'/manidis.txt'),header=FALSE))
     estim_geo_penalized_isomap=matrix(temp[,1],ncol=samplesize)
-    temp2=read.table(file='./err_delta_neigh.txt',header=FALSE)
+    temp2=read.table(file=paste0('./',string,'/err_delta_neigh.txt'),header=FALSE)
     err_delta_neigh=matrix(temp2[,1],ncol=length(num_neigh))
     delta_min_tmp=which(err_delta_neigh==min(err_delta_neigh),arr.ind = TRUE)
     delta_min=delta_can[delta_min_tmp[1,1]]
   
     list_to_return[["estim_geo_pI"]]<- estim_geo_penalized_isomap
+    list_to_return[["delta_min"]]<- delta_min
+    
+    unlink(string,recursive=TRUE)
     
     if(plot_true){
       image.plot(estim_geo_penalized_isomap,main=paste('err p-isomap = ',signif(min(err_delta_neigh),digits =4),', delta = ',delta_min,sep=''))

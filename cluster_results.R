@@ -46,7 +46,7 @@ nr_methods = length(method_names)
 
 combination_res_assess<- cbind(rep(1:nr_methods,3),rep(1:3,each=nr_methods)) # nr_methods*3 combinations of methods and assesment measures
 # TODO: fix hardcoding
-combination_para <- expand.grid(c(5,2,4),c(0.1,0.5),c(TRUE,FALSE),c(100,30),c(100,30)) # combinations of the parameters, copied from compare_methods.R
+combination_para <- expand.grid(c(5,2,4),c(0.1,0.5),c(TRUE,FALSE),c(100,30)) # combinations of the parameters, copied from compare_methods.R
 
 apply(combination_para,1,create_boxplot,mat_ind=combination_res_assess,method_names=method_names,nr_methods=nr_methods)
 
