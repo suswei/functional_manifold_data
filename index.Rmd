@@ -1,12 +1,12 @@
 ---
 title: "The hidden manifold distance for functional data"
 output:
-  html_document:
-    df_print: paged
-    number_sections: yes
   word_document: default
   pdf_document:
     keep_tex: yes
+    number_sections: yes
+  html_document:
+    df_print: paged
     number_sections: yes
 bibliography: references.bib
 ---
@@ -76,23 +76,27 @@ In this work, we put forth a technique for the specific task of recovering pairw
 
 Suppose that each curve $X_i$ is observed with measurements errors on a grid $T_i=(t_{i1},\ldots,t_{iK})$, i.e. we observe a sample of $K$-dimensional vectors $Y_1,\ldots,Y_n$ with $Y_{ij} = X_i(t_{ij}) + \epsilon_{ij}$, where the random variables $\epsilon_{ij}$ are of mean zero and uncorrelated with each other. We assume that the grids $T_1,\ldots,T_n$ are dense.
 
-Let $\tilde X_1,\ldots,\tilde X_n$ denote the functional versions of the raw data by some smoothing method. Our proposed methodology is unspecific to the smoothing method employed. For simplicity however, let's say we employ spline smoothing to recover the functional versions of the raw data, i.e.\
-$$ \tilde X_i = \arg\min_{f\in C^2[0,1]}\left\{\sum_{j=1}^{K}\left(f(t_{ij})-Y_{ij}\right)^2+\lambda \|\partial^2_tf\|^2_{L^2}\right\}$$
+Let $\tilde X_1,\ldots,\tilde X_n$ denote the functional versions of the raw data obtained by some smoothing method. Our proposed methodology is unspecific to the smoothing method employed. For simplicity however, let's say we employ spline smoothing to recover the functional versions of the raw data, i.e.\
+$$ \tilde X_i = \arg\min_{f\in C^2[0,1]}\left\{\sum_{j=1}^{K}\left(f(t_{ij})-Y_{ij}\right)^2+\lambda \|\partial^2_tf\|^2_{L^2}\right\},$$
 where $\lambda>0$ is a tuning parameter controlling the smoothness of $\tilde X_i$. 
 
 
-We first describe an important helper algorithm which we call IsoGeo. It is a subroutine of the classic Isomap procedure.
-Isomap is a three steps procedure that takes as input a set of points $x_1,\ldots,x_n\in \R^D$ and produces an embedding of the input data in the space $\R^d$ with $d<D$, that preserves pairwise geodesic distances. 
+We first describe an important helper algorithm which we call IsoGeo and that has been proposed in @Dimeglio2014. It is a modified version of a subroutine of the classic Isomap procedure [@Tenenbaum2000]. Isomap is a three steps procedure that takes as input a set of points $x_1,\ldots,x_n\in \R^D$ and produces an embedding of the input data in the space $\R^d$ with $d<D$, that preserves pairwise geodesic distances. The three steps are as follow:
 
-\begin{enumerate}
-\item The first step consists in constructing a weighted graph $G$ with nodes corresponding to the input data and for which the weight of an edge between two nodes $x_i$ and $x_j$ is equal to $||x_i-x_j ||_{\R^D}$. The graph $G$ is constructed such that a node is connected to a fix number $N$ of neighbors or to all nodes that are at a distance smaller than a given value $\epsilon$.
-\item In the second step, the pairwise geodesic distances $d_\M(x_i,x_j)$
-are estimated based on $G$. The geodesic distance between two nodes is simply the length of the shortest path in $G$ between these two nodes, which we calculate with the Floyd-Warshall algorithm [@Floyd1962].
-<!-- Which one do we actually use in our implementation, Floyd-Warshall or Dijkstra's? -->
-\item The last step consists in using MDS on the matrix of pairwise geodesic distances obtained in the first step in order to obtain an embedding in $\R^d$.
-\end{enumerate}
 
-In what follows, we call IsoGeo the procedure of estimating pairwise geodesic distances with the two first steps of Isomap. Note that Floyd or Dijkstra are methods to find the smallest path given a weigthed graph but they are not related to how to calculate that graph (which is the difficult part, depend on number of neighbors, many method out there to calculate that graph in a robust way, P-ISOMAP is one of these). 
+1. Construct a weighted graph $G$ with nodes corresponding to the observations $x_1,\ldots,x_n\in \R^D$. Two nodes $x_i$ and $x_j$ are connected by an edge $e_{ij}$ if the distance $d_{ij}=||x_i-x_j ||_{2}$ is smaller than a given value $\epsilon$, and the weight associated to an edge $e_{ij}$ is $d_{ij}$.
+2. Estimate the pairwise geodesic distances $d_\M(x_i,x_j)$ based on $G$. The geodesic distance between two nodes is simply the length of the shortest path in $G$ between these two nodes, i.e. the sum of the weights of the edges forming the shortest path, which is calculated either with the Floyd-Warshall algorithm [@Floyd1962] or with the Dijkstra algorithm [@Dijkstra59anote].
+<!-- Which one do we actually use in our implementation, Floyd-Warshall or Dijkstra's? [Marie: In robust_isomap Dijkstra is used but both should give the same results no? I'm not sure we need to specify it]-->
+3. Use Multidimensional Scaling (MDS) algorithm on the matrix of pairwise geodesic distances obtained in the second step in order to obtain an embedding in $\R^d$.
+
+Note that in step 2 Floyd or Dijkstra algorithms are methods to find the shortest path given a weigthed graph but they are not related to how to calculate that graph in step 1 which is usually the difficult part. Indeed it depends heavily on the choice of the tuning parameter $\epsilon$, and there exist many methods out there to calculate that graph in a robust way; p-ISOMAP is one of these as well as IsoGeo. In what follows, we call IsoGeo the procedure of estimating pairwise geodesic distances with the two first steps of Isomap but where the method to construct the graph $G$ in the first step has been modified as follow in order to avoid using the tuning parameter $\epsilon$:
+
+1'. Construct the complete weigthed graph $G_c$ with nodes corresponding to the observations $x_1,\ldots,x_n\in \R^D$. Obtain the minimal spanning tree $G_s$ associated with $G_c$ and denote its set of edges by $E_s$. The graph $G$ is obtained by adding all edges $e_{ij}$ to $E_s$ for which the following condition is true:
+$$ \overline{x_ix_j} \subset \bigcup_{i=1}^n B(x_i,\epsilon_i),$$
+where $B(x_i,\epsilon_i)$ is the open ball of center $x_i$ and radius $\epsilon_i = \max_{e_{ij}\in E_s}d_{ij}$, and $\overline{x_ix_j}= \{x\in R^D \ | \ \exists \lambda \in [0,1], x=\lambda x_i + (1-\lambda)x_j \}$.
+
+
+For more details on computations involved in IsoGeo, one should refer to Algorithm 1 of @Dimeglio2014. 
 
 Our method is described by the following steps:
 
