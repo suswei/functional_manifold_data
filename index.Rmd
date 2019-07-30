@@ -1,10 +1,10 @@
 ---
 title: "The hidden manifold distance for functional data"
 output:
-  word_document: default
   pdf_document:
     keep_tex: yes
     number_sections: yes
+  word_document: default
   html_document:
     df_print: paged
     number_sections: yes
@@ -83,23 +83,27 @@ The work of [@ChenMuller2012] was among the first in functional data analysis to
 
 Suppose that each curve $X_i$ is observed with measurements errors on a grid $T_i=(t_{i1},\ldots,t_{iK})$, i.e. we observe a sample of $K$-dimensional vectors $Y_1,\ldots,Y_n$ with $Y_{ij} = X_i(t_{ij}) + \epsilon_{ij}$, where the random variables $\epsilon_{ij}$ have mean zero and are uncorrelated with each other. We assume that each observation grid $T_1,\ldots,T_n$ is dense.
 
-We begin by converting the discrete functional observations into continuous ones. Let $\tilde X_1,\ldots,\tilde X_n$ denote the functional versions of the raw data by some smoothing method. Our proposed methodology for estimating the pairwise geodesic distances $\{ d_\M (X_i,X_j)\}_{i>j}$ is agnostic to the smoothing method employed. For example we may employ spline smoothing to recover the functional versions of the raw data, i.e.\
-$$ \tilde X_i = \arg\min_{f\in C^2[0,1]}\left\{\sum_{j=1}^{K}\left(f(t_{ij})-Y_{ij}\right)^2+\lambda \|\partial^2_tf\|^2_{L^2}\right\}$$
+We begin by converting the discrete functional observations into continuous ones. Let $\tilde X_1,\ldots,\tilde X_n$ denote the functional versions of the raw data obtained by some smoothing method. Our proposed methodology for estimating the pairwise geodesic distances $\{ d_\M (X_i,X_j)\}_{i>j}$ is agnostic to the smoothing method employed. For example we may employ spline smoothing to recover the functional versions of the raw data, i.e.\
+$$ \tilde X_i = \arg\min_{f\in C^2[0,1]}\left\{\sum_{j=1}^{K}\left(f(t_{ij})-Y_{ij}\right)^2+\lambda \|\partial^2_tf\|^2_{L^2}\right\},$$
 where $\lambda>0$ is a tuning parameter controlling the smoothness of $\tilde X_i$. 
 
-Before introducing our procedure, let us first review the ISOMAP algorithm [@Tenenbaum2000], a three-step procedure that takes a set of points $x_1,\ldots,x_n$ in $(\M,g)$, a submanifold of $\R^D$ as input and produces an embedding of the input data in the space $\R^d$ with $d<D$, that preserves pairwise geodesic distances. 
-
+Before introducing our procedure, let us first review the ISOMAP algorithm [@Tenenbaum2000], a three-step procedure that takes a set of points $x_1,\ldots,x_n$ in $(\M,g)$, a submanifold of $\R^D$ as input and produces an embedding of the input data in the space $\R^d$ with $d<D$ that preserves pairwise geodesic distances. 
 \begin{enumerate}
-\item The first step constructs a weighted graph $G$ with nodes corresponding to the input data and for which the weight of an edge between two nodes $x_i$ and $x_j$ is equal to $||x_i-x_j ||_{\R^D}$. The graph $G$ is constructed such that a node is connected to a fix number $N$ of neighbors or to all nodes that are at a distance smaller than a given value $\epsilon$.
-\item In the second step, the pairwise geodesic distances $d_g(x_i,x_j)$ are estimated based on $G$ using shortest-path algorithms. Specifically, the geodesic distance between two nodes is estimated to be the length of the shortest path in $G$ between these two nodes, which we may calculate for instance with the Floyd-Warshall algorithm [@Floyd1962].
+\item Construct a weighted graph $G$ with nodes corresponding to the observations $x_1,\ldots,x_n\in \R^D$. Two nodes $x_i$ and $x_j$ are connected by an edge $e_{ij}$ if the distance $d_{ij}=||x_i-x_j ||_{2}$ is smaller than a given value $\epsilon$, and the weight associated to an edge $e_{ij}$ is $d_{ij}$.
+\item Estimate the pairwise geodesic distances $d_g(x_i,x_j)$ based on $G$ using shortest-path algorithms. Specifically, the geodesic distance between two nodes is estimated to be the length of the shortest path in $G$ between these two nodes, i.e./ the sum of the weights of the edges forming the shortest path, which is calculated either with the Floyd-Warshall algorithm [@Floyd1962] or with the Dijkstra algorithm [@Dijkstra59anote].
 <!-- Which one do we actually use in our implementation, Floyd-Warshall or Dijkstra's? -->
-\item The last step consists in using multidimensional scaling to obtain an embedding in $\R^d$ that preserves the pairwise geodesic distances estimated above.
+\item Use multidimensional scaling to obtain an embedding in $\R^d$ that preserves the pairwise geodesic distances estimated above.
 \end{enumerate}
-
-In what follows, we call IsoGeo the procedure which performs the first two steps of ISOMAP.Note that shortest-path algorithms such as the Floyd-Warshall algorithm are used to find the smallest path given a weigthed graph but they do not produce the weighted graphs themselves. In fact, P-ISOMAP and robust ISOMAP are both modifications of ISOMAP in the sense that they change the construction of the weighted graph in Step 1.  
+Note that shortest-path algorithms such as the Floyd-Warshall algorithm are used to find the smallest path given a weigthed graph but they do not produce the weighted graphs themselves. Formulating the graph in step 1 of ISOMAP is in fact the most challenging asepct of the algorithm since it depends heavily on the choice of the tuning parameter $\epsilon$.  Both P-ISOMAP and robust ISOMAP are modifications of ISOMAP in the sense that they change the construction of the weighted graph in Step 1.  
 <!-- (which is the difficult part, depend on number of neighbors, many method out there to calculate that graph in a robust way, P-ISOMAP is one of these). -->
 
-Our method is based on the idea that the underlying functional manifold can be sufficiently well-recovered by the subspace-constrained mean-shift algorithm [@Ozertem2011]. Theoretical justificaton for this can be found in [@Genovese2014].  and then performing operations on this hidden manifold. We expect the points $\tilde X^{s,\hat \M}_1,\ldots,\tilde X^{s,\hat \M}_n$ to lie close to the real manifold $\M$ and then $d_{\hat \M}$ to be close to $d_\M$. is described by the following steps:
+In what follows, we call IsoGeo the procedure which performs a modified version of the first step of ISOMAP, proposed in @Dimeglio2014, followed by the original second step of ISOMAP. The first step of IsoGeo modifies Step 1 of ISOMAP so that the constructed graph $G$ is independent of the tuning parameter $\epsilon$:
+1'. Construct the complete weigthed graph $G_c$ with nodes corresponding to the observations $x_1,\ldots,x_n\in \R^D$. Obtain the minimal spanning tree $G_s$ associated with $G_c$ and denote its set of edges by $E_s$. The graph $G$ is obtained by adding all edges $e_{ij}$ to $E_s$ for which the following condition is true:
+$$ \overline{x_ix_j} \subset \bigcup_{i=1}^n B(x_i,\epsilon_i),$$
+where $B(x_i,\epsilon_i)$ is the open ball of center $x_i$ and radius $\epsilon_i = \max_{e_{ij}\in E_s}d_{ij}$, and $\overline{x_ix_j}= \{x\in R^D \ | \ \exists \lambda \in [0,1], x=\lambda x_i + (1-\lambda)x_j \}$.
+Note that IsoGeo has no tuning parameters. 
+
+Our method is based on the idea that the underlying functional manifold can be sufficiently well-recovered by the subspace-constrained mean-shift algorithm [@Ozertem2011]. Theoretical justificaton for this can be found in [@Genovese2014]. We expect the points $\tilde X^{s,\hat \M}_1,\ldots,\tilde X^{s,\hat \M}_n$ to lie close to the real manifold $\M$ and then $d_{\hat \M}$ to be close to $d_\M$. Our procedure is described by the following steps:
 
 <!-- 1. [Susan: I think the smoothing step should be independent of our proposed methodology] Transform each vector $Y_i$ into a function $\tilde X_i$ by spline smoothing: -->
 <!-- $$ \tilde X_i = \arg\min_{f\in C^2[0,1]}\left\{\sum_{j=1}^{K}\left(f(t_{ij})-Y_{ij}\right)^2+\lambda \|\partial^2_tf\|^2_{L^2}\right\}$$ -->
@@ -109,7 +113,7 @@ Our method is based on the idea that the underlying functional manifold can be s
 \item Apply the subspace constrained mean-shift algorithm [@Ozertem2011] to each of $\tilde X^s_i$ to obtain  $\tilde X^{s,\hat \M}_i$.
 \item Use IsoGeo to approximate the pairwise geodesic distances $\{d_{\hat \M}(\tilde X^{s,\hat \M}_i,\tilde X^{s,\hat \M}_j)\}_{i>j}$.
 \end{enumerate}
-Thus our geodesic distance estimators is the $n{\times}n$ matrix $\hat G$ whose elements are given by
+Thus our geodesic distance estimator is the $n{\times}n$ matrix $\hat G$ whose elements are given by
 $$
 \hat G(i,j)=\hat G(j,i) = \left\{ \begin{array}{ll}
  d_{\hat \M}(\tilde X^{s,\hat \M}_i,\tilde X^{s,\hat \M}_j) & \textrm{if $i\neq j$,}\\
