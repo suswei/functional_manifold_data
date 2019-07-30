@@ -1,12 +1,12 @@
 ---
 title: "The hidden manifold distance for functional data"
 output:
-  pdf_document:
-    keep_tex: yes
-    number_sections: yes
-  word_document: default
   html_document:
     df_print: paged
+    number_sections: yes
+  word_document: default
+  pdf_document:
+    keep_tex: yes
     number_sections: yes
 bibliography: references.bib
 ---
@@ -84,7 +84,9 @@ The work of [@ChenMuller2012] was among the first in functional data analysis to
 Suppose that each curve $X_i$ is observed with measurements errors on a grid $T_i=(t_{i1},\ldots,t_{iK})$, i.e. we observe a sample of $K$-dimensional vectors $Y_1,\ldots,Y_n$ with $Y_{ij} = X_i(t_{ij}) + \epsilon_{ij}$, where the random variables $\epsilon_{ij}$ have mean zero and are uncorrelated with each other. We assume that each observation grid $T_1,\ldots,T_n$ is dense.
 
 We begin by converting the discrete functional observations into continuous ones. Let $\tilde X_1,\ldots,\tilde X_n$ denote the functional versions of the raw data obtained by some smoothing method. Our proposed methodology for estimating the pairwise geodesic distances $\{ d_\M (X_i,X_j)\}_{i>j}$ is agnostic to the smoothing method employed. For example we may employ spline smoothing to recover the functional versions of the raw data, i.e.\
-$$ \tilde X_i = \arg\min_{f\in C^2[0,1]}\left\{\sum_{j=1}^{K}\left(f(t_{ij})-Y_{ij}\right)^2+\lambda \|\partial^2_tf\|^2_{L^2}\right\},$$
+\begin{equation}\label{eq_spline_smoothing} 
+\tilde X_i = \arg\min_{f\in C^2[0,1]}\left\{\sum_{j=1}^{K}\left(f(t_{ij})-Y_{ij}\right)^2+\lambda \|\partial^2_tf\|^2_{L^2}\right\},
+\end{equation}
 where $\lambda>0$ is a tuning parameter controlling the smoothness of $\tilde X_i$. 
 
 Before introducing our procedure, let us first review the ISOMAP algorithm [@Tenenbaum2000], a three-step procedure that takes a set of points $x_1,\ldots,x_n$ in $(\M,g)$, a submanifold of $\R^D$ as input and produces an embedding of the input data in the space $\R^d$ with $d<D$ that preserves pairwise geodesic distances. 
@@ -139,11 +141,12 @@ where $d$ and $\hat d$ are the true and estimated $n{\times}n$ geodesic distance
 * the Pearson correlation metric: this is the Pearson correlation coefficient between the upper diagonal of $d$ and $\hat d$.
 
 ## Alternative estimators of geodesic distance [Marie]
+We compare the performance of our method to the one of the three following methods:
 
-* **(Raw Data) RD** Apply IsoGeo on the raw data $Y_1,\ldots,Y_n$ to obtain an estimator $\hat G_{\textrm{RD}}$. Note that this procedure can only be used if the grid $T_i$ is the same for each $i$.
-* **(Spline Smoothing) SS** Transform each vector $Y_i$ into a function $\tilde X_i$ by spline smoothing. Apply IsoGeo on the vectors $\{(\tilde X_i(t_1), \ldots, X_i(t_K)\}_{i=1}^n$, where $t_1,\ldots,t_K$ is a regular grid of $[a,b]$, to obtain an estimator $\hat G_{\textrm{SS}}$.
-* **(P-ISOMAP) pI** Transform each vector $Y_i$ into a function $\tilde X_i$ by spline smoothing. Calculate the weighted graph of step I of Isomap with a penalty (describe the penalty of Chen and Muller). Apply step II of Isomap to obtain $\hat G_{\textrm{pI}}$.
-* **(Random Projection) RP**  same method as our but change step 2 by : obtain $s$-dimensional representation by random projection and setp 4 by obtain $\hat G$ using a ensemble method.
+1.  **Raw Data (RD)** The naive approach consisting in appling directly IsoGeo on the raw vectors $Y_1,\ldots,Y_n \in R^K$. <!-- to obtain an estimator $\hat G_{\textrm{RD}}$.--> Note that this procedure only makes sense if all the grids $T_1,\ldots,T_n$ are the same.
+2.  **Spline Smoothing (SS)** The natural method consisting in applying IsoGeo on the smoothed version $\tilde X_1,\ldots,\tilde X_n$ of the raw data obtained by spline smoothing as described in (\ref{eq_spline_smoothing}). <!--Transform each vector $Y_i$ into a function $\tilde X_i$ by spline smoothing. Apply IsoGeo on the vectors $\{(\tilde X_i(t_1), \ldots, X_i(t_K)\}_{i=1}^n$, where $t_1,\ldots,t_K$ is a regular grid of $[a,b]$, to obtain an estimator $\hat G_{\textrm{SS}}$.-->
+3.  **P-ISOMAP (pI)** The two step procedure developed in @ChenMuller2012 where the first step is a modified version of step I of ISOMAP incorporating a penalty in order to robustify the construction of the weighted graph and the second step is step II of ISOMAP.
+<!--* **(Random Projection) RP**  same method as our but change step 2 by : obtain $s$-dimensional representation by random projection and setp 4 by obtain $\hat G$ using a ensemble method.-->
 
 We ran Chen and Muller's P-ISOMAP separately in Matlab with their automatic penalty selection and discovered that ???.
 
