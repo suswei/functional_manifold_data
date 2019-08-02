@@ -1,0 +1,121 @@
+\begin{thebibliography}{}
+
+\bibitem[\protect\citeauthoryear{Chen and Muller}{2012}]{ChenMuller2012}
+Chen, D., and Muller, H.-G.
+\newblock 2012.
+\newblock Nonlinear manifold representations for functional data.
+\newblock {\em The Annals of Statistics} 40(1):1--29.
+
+\bibitem[\protect\citeauthoryear{{Chen} \bgroup et al\mbox.\egroup
+  }{2015}]{ChenHo2015}
+{Chen}, Y.; {Ho}, S.; {Freeman}, P.~E.; {Genovese}, C.~R.; and {Wasserman}, L.
+\newblock 2015.
+\newblock Cosmic web reconstruction through density ridges: method and
+  algorithm.
+\newblock {\em Monthly Notices of the Royal Astronomical Society}
+  454(1):1140--1156.
+
+\bibitem[\protect\citeauthoryear{Chen, Reiss, and Tarpey}{2014}]{ChenReiss2014}
+Chen, H.; Reiss, P.~T.; and Tarpey, T.
+\newblock 2014.
+\newblock Optimally weighted l2 distance for functional data.
+\newblock {\em Biometrics} 70(3):516--525.
+
+\bibitem[\protect\citeauthoryear{Diaconis, Holmes, and
+  Shahshahani}{2013}]{Diaconis2013}
+Diaconis, P.; Holmes, S.; and Shahshahani, M.
+\newblock 2013.
+\newblock {\em Sampling from a Manifold}, volume Volume 10 of {\em
+  Collections}.
+\newblock Beachwood, Ohio, USA: Institute of Mathematical Statistics.
+\newblock  102--125.
+
+\bibitem[\protect\citeauthoryear{Dijkstra}{1959}]{Dijkstra59anote}
+Dijkstra, E.~W.
+\newblock 1959.
+\newblock A note on two problems in connexion with graphs.
+\newblock {\em NUMERISCHE MATHEMATIK} 1(1):269--271.
+
+\bibitem[\protect\citeauthoryear{Dimeglio \bgroup et al\mbox.\egroup
+  }{2014}]{Dimeglio2014}
+Dimeglio, C.; Gallon, S.; Loubes, J.-M.; and Maza, E.
+\newblock 2014.
+\newblock A robust algorithm for template curve estimation based on manifold
+  embedding.
+\newblock {\em Comput. Stat. Data Anal.} 70:373--386.
+
+\bibitem[\protect\citeauthoryear{Floyd}{1962}]{Floyd1962}
+Floyd, R.~W.
+\newblock 1962.
+\newblock Algorithm 97: Shortest path.
+\newblock {\em Commun. ACM} 5(6):345--.
+
+\bibitem[\protect\citeauthoryear{Galeano, Joseph, and
+  Lillo}{2015}]{Galeano2015}
+Galeano, P.; Joseph, E.; and Lillo, R.~E.
+\newblock 2015.
+\newblock The mahalanobis distance for functional data with applications to
+  classification.
+\newblock {\em Technometrics} 57(2):281--291.
+
+\bibitem[\protect\citeauthoryear{Genovese \bgroup et al\mbox.\egroup
+  }{2014}]{Genovese2014}
+Genovese, C.~R.; Perone-Pacifico, M.; Verdinelli, I.; and Wasserman, L.
+\newblock 2014.
+\newblock Nonparametric ridge estimation.
+\newblock {\em The Annals of Statistics} 42(4):1511--1545.
+
+\bibitem[\protect\citeauthoryear{Joshi, Srivastava, and
+  Jermyn}{2007}]{Joshi2007}
+Joshi, S.; Srivastava, A.; and Jermyn, I.
+\newblock 2007.
+\newblock Riemannian analysis of probability density functions with
+  applications in vision.
+\newblock In {\em 2007 IEEE Conference on Computer Vision and Pattern
+  Recognition ; proceedings}. Piscataway, NJ: IEEE.
+\newblock  1664--1671.
+
+\bibitem[\protect\citeauthoryear{Kneip and Ramsay}{2008}]{Kneip2008}
+Kneip, A., and Ramsay, J.~O.
+\newblock 2008.
+\newblock Combining registration and fitting for functional models.
+\newblock {\em Journal of the American Statistical Association}
+  103(483):1155--1165.
+
+\bibitem[\protect\citeauthoryear{Leng and Muller}{2005}]{LengMuller2005}
+Leng, X., and Muller, H.-G.
+\newblock 2005.
+\newblock {Classification using functional data analysis for temporal gene
+  expression data}.
+\newblock {\em Bioinformatics} 22(1):68--76.
+
+\bibitem[\protect\citeauthoryear{{Lin} and {Yao}}{2017}]{LinYao2017}
+{Lin}, Z., and {Yao}, F.
+\newblock 2017.
+\newblock {Functional Regression on Manifold with Contamination}.
+\newblock {\em arXiv e-prints}  arXiv:1704.03005.
+
+\bibitem[\protect\citeauthoryear{Lin \bgroup et al\mbox.\egroup
+  }{2014}]{Lin2014}
+Lin, B.; Yang, J.; He, X.; and Ye, J.
+\newblock 2014.
+\newblock Geodesic distance function learning via heat flow on vector fields.
+\newblock In {\em Proceedings of the 31st International Conference on
+  International Conference on Machine Learning - Volume 32}, ICML'14,
+  II--145--II--153.
+\newblock JMLR.org.
+
+\bibitem[\protect\citeauthoryear{Ozertem and Erdogmus}{2011}]{Ozertem2011}
+Ozertem, U., and Erdogmus, D.
+\newblock 2011.
+\newblock Locally defined principal curves and surfaces.
+\newblock {\em J. Mach. Learn. Res.} 12:1249--1286.
+
+\bibitem[\protect\citeauthoryear{Tenenbaum, Silva, and
+  Langford}{2000}]{Tenenbaum2000}
+Tenenbaum, J.~B.; Silva, V.~d.; and Langford, J.~C.
+\newblock 2000.
+\newblock A global geometric framework for nonlinear dimensionality reduction.
+\newblock {\em Science} 290(5500):2319--2323.
+
+\end{thebibliography}

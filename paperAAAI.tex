@@ -1,0 +1,331 @@
+\def\year{2020}\relax
+%File: formatting-instruction.tex
+\documentclass[letterpaper]{article} % DO NOT CHANGE THIS
+\usepackage{aaai20}  % DO NOT CHANGE THIS
+\usepackage{times}  % DO NOT CHANGE THIS
+\usepackage{helvet} % DO NOT CHANGE THIS
+\usepackage{courier}  % DO NOT CHANGE THIS
+\usepackage[hyphens]{url}  % DO NOT CHANGE THIS
+\usepackage{graphicx} % DO NOT CHANGE THIS
+\urlstyle{rm} % DO NOT CHANGE THIS
+\def\UrlFont{\rm}  % DO NOT CHANGE THIS
+\usepackage{graphicx}  % DO NOT CHANGE THIS
+\frenchspacing  % DO NOT CHANGE THIS
+\setlength{\pdfpagewidth}{8.5in}  % DO NOT CHANGE THIS
+\setlength{\pdfpageheight}{11in}  % DO NOT CHANGE THIS
+
+
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+
+
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{amsbsy}
+\usepackage{graphics}
+\usepackage{epsfig}
+\usepackage[usenames]{color}
+\usepackage{graphicx}
+
+
+
+
+\newcommand {\To}{\rightarrow}
+\newcommand {\TO}{\Rightarrow}
+\newcommand {\R}{\mathbb{R}}
+\newcommand {\Prob}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand {\cov}{\textrm{Cov}}
+\newcommand {\var}{\textrm{Var}}
+\newcommand {\1}{\textrm{\textbf{1}}}
+\newcommand{\M}{\mathcal{M}}
+%\nocopyright
+%PDF Info Is REQUIRED.
+% For /Author, add all authors within the parentheses, separated by commas. No accents or commands.
+% For /Title, add Title in Mixed Case. No accents or commands. Retain the parentheses.
+ \pdfinfo{
+/Title (The hidden manifold distance for functional data)
+/Author (Susan Wei and Marie-H\'el\`{e}ne Descary)
+} %Leave this	
+% /Title ()
+% Put your actual complete title (no codes, scripts, shortcuts, or LaTeX commands) within the parentheses in mixed case
+% Leave the space between \Title and the beginning parenthesis alone
+% /Author ()
+% Put your actual complete list of authors (no codes, scripts, shortcuts, or LaTeX commands) within the parentheses in mixed case. 
+% Each author should be only by a comma. If the name contains accents, remove them. If there are any LaTeX commands, 
+% remove them. 
+
+% DISALLOWED PACKAGES
+% \usepackage{authblk} -- This package is specifically forbidden
+% \usepackage{balance} -- This package is specifically forbidden
+% \usepackage{caption} -- This package is specifically forbidden
+% \usepackage{color (if used in text)
+% \usepackage{CJK} -- This package is specifically forbidden
+% \usepackage{float} -- This package is specifically forbidden
+% \usepackage{flushend} -- This package is specifically forbidden
+% \usepackage{fontenc} -- This package is specifically forbidden
+% \usepackage{fullpage} -- This package is specifically forbidden
+% \usepackage{geometry} -- This package is specifically forbidden
+% \usepackage{grffile} -- This package is specifically forbidden
+% \usepackage{hyperref} -- This package is specifically forbidden
+% \usepackage{navigator} -- This package is specifically forbidden
+% (or any other package that embeds links such as navigator or hyperref)
+% \indentfirst} -- This package is specifically forbidden
+% \layout} -- This package is specifically forbidden
+% \multicol} -- This package is specifically forbidden
+% \nameref} -- This package is specifically forbidden
+% \natbib} -- This package is specifically forbidden -- use the following workaround:
+% \usepackage{savetrees} -- This package is specifically forbidden
+% \usepackage{setspace} -- This package is specifically forbidden
+% \usepackage{stfloats} -- This package is specifically forbidden
+% \usepackage{tabu} -- This package is specifically forbidden
+% \usepackage{titlesec} -- This package is specifically forbidden
+% \usepackage{tocbibind} -- This package is specifically forbidden
+% \usepackage{ulem} -- This package is specifically forbidden
+% \usepackage{wrapfig} -- This package is specifically forbidden
+% DISALLOWED COMMANDS
+% \nocopyright -- Your paper will not be published if you use this command
+% \addtolength -- This command may not be used
+% \balance -- This command may not be used
+% \baselinestretch -- Your paper will not be published if you use this command
+% \clearpage -- No page breaks of any kind may be used for the final version of your paper
+% \columnsep -- This command may not be used
+% \newpage -- No page breaks of any kind may be used for the final version of your paper
+% \pagebreak -- No page breaks of any kind may be used for the final version of your paperr
+% \pagestyle -- This command may not be used
+% \tiny -- This is not an acceptable font size.
+% \vspace{- -- No negative value may be used in proximity of a caption, figure, table, section, subsection, subsubsection, or reference
+% \vskip{- -- No negative value may be used to alter spacing above or below a caption, figure, table, section, subsection, subsubsection, or reference
+
+\setcounter{secnumdepth}{0} %May be changed to 1 or 2 if section numbers are desired.
+
+% The file aaai20.sty is the style file for AAAI Press 
+% proceedings, working notes, and technical reports.
+%
+\setlength\titlebox{2.5in} % If your paper contains an overfull \vbox too high warning at the beginning of the document, use this
+% command to correct it. You may not alter the value below 2.5 in
+\title{The hidden manifold distance for functional data}
+%Your title must be in mixed case, not sentence case. 
+% That means all verbs (including short verbs like be, is, using,and go), 
+% nouns, adverbs, adjectives should be capitalized, including both words in hyphenated terms, while
+% articles, conjunctions, and prepositions are lower case unless they
+% directly follow a colon or long dash
+\author{Susan Wei\textsuperscript{\rm 1} and Marie-H\'el\`{e}ne Descary\textsuperscript{\rm 2}\\ % All authors must be in the same font size and format. Use \Large and \textbf to achieve this result when breaking a line
+\textsuperscript{\rm 1} The University of Melbourne, \textsuperscript{\rm 2}Universit\'e du Qu\'ebec \`{a} Montr\'eal\\ %If you have multiple authors and multiple affiliations
+% use superscripts in text and roman font to identify them. For example, Sunil Issar,\textsuperscript{\rm 2} J. Scott Penberthy\textsuperscript{\rm 3} George Ferguson,\textsuperscript{\rm 4} Hans Guesgen\textsuperscript{\rm 5}. Note that the comma should be placed BEFORE the superscript for optimum readability
+ % email address must be in roman text type, not monospace or sans serif
+}
+ \begin{document}
+
+\maketitle
+
+\begin{abstract}
+Functional data analysis is the statistical analysis of smooth infinite-dimensional curves. 
+The challenge of analyzing infinite-dimensional objects is ameliorated by the fact that the dimensionality of curves is only artifically high if they are smooth.
+There is also another sense in which the dimensionality of the curves under study may be low. 
+This is the much less explored idea that the curves may actually live in a submanifold with low intrinsic dimension.
+Interesting classes of functional manifold data include classes of probability density functions and classes of warped curves of a common template function. 
+%Since these spaces are not vector spaces, even basic operations such as addition and subtraction require special consideration.-->
+In this work we address the estimation of the pairwise geodesic distance between functional manifold data when we only have access to their noisy realizations which live near, rather than exactly on, the manifold.
+% This setting cannot be tackled by classic manifold learning techniques which require data to live exactly on a manifold.  -->
+%We will show that estimation of the geodesic distance cannot easily be accomplished by a naive method such as smoothing followed by a shortest-path algorithm. -->
+The proposed methodology first projects the functional data on to the underlying hidden manifold and then performs operations on this hidden manifold. 
+Good estimation of the pairwise geodesic distance has beneficial implications for many downstream tasks in functional data analysis which we illustrate in the case of distanced-based functional classification.
+
+
+\end{abstract}
+
+\section{Introduction}
+
+Many statistical methods depend on a measure of distance. Methods in functional data analysis, the study of infinite-dimensional smooth curves, are no exception. Certain classes of functional data may naturally live on manifold, e.g.\ classes of probability density functions and classes of warped curves of a common template function.
+In situations where the manifold hypothesis might be plausible, one might consider using a geodesic distance that takes into account the intrinsic structure of the manifold rather than the standard $L^2$ distance. The benefits of adopting the geodesic distance may be realized in downstream tasks such as distanced-based clustering and classification of functional obvervations.
+
+Specifically, let $X_1,\ldots,X_n$ be a sample of $n$ independant realizations of a random variable $X$ that takes value in the Hilbert space $L^2([a,b],\R)$. Suppose additionally that the function $X$ belongs to a low-dimensional nonlinear Riemannian manifold $\M \subset L^2([a,b],\R)$ where $g$ is a Riemannian metric tensor on $\M$ which can be used to assign a metric on the manifold as follows \cite{Lin2014}. For each point $X$ on the manifold, the Riemannian metric tensor $g$ has an inner product $g_X$ on the tangent space $T_X \M$. The norm of a tangent vector $V \in T_X \M$ is defined as $$\|V\| = \sqrt{g_X(V,V)}.$$ The geodesic distance between two functions $X_i,X_j$ on the manifold $\M$, based on this metric tensor $g$, is defined as
+\begin{eqnarray*} 
+d_g(X_i,X_j)&:=&\inf \big\{l(\gamma): \gamma:[a,b] \to \M \text{ piecewise smooth},\\
+&&\quad \quad  \gamma(a) = X_i, \gamma(b) = X_j] \big \},
+\end{eqnarray*}
+where $$ l(\gamma) := \int_a^b \left\| \frac{\,d\gamma}{\,d t}(t) \right\| \,dt$$
+is the length of a smooth curve $\gamma: [a,b] \subset \R \to \M$.
+
+
+
+%<!-- ???insert example that shows pairwise geodesic distances give visually more interesting results than pairwise $L_2$ distance.??? -->
+
+%<!-- (gives examples and references for functional manifolds). -->
+%<!-- Before continuing, some diambiguities are called for. Contrast existing work on functional data where either the domain is a manifold or the range is a manifold, or both.  -->
+
+%<!-- There exist many nonlinear dimension reduction methods for manifolds embedded in Euclidean space, also known as manifold learning methods, which are particularly popular in computer vision. However, the success of these methods typically require the data to be observed with a high signal-to-noise ratio. (is it true? ref?)  -->
+
+Given perfect functional observations $X_i$ and $X_j$, i.e.\ with no measurement error and on a very dense domain grid, the estimation of the geodesic distance $d_g(X_i,X_j)$ can be accomplished straightforwardly using a shortest-path algorithm, e.g. the Floyd-Warhsall algorithm \cite{Floyd1962}. 
+However, when functional data are observed with noise, this approach is likely to fail. This is because the error may be such that the noisy functional manifold data no longer live on a manifold. 
+A preprocessing step where the nosiy functional manifold data is smoothed is also likely to fail. This is because smoothing techniques in functional data analysis are designed for the $L_2$ recovery of the original curve, not to ensure the recovered functional versions of the data lie on or close to the functional manifold $\M$. 
+%<!-- This presents challenges to the application of many manifold learning techniques which assume fully observed nearly-noiseless inputs. -->
+
+%<!-- Estimating the manifold $\M$ from a sample of functions observed discretely and with measurements is a challenging task (results depend on curvature of the manifold, need a lot of data). Even after recovering a functional version of the data, the chances are pretty high that $\tilde X_1,\ldots,\tilde X_n$ do not lie exactly on $\M$.  -->
+
+In this work, we put forth a technique for the specific task of recovering the $n{\times}n$ matrix $G$ of pairwise geodesic distances, i.e.\
+$$
+G(i,j)=G(j,i) = \left\{ \begin{array}{ll}
+ d_g (X_i,X_j) & \textrm{if $i\neq j$,}\\
+ 0 & \textrm{otherwise,}
+  \end{array} \right.
+$$ 
+when we have, in lieu of $X_i$ and $X_j$, access only to discretely-observed noisy functional observations $Y_i$ and $Y_j$ that possibly live off the true manifold. This is accomplished by first projecting the functional data on to the underlying hidden manifold and then performing operations on this hidden manifold. 
+
+% Pairwise distances are important for many downstream tasks, e.g.  classification, clustering, manifold learning (ISOMAP), nonparametric regression (kernel regression). Certainly, pairwise geodesic distances are legitimate objects of interest in themselves but our motivation is more general in nature. Specifically, we use pairwise distances as an illuminating example to advocate and promote the nonlinear perspective in FDA.  -->
+
+\subsection{Related work}
+
+The work of Chen and Muller \shortcite{ChenMuller2012} was among the first in functional data analysis to consider the manifold hypothesis for functional data. A notion of the mean and variation of functional manifold data was introduced. Of particular relevance to our work is the modified ISOMAP procedure, called P-ISOMAP, introduced in Chen and Muller \shortcite{ChenMuller2012}, which adds a data-adaptive penalty to allow for noisy functional observations whereas in the classic ISOMAP algorithm, observations are assumed to lie exactly on the manifold. Another existing work for estimating the pairwise geodesic distance for functional manifold data can be found in Dimeglio et al. \shortcite{Dimeglio2014}. The estimator is called Robust-ISOMAP for the fact that it is motivated by modifying the ISOMAP algorithm to be less sensitive to outliers. We will discuss both P-ISOMAP and robust ISOMAP in more details in the simulation section. 
+
+%<!-- [@LinYao2017]  -->
+
+\section{Proposed method for estimating geodesic distances}
+
+Suppose that each curve $X_i$ is observed with measurements errors on a grid $T_i=(t_{i1},\ldots,t_{iK})$, i.e. we observe a sample of $K$-dimensional vectors $Y_1,\ldots,Y_n$ with $Y_{ij} = X_i(t_{ij}) + \epsilon_{ij}$, where the random variables $\epsilon_{ij}$ have mean zero and are uncorrelated with each other. We assume that each observation grid $T_1,\ldots,T_n$ is dense.
+
+We begin by converting the discrete functional observations into continuous ones. Let $\tilde X_1,\ldots,\tilde X_n$ denote the functional versions of the raw data obtained by some smoothing method. Our proposed methodology for estimating the pairwise geodesic distances $\{ d_\M (X_i,X_j)\}_{i>j}$ is agnostic to the smoothing method employed. For example we may employ spline smoothing to recover the functional versions of the raw data, i.e.\
+\begin{equation}\label{eq_spline_smoothing} 
+\tilde X_i = \arg\min_{f\in C^2[0,1]}\left\{\sum_{j=1}^{K}\left(f(t_{ij})-Y_{ij}\right)^2+\lambda \|\partial^2_tf\|^2_{L^2}\right\},
+\end{equation}
+where $\lambda>0$ is a tuning parameter controlling the smoothness of $\tilde X_i$. 
+
+Before introducing our procedure, let us first review the ISOMAP algorithm \cite{Tenenbaum2000}, a three-step procedure that takes a set of points $x_1,\ldots,x_n$ in $(\M,g)$, a submanifold of $\R^D$ as input and produces an embedding of the input data in the space $\R^d$ with $d<D$ that preserves pairwise geodesic distances. 
+\begin{enumerate}
+\item Construct a weighted graph $G$ with nodes corresponding to the observations $x_1,\ldots,x_n\in \R^D$. Two nodes $x_i$ and $x_j$ are connected by an edge $e_{ij}$ if the distance $d_{ij}=||x_i-x_j ||_{2}$ is smaller than a given value $\epsilon$, and the weight associated to an edge $e_{ij}$ is $d_{ij}$.
+\item Estimate the pairwise geodesic distances $d_g(x_i,x_j)$ based on $G$ using shortest-path algorithms. Specifically, the geodesic distance between two nodes is estimated to be the length of the shortest path in $G$ between these two nodes, i.e./ the sum of the weights of the edges forming the shortest path, which is calculated either with the Floyd-Warshall algorithm \cite{Floyd1962} or with the Dijkstra algorithm \cite{Dijkstra59anote}.
+%<!-- Which one do we actually use in our implementation, Floyd-Warshall or Dijkstra's? -->
+\item Use multidimensional scaling to obtain an embedding in $\R^d$ that preserves the pairwise geodesic distances estimated above.
+\end{enumerate}
+Note that shortest-path algorithms such as the Floyd-Warshall algorithm are used to find the smallest path given a weigthed graph but they do not produce the weighted graphs themselves. Formulating the graph in step 1 of ISOMAP is in fact the most challenging asepct of the algorithm since it depends heavily on the choice of the tuning parameter $\epsilon$.  Both P-ISOMAP and robust ISOMAP are modifications of ISOMAP in the sense that they change the construction of the weighted graph in Step 1.  
+%<!-- (which is the difficult part, depend on number of neighbors, many method out there to calculate that graph in a robust way, P-ISOMAP is one of these). -->
+
+In what follows, we call IsoGeo the procedure which performs a modified version of the first step of ISOMAP, proposed in @Dimeglio2014, followed by the original second step of ISOMAP. The first step of IsoGeo modifies Step 1 of ISOMAP so that the constructed graph $G$ is independent of the tuning parameter $\epsilon$:
+1'. Construct the complete weigthed graph $G_c$ with nodes corresponding to the observations $x_1,\ldots,x_n\in \R^D$. Obtain the minimal spanning tree $G_s$ associated with $G_c$ and denote its set of edges by $E_s$. The graph $G$ is obtained by adding all edges $e_{ij}$ to $E_s$ for which the following condition is true:
+$$ \overline{x_ix_j} \subset \bigcup_{i=1}^n B(x_i,\epsilon_i),$$
+where $B(x_i,\epsilon_i)$ is the open ball of center $x_i$ and radius $\epsilon_i = \max_{e_{ij}\in E_s}d_{ij}$, and $\overline{x_ix_j}= \{x\in R^D \ | \ \exists \lambda \in [0,1], x=\lambda x_i + (1-\lambda)x_j \}$.
+Note that IsoGeo has no tuning parameters. 
+
+Our method is based on the idea that the underlying functional manifold can be sufficiently well-recovered by the subspace-constrained mean-shift algorithm \cite{Ozertem2011}. Theoretical justificaton for this can be found in Genovese et al. \shortcite{Genovese2014}. We expect the points $\tilde X^{s,\hat \M}_1,\ldots,\tilde X^{s,\hat \M}_n$ to lie close to the real manifold $\M$ and then $d_{\hat \M}$ to be close to $d_\M$. Our procedure is described by the following steps:
+
+%<!-- 1. [Susan: I think the smoothing step should be independent of our proposed methodology] Transform each vector $Y_i$ into a function $\tilde X_i$ by spline smoothing: -->
+%<!-- $$ \tilde X_i = \arg\min_{f\in C^2[0,1]}\left\{\sum_{j=1}^{K}\left(f(t_{ij})-Y_{ij}\right)^2+\lambda \|\partial^2_tf\|^2_{L^2}\right\}$$ -->
+%<!-- where $\lambda>0$ is a tuning parameter controlling the smoothness of $\tilde X_i$.  -->
+\begin{enumerate}
+\item Discretise the functions $\tilde X_1,\ldots,\tilde X_n$ by evaluating them on a common grid $\tilde T=(t_{1},\ldots,t_{K})$. Let $s$ be a positive integer, smaller than $K$. Obtain $\tilde X^s_1,\ldots,\tilde X^s_n \in \mathbb R^s$ using multidimensional scaling whereby the pairwise $\mathbb R^K$ Euclidean distances on the discretised functions $\tilde X_i$ are preserved.
+\item Apply the subspace constrained mean-shift algorithm \cite{Ozertem2011} to each of $\tilde X^s_i$ to obtain  $\tilde X^{s,\hat \M}_i$.
+\item Use IsoGeo to approximate the pairwise geodesic distances $\{d_{\hat \M}(\tilde X^{s,\hat \M}_i,\tilde X^{s,\hat \M}_j)\}_{i>j}$.
+\end{enumerate}
+Thus our geodesic distance estimator is the $n{\times}n$ matrix $\hat G$ whose elements are given by
+$$
+\hat G(i,j)=\hat G(j,i) = \left\{ \begin{array}{ll}
+ d_{\hat \M}(\tilde X^{s,\hat \M}_i,\tilde X^{s,\hat \M}_j) & \textrm{if $i\neq j$,}\\
+ 0 & \textrm{otherwise.}
+  \end{array} \right.
+$$
+Since ridge estimation suffers from the curse of dimensionality, we first reduce the dimension of our data with multidimensional scaling in Step 1 before applying the mean-shift algorithm.
+
+\subsection{Selection of tuning parameters}
+Describe heuristics. We pick the bandwidth $h$ in the subspace constrained mean-shift using Equation (A1) of \cite{ChenHo2015}.
+
+\section{Simulation study}
+
+We perform a simulation study to ascertain the efficacy of our method for estimating pairwise geodesic distances when one only has access to discretely-observed noisy functional data. Three different metrics are used to assess the quality of a pairwise geodesic distance estimator. 
+
+\begin{itemize}
+\item the near isometry metric: this is the area under the receiver operating curve with $\epsilon$ on the $x$-axis and the degree to which near-$\epsilon$ isometry holds on the $y$-axis. Near-$\epsilon$ isometry is a relaxation of isometry measured by the percentage of estimated pairwise distances between $1-\epsilon$ and $1+\epsilon$ of the truth pairwise distance.  
+\item  the relative Frobenius metric: this is given by
+$||d-\hat d||/||d||$
+where $d$ and $\hat d$ are the true and estimated $n{\times}n$ geodesic distance matrices, respectively. 
+\item  the Pearson correlation metric: this is the Pearson correlation coefficient between the upper diagonal of $d$ and $\hat d$.
+\end{itemize}
+
+
+\subsection{Alternative estimators of geodesic distance [Marie]}
+
+We compare the performance of our method to the one of the three following methods:
+\begin{enumerate}
+\item \emph{Raw Data (RD)} The naive approach consisting in appling directly IsoGeo on the raw vectors $Y_1,\ldots,Y_n \in R^K$. <!-- to obtain an estimator $\hat G_{\textrm{RD}}$.--> Note that this procedure only makes sense if all the grids $T_1,\ldots,T_n$ are the same.
+\item   \emph{Spline Smoothing (SS)} The natural method consisting in applying IsoGeo on the smoothed version $\tilde X_1,\ldots,\tilde X_n$ of the raw data obtained by spline smoothing as described in (\ref{eq_spline_smoothing}). %<!--Transform each vector $Y_i$ into a function $\tilde X_i$ by spline smoothing. Apply IsoGeo on the vectors $\{(\tilde X_i(t_1), \ldots, X_i(t_K)\}_{i=1}^n$, where $t_1,\ldots,t_K$ is a regular grid of $[a,b]$, to obtain an estimator $\hat G_{\textrm{SS}}$.-->
+\item  \emph{P-ISOMAP (pI)} The two step procedure developed in @ChenMuller2012 where the first step is a modified version of step I of ISOMAP incorporating a penalty in order to robustify the construction of the weighted graph and the second step is step II of ISOMAP.
+%<!--* **(Random Projection) RP**  same method as our but change step 2 by : obtain $s$-dimensional representation by random projection and setp 4 by obtain $\hat G$ using a ensemble method.-->
+\end{enumerate}
+We ran Chen and Muller's P-ISOMAP separately in Matlab with their automatic penalty selection and discovered that ???.
+
+\subsection{Simulation scenarios }
+%<!-- Susan  -->
+
+\subsubsection{Isometric functional manifold of normal density functions}
+%<!-- Scenario 5 -->
+This scenario is modified from what is referred to as Manifold 2 in \cite{ChenMuller2012} by fixing the variance of the normal density to be $1$. We have $$\M =  \left \{X_\beta: \beta \in [-1,1], t \in [a,b]\right \}$$ with the $L_2$ inner product as the metric tensor of $\M$, where $X_\beta: [a,b] \to \R$ is given by $X_\beta(t) = \frac{1}{\sqrt{2\pi}} \exp{[-\frac{1}{2}(t-\beta)^2]}$. We set $a=-4$ and $b=4$.The geodesic distance between the curves $X_{\beta_1}$ and $X_{\beta_2}$ is given by
+\begin{eqnarray*}
+d(X_{\beta_1},X_{\beta_2}) &=& \int_{\beta_1}^{\beta_2} \left \| \frac{d X_\beta (t)}{d\beta} \right\|_{L^2} d\beta \\
+&=&  \int_{\beta_1}^{\beta_2} \sqrt{ \frac{1}{2\sqrt{\pi}} \int_{-4}^4 \frac{1}{\sqrt{\pi}} \exp\{-(t-\beta)^2\}(t-\beta)^2 dt  }  \  d\beta \\
+&=&   \int_{\beta_1}^{\beta_2} \sqrt{ \frac{1}{2\sqrt{\pi}} \int_{-4}^4(t-\beta)^2 f(t) dt  }  \  d\beta, \textrm{ where $f$ is the density of a N$(\beta,1/2)$ }   \\
+&\approx&  \int_{\beta_1}^{\beta_2}  \sqrt{ \frac{1}{2\sqrt{\pi}} \frac{1}{2}} \ d\beta \\
+&=& (\beta_2-\beta_1) \frac{1}{2\pi^{1/4}},
+\end{eqnarray*}
+where the approximation comes from the fact that we are integrating on $[a,b]=[-4,4]$ and not on $\R$. 
+We can see this manifold is isometric, since the geodesic distance between $X_{\beta_1}$ and $X_{\beta_2}$ in $\M$ is the Euclidan distance between the $\beta$'s, up to some scaling factor. Note that the "straight" line connecting $X_{\beta_1}$ and $X_{\beta_2}$ in $\M$ does not always stay inside of $\M$, so we cannot employ the calculation technique of Scenario 1. 
+
+\subsubsection{Functional manifold of square root velocity functions}
+It was shown in \cite{Joshi2007} that the square root representation of probability density functions has a nice closed form geodesic.
+They consider the manifold $$ \M = \{ \psi:[0,1] \to \R : \psi \ge 0, \int_0^1 \psi^2(s) \,ds = 1 \}$$ with the metric tensor given by the Fisher-Rao metric tensor $$ <v_1,v_2> = \int_0^1 v_1(s) v_2(s) \,ds $$ for two tangent vectors $v_1,v_2 \in T_\psi(\M)$. Note that this concides with the $L_2[0,1]$ inner product. \cite{Joshi2007} showed that the geodesic distance between any two $\psi_1$ and $\psi_2$ in $\M$ is simply $$d(\psi_1,\psi_2) = \cos^{-1}<\psi_1,\psi_2>.$$
+We will specifically examine the square root of $Beta(\alpha,\beta)$ distributions which is supported on $[0,1]$. That is, $$ M = \{ \psi_{\alpha,\beta}: 1 \le \alpha \le 5, 2 \le \beta \le 5\} $$ where $\psi_{\alpha,\beta}: [0,1] \to \R$ is the pdf of $Beta(\alpha,\beta)$.
+ 
+\subsubsection{Functional manifold of warping functions}
+%<!-- Scenario 5 -->
+This is based on Equations (17) and (18) of\cite{Kneip2008} but with $z_{i1}, z_{i2}$ set to $1$. (Equation 17 has a typo where the exponentials are missing negative signs).Let $X_\alpha(t) = \mu(h_\alpha(t))$ be defined on $[-3,3]$ where $$ \mu(t) = \exp\{(t-1.5)^2/2\} + \exp\{(t+1.5)^2/2\}$$ and $$ h_\alpha(t) = 6 \frac{ \exp\{\alpha(t+3)/6\} - 1}{\exp\{\alpha\}-1}, \alpha \ne 0 $$ and $h_\alpha(t) = t$ if $\alpha = 0$. Consider the manifold $$ M = \{X_\alpha: -1 \le \alpha \le 1\} $$. The geodesic distance is then $$ d(X_{\alpha_1},X_{\alpha_2}) = \int_{\alpha_1}^{\alpha_2} \left \| \frac{d X_\alpha (t)}{d\alpha} \right\|_{L^2} d\alpha.$$
+
+
+\subsection{Sampling from a functional manifold}
+As of yet, there is little work as to how to sample from a functional manifold. Even in the Euclidean case, it is not obvious how sampling should be done \cite{Diaconis2013}. To safeguard against sampling unevenly on the functional manifold, we sample on a very concentrated measure for the intrinsic parameters.
+For both the manifold of normal densities and the manifold of warping functions, we sample $\alpha$ according to ???%rtruncnorm(samplesize,alphamin,alphamax,(alphamin+alphamax)/2,1)???
+For the manifold of square root beta densities, we sample as follows       
+%alpha<-$ rtruncnorm(nb_alpha,alphamin,alphamax,(alphamax+alphamin)/2,0.3)$
+%beta<- $rtruncnorm(nb_beta,betamin,betamax,(betamax+betamin)/2,0.3)$
+How to sample properly from a functional manifold could be interesting future work.
+
+\subsection{Results}
+
+\subsection{The cost of employing proposed method when manifold is flat}
+
+\section{Distance-based functional classification [Marie]}
+
+In this section, we explore whether our geodesic distance estimator has benefits for downstream analysis task. There are many tasks we could consider here such as distance-based nonparametric regression and distanced-based functional clustering, but we will focus on distance-based functional classification. It must be noted that while curve alignment, also known as curve registration, is necessarily performed as a preprocessing technique prior to clustering and classification, our geodesic distance estimator allows one to forsake this step. 
+For simplicity, assume the task is binary classification. Associated to each functional object $x$ is a binary $y$ indicating class membership.
+Consider the classifier proposed in Ferraty and Vieu (2003,2006) which is a functional version of the Nadaraya-Watson kernel estimator of class membership probabilities:
+$$
+\hat p(y = 0 | x) \frac{ \sum_{i=1}^n K[h^{-1} d(x,x_i)] 1(y_i = 0) }{ \sum_{i=1}^n K[h^{-1} d(x,x_i)] }
+$$
+We shall compare our method to using $L_2$ distance, possibly weighted, and with curve registration already accomplished. Describe alternative methods in detail. 
+
+The bandwidth in the classifier should be tuned individually for each method. Also we might need to tune MDS dimension $s$ since in real data, the dimension of the manifold might be much higher than encountered in the simulation scenarios where it never goes above 2. 
+
+Datasets used by functional classification papers
+\begin{itemize}
+\item Wheat, rainfall and phoneme in Aurore's paper "Achieving near-perfect classification for functional data"
+\item Berkeley growth curves in \cite{ChenReiss2014}.
+\item Tecator and phoneme in \cite{Galeano2015} Mahalanobis technometrics paper.
+\item yeast cell cycle gene expression (can't find this publicly) in \cite{LengMuller2005} "Classification using functional data analysis for temporal gene expression data"
+\end{itemize}
+
+Datasets used in functional manifold papers
+\begin{itemize}
+\item Berkeley growth, yeast cell cycle gene expression (can't find this publicly) in \cite{ChenMuller2012}
+\item Tecator in \cite{LinYao2017} contamination paper
+\item Berkeley growth, gait cycle in \cite{Dimeglio2014} robust isomap paper
+\end{itemize}
+
+\bibliographystyle{aaai} 
+\bibliography{references}
+
+\end{document}
