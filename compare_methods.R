@@ -8,6 +8,7 @@ library(reticulate)
 library(fields)
 library(fda)
 library(igraph)
+library(matlabr)
 
 source('EuclideanExamples.R')
 source('full_geo_from_adj_geo.R')

@@ -56,8 +56,6 @@
 # meth <- list("NN" = TRUE,"RD_o" = TRUE,"RD" = TRUE,"SS_o" = TRUE,"SS" = TRUE,"pI" = FALSE,"OUR" = TRUE,"OUR2" = FALSE,"OUR3"=TRUE,"RP" = FALSE, "L2" = TRUE, "w_L2" = TRUE )
 # Estim<- pairwise_geo_estimation(meth,data$noiseless_data,data$noisy_data,data$analytic_geo,TRUE,TRUE,20,data$grid,data$reg_grid,100,1,FALSE,FALSE)
 
-library(matlabr)
-
 
 pyIso = import_from_path("getIsomapGdist",path='.') # TODO: consider replacing python Isomap with R implementation of Floyd's algorithm? https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm
 py_min_neigh = import_from_path("get_min_num_neighbors",path='.')
