@@ -36,11 +36,10 @@ Ks_obs = c(100,30)
 
 total_tasks = length(sces)*length(SNRs)*length(reg_samplings)*length(Ks_obs)*length(mcs)
 
-# get sweeping id, only use this block if submitting to cluster
-slurm_arrayid <- Sys.getenv('SLURM_ARRAY_TASK_ID')
-slurm_arrayid = as.numeric(slurm_arrayid)
-print(slurm_arrayid)
-
+# slurm_arrayid <- Sys.getenv('SLURM_ARRAY_TASK_ID')
+# slurm_arrayid = as.numeric(slurm_arrayid)
+# print(slurm_arrayid)
+slurm_arrayid = 1
 
 # Hardcode
 unravel=arrayInd(slurm_arrayid,c(length(sces), length(SNRs), length(reg_samplings), length(Ks_obs),length(mcs)))
@@ -85,7 +84,7 @@ Estim<- pairwise_geo_estimation(method=meth,
                                 grid = data$grid,
                                 reg_grid = data$reg_grid,
                                 common_grid_true =com_grid,
-                                K_dense = K_smooth)
+                                K_dense = Ks_smooth)
 
 # Assessment 
 Rel_errs = lapply(Estim, assess_goodness_estimation, true_geo = data$analytic_geo)

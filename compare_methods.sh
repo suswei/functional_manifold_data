@@ -3,8 +3,7 @@
 # example from https://stackoverflow.com/questions/50653937/how-to-run-a-job-array-in-r-using-the-rscript-command-from-the-command-line
 
 # Partition for the job:
-#SBATCH --partition=cloud
-
+#SBATCH -p cloud,physical
 
 # The name of the job:
 #SBATCH --job-name="manifoldFDAgeodesic"
@@ -25,7 +24,7 @@
 #SBATCH --mail-user=susan.wei@unimelb.edu.au
 
 # The maximum running time of the job in days-hours:mins:sec
-#SBATCH --time=1-0:00:00
+#SBATCH --time=0-3:00:00
 
 #SBATCH --array=1-2400         ### Array index | %50: number of simultaneously tasks
 
