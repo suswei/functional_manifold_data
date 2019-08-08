@@ -40,7 +40,7 @@ fi
 # Run the job from the directory where it was launched (default)
 
 # The modules to load:
-# module load MATLAB
+module load MATLAB
 
 # The job command(s):
 R --vanilla < compare_methods.R

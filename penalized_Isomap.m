@@ -1,3 +1,4 @@
+% Marie adpated this from maniMethods.m in PACE package
 function [Manidis] = penalized_Isomap (Dis,K,delta)
     N = size(Dis,1);    
     % initial step: connect K nearest points

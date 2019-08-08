@@ -7,6 +7,8 @@
 # SS_o: Floyd's Algorithm on smooth data (oracle for num neigh)
 # SS: Floyd's Algorithm on smooth data (no oracle)
 # pI: p-isomap of Muller on smooth data
+  # TODO: pI as implemented below still doesn't work with the txt files writing and reading. this is mainly due to the fact that matlabr doesn't allow you to pass in function arguments
+  # Susan made a work around where we first run creatSimTextFiles_pisomap.R in R and then run "run_isomap_p.m" in Matlab. Most delta's, chosen in the oracle way, are chosen to be zero.
 # OUR: mds of smooth data + scms + Floyd's Algorithm (oracle for h and num neigh)
 # OUR2: mds of smooth data + scms + robust isomap (oracle for h)
 # OUR3: mds of smooth data + scms h heuri + robust isomap (no oracle)
@@ -242,25 +244,25 @@ pairwise_geo_estimation <- function(method,
     write.table(num_neigh,file=paste0('./',string,'/possible_K.txt'),col.names = FALSE, row.names = FALSE)
     write.table(c(samplesize,K),file=paste0('./',string,'/n_K.txt'),col.names = FALSE, row.names = FALSE)
     write.table(true_geo,file=paste0('./',string,'/true_geo.txt'),col.names = FALSE, row.names = FALSE)
-  
-    file.copy("./run_isomap_p.m",paste0('./',string,'/'))
-    run_matlab_script(paste0('./',string,'/run_isomap_p.m'))
-  
-    temp=as.vector(read.table(file=paste0('./',string,'/manidis.txt'),header=FALSE))
-    estim_geo_penalized_isomap=matrix(temp[,1],ncol=samplesize)
-    temp2=read.table(file=paste0('./',string,'/err_delta_neigh.txt'),header=FALSE)
-    err_delta_neigh=matrix(temp2[,1],ncol=length(num_neigh))
-    delta_min_tmp=which(err_delta_neigh==min(err_delta_neigh),arr.ind = TRUE)
-    delta_min=delta_can[delta_min_tmp[1,1]]
-  
-    list_to_return[["estim_geo_pI"]]<- estim_geo_penalized_isomap
-    list_to_return[["delta_min"]]<- delta_min
-    
-    unlink(string,recursive=TRUE)
-    
-    if(plot_true){
-      image.plot(estim_geo_penalized_isomap,main=paste('err p-isomap = ',signif(min(err_delta_neigh),digits =4),', delta = ',delta_min,sep=''))
-    }
+    # 
+    # file.copy("./run_isomap_p.m",paste0('./',string,'/'))
+    # run_matlab_script(paste0('./',string,'/run_isomap_p.m'))
+    # 
+    # temp=as.vector(read.table(file=paste0('./',string,'/manidis.txt'),header=FALSE))
+    # estim_geo_penalized_isomap=matrix(temp[,1],ncol=samplesize)
+    # temp2=read.table(file=paste0('./',string,'/err_delta_neigh.txt'),header=FALSE)
+    # err_delta_neigh=matrix(temp2[,1],ncol=length(num_neigh))
+    # delta_min_tmp=which(err_delta_neigh==min(err_delta_neigh),arr.ind = TRUE)
+    # delta_min=delta_can[delta_min_tmp[1,1]]
+    # 
+    # list_to_return[["estim_geo_pI"]]<- estim_geo_penalized_isomap
+    # list_to_return[["delta_min"]]<- delta_min
+    # 
+    # unlink(string,recursive=TRUE)
+    # 
+    # if(plot_true){
+    #   image.plot(estim_geo_penalized_isomap,main=paste('err p-isomap = ',signif(min(err_delta_neigh),digits =4),', delta = ',delta_min,sep=''))
+    # }
   }
 
   

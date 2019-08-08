@@ -5,6 +5,7 @@
 
 # library(DescTools)
 library(reticulate)
+use_python("/Users/suswei/anaconda3/bin/python",required=TRUE)
 library(fields)
 library(fda)
 library(igraph)
@@ -18,8 +19,6 @@ source('pairwise_geo_estimation.R')
 source('sim_Euclidean_data.R')
 source('assess_goodness_estimation.R')
 source('robust_isomap.R')
-
-
 
 # parameters that will be fixed during the sim study
 com_grid = 1 # 1 or 0 to indicate if yes or no each curve is observed on a common grid
@@ -37,10 +36,9 @@ Ks_obs = c(100,30)
 
 total_tasks = length(sces)*length(SNRs)*length(reg_samplings)*length(Ks_obs)*length(mcs)
 
-# slurm_arrayid <- Sys.getenv('SLURM_ARRAY_TASK_ID')
-# slurm_arrayid = as.numeric(slurm_arrayid)
-# print(slurm_arrayid)
-slurm_arrayid = 1
+slurm_arrayid <- Sys.getenv('SLURM_ARRAY_TASK_ID')
+slurm_arrayid = as.numeric(slurm_arrayid)
+print(slurm_arrayid)
 
 # Hardcode
 unravel=arrayInd(slurm_arrayid,c(length(sces), length(SNRs), length(reg_samplings), length(Ks_obs),length(mcs)))
@@ -69,11 +67,11 @@ meth <- list("NN" = FALSE,
              "RD_o" = FALSE,
              "RD" = FALSE,
              "SS_o" = FALSE,
-             "SS" = TRUE,
-             "pI" = TRUE,
+             "SS" = FALSE,
+             "pI" = FALSE,
              "OUR" = FALSE,
              "OUR2" = FALSE,
-             "OUR3"=TRUE,
+             "OUR3"=FALSE,
              "RP" = FALSE,
              "L2" = TRUE, 
              "w_L2" = FALSE )# see pairwise_geo_estimation for more info
