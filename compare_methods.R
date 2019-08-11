@@ -25,13 +25,13 @@ com_grid = 1 # 1 or 0 to indicate if yes or no each curve is observed on a commo
 plotTrue = FALSE
 samplesize = 100
 Ks_smooth = 100
+reg_samplings = TRUE
 
 ## STUDY THE EFFECT OF THE FOLLOWING PARAMETERS 
 mcs = 1:100
 # parameters in sim_functional_data
 sces = c(5,2,4)
 SNRs = c(0.1,0.5)
-reg_samplings = c(TRUE,FALSE)
 Ks_obs = c(100,30)
 
 total_tasks = length(sces)*length(SNRs)*length(reg_samplings)*length(Ks_obs)*length(mcs)
@@ -41,24 +41,23 @@ slurm_arrayid = as.numeric(slurm_arrayid)
 print(slurm_arrayid)
 
 # Hardcode
-unravel=arrayInd(slurm_arrayid,c(length(sces), length(SNRs), length(reg_samplings), length(Ks_obs),length(mcs)))
+unravel=arrayInd(slurm_arrayid,c(length(sces), length(SNRs), length(Ks_obs),length(mcs)))
 
 # actual parameters for this run
 sce = sces[unravel[1,1]]
 SNR = SNRs[unravel[1,2]]
-reg_sampling = reg_samplings[unravel[1,3]]
-K_obs = Ks_obs[unravel[1,4]]
-mc = mcs[unravel[1,5]]
+K_obs = Ks_obs[unravel[1,3]]
+mc = mcs[unravel[1,4]]
 
 
 # Generate data
 data<- sim_functional_data(samplesize = samplesize, 
                            com_grid = com_grid, 
                            plot_true = plotTrue,
+                           reg_sampling = reg_sampling,
                            ### parameters under study
                            sce = sce, 
                            SNR = SNR, 
-                           reg_sampling = reg_sampling,
                            K = K_obs)
 
 
@@ -67,11 +66,11 @@ meth <- list("NN" = FALSE,
              "RD_o" = FALSE,
              "RD" = FALSE,
              "SS_o" = FALSE,
-             "SS" = FALSE,
+             "SS" = TRUE,
              "pI" = FALSE,
              "OUR" = FALSE,
-             "OUR2" = FALSE,
-             "OUR3"=FALSE,
+             "OUR2" = TRUE,
+             "OUR3"=TRUE,
              "RP" = FALSE,
              "L2" = TRUE, 
              "w_L2" = FALSE )# see pairwise_geo_estimation for more info
@@ -89,6 +88,6 @@ Estim<- pairwise_geo_estimation(method=meth,
 Rel_errs = lapply(Estim, assess_goodness_estimation, true_geo = data$analytic_geo)
 print(Rel_errs)
 # hardcode 
-saveRDS(Rel_errs, file = sprintf("taskid=%d_sce=%d_SNR=%.01f_regsamp=%d_Kobs=%d_mc=%d",slurm_arrayid,sce,SNR,reg_sampling,K_obs,mc))
+saveRDS(Rel_errs, file = sprintf("taskid=%d_sce=%d_SNR=%.01f_Kobs=%d_mc=%d",slurm_arrayid,sce,SNR,K_obs,mc))
 
 
