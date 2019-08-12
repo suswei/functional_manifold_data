@@ -25,7 +25,7 @@ com_grid = 1 # 1 or 0 to indicate if yes or no each curve is observed on a commo
 plotTrue = FALSE
 samplesize = 100
 Ks_smooth = 100
-reg_samplings = TRUE
+reg_sampling = TRUE
 
 ## STUDY THE EFFECT OF THE FOLLOWING PARAMETERS 
 mcs = 1:100
@@ -34,7 +34,7 @@ sces = c(5,2,4)
 SNRs = c(0.1,0.5)
 Ks_obs = c(100,30)
 
-total_tasks = length(sces)*length(SNRs)*length(reg_samplings)*length(Ks_obs)*length(mcs)
+total_tasks = length(sces)*length(SNRs)*length(Ks_obs)*length(mcs)
 
 slurm_arrayid <- Sys.getenv('SLURM_ARRAY_TASK_ID')
 slurm_arrayid = as.numeric(slurm_arrayid)
