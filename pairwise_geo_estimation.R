@@ -244,6 +244,7 @@ pairwise_geo_estimation <- function(method,
     write.table(num_neigh,file=paste0('./',string,'/possible_K.txt'),col.names = FALSE, row.names = FALSE)
     write.table(c(samplesize,K),file=paste0('./',string,'/n_K.txt'),col.names = FALSE, row.names = FALSE)
     write.table(true_geo,file=paste0('./',string,'/true_geo.txt'),col.names = FALSE, row.names = FALSE)
+    write.table(reg_grid_dense,file=paste0('./',string,'/grid.txt'),col.names = FALSE, row.names = FALSE)
     # 
     # file.copy("./run_isomap_p.m",paste0('./',string,'/'))
     # run_matlab_script(paste0('./',string,'/run_isomap_p.m'))
