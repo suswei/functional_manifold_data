@@ -1,5 +1,3 @@
-#setwd('./Users/UQAM/Dropbox/Marie-Moi/Susan_project/manifold learning/Geo_dist_calculation/Cluster_results/spartanSim_clusterOutput')
-
 choose_el<- function(list_in,ind1,ind2){
   list_in[[ind1]][ind2]
 }
@@ -10,8 +8,16 @@ choose_el2<-function(ind_vec,list_in1){
 
 create_boxplot<- function(sce_details,mat_ind,method_names,nr_methods){
 
+  base_pattern = do.call(sprintf, c(list("sce=%d_SNR=%.01f_Kobs=%d"), sce_details))
+  
   # TODO: fix hardcoding
-  base_pattern = do.call(sprintf, c(list("sce=%d_SNR=%.01f_regsamp=%d_Kobs=%d_Ksmooth=%d"), sce_details))
+  if(sce_details[2]==0.1){
+    base_pattern_out = do.call(sprintf, c(list("sce=%d_SNR=low_Kobs=%d"), sce_details[1],sce_details[3]))
+  }
+  else{
+    base_pattern_out = do.call(sprintf, c(list("sce=%d_SNR=high_Kobs=%d"), sce_details[1],sce_details[3]))
+  }
+  
 
   data_sce = list.files(pattern=paste("_", base_pattern,"_mc=*",sep=""))
   if (length(data_sce) == 0){
@@ -25,29 +31,30 @@ create_boxplot<- function(sce_details,mat_ind,method_names,nr_methods){
     results<- matrix(unlist(temp_res2,use.names=FALSE),ncol=3*nr_methods)
     
     ### We plot one boxplot per method and per assesment measure
-    pdf(paste(base_pattern,".pdf",sep=""),width=15,height=5)
+    pdf(paste(base_pattern_out,".pdf",sep=""),width=4,height=2)
     
     par(mfrow=c(1,3))
-    par(oma=c(3,3,3,3))
+    # par(oma=c(3,3,3,3))
+    boxplot(results[,1:nr_methods],main="MSE",names=method_names)
+    boxplot(results[,(1+nr_methods):(2*nr_methods)],main="isometry",names=method_names)
+    boxplot(results[,(2*nr_methods+1):(3*nr_methods)],main="Pearson",names=method_names)
     
-    boxplot(results[,1:nr_methods],main="relative MSE",names=method_names)
-    boxplot(results[,(1+nr_methods):(2*nr_methods)],main="AUC of entrywise epsilon-isometry",names=method_names)
-    boxplot(results[,(2*nr_methods+1):(3*nr_methods)],main="Pearson correlation",names=method_names)
-    
-    mtext(base_pattern,outer=TRUE,cex=1.5)
+    # mtext(base_pattern,outer=TRUE,cex=1.5)
     dev.off()
   }
 }
 
 
-# TODO: fix hardcoding
-method_names=c("SS","Our3S1","Our3S2","Our3S3","L2")
+setwd("./sim_results")
+
+method_names=c("SS","s=2","s=3","L2")
 nr_methods = length(method_names)
 
 combination_res_assess<- cbind(rep(1:nr_methods,3),rep(1:3,each=nr_methods)) # nr_methods*3 combinations of methods and assesment measures
 # TODO: fix hardcoding
-combination_para <- expand.grid(c(5,2,4),c(0.1,0.5),c(TRUE,FALSE),c(100,30)) # combinations of the parameters, copied from compare_methods.R
+combination_para <- expand.grid(c(5,2,4),c(0.5),c(30)) # combinations of the parameters, copied from compare_methods.R
 
 apply(combination_para,1,create_boxplot,mat_ind=combination_res_assess,method_names=method_names,nr_methods=nr_methods)
 
+setwd("../")
 
