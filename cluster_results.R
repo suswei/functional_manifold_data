@@ -45,16 +45,4 @@ create_boxplot<- function(sce_details,mat_ind,method_names,nr_methods){
 }
 
 
-setwd("./sim_results")
-
-method_names=c("SS","s=2","s=3","L2")
-nr_methods = length(method_names)
-
-combination_res_assess<- cbind(rep(1:nr_methods,3),rep(1:3,each=nr_methods)) # nr_methods*3 combinations of methods and assesment measures
-# TODO: fix hardcoding
-combination_para <- expand.grid(c(5,2,4),c(0.5),c(30)) # combinations of the parameters, copied from compare_methods.R
-
-apply(combination_para,1,create_boxplot,mat_ind=combination_res_assess,method_names=method_names,nr_methods=nr_methods)
-
-setwd("../")
 
