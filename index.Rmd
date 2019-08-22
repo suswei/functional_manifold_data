@@ -191,7 +191,7 @@ scp susanwei@spartan.hpc.unimelb.edu.au:/home/susanwei/functional_manifold_data/
 
 
 
-```{r, echo=FALSE, eval=TRUE, results='hide'}
+```{r, echo=FALSE, eval=FALSE, results='hide'}
 
 setwd("./sim_results")
  
