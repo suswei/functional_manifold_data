@@ -8,3 +8,10 @@ __pycache__
 *.bbl
 *.log
 taskid*
+index.tex
+index.md
+true_geo.txt
+possible*.txt
+*.synctex.gz
+paperAAAI.pdf
+n_K.txt
