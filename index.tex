@@ -11,27 +11,29 @@
 \section{Abstract}\label{abstract}
 
 The clustering and classification of functional data, discretely-sampled
-data varying over a continuum, is frequently encountered in machine
+curves varying over a continuum, is frequently encountered in machine
 learning. While one can naively treat the data as vectors in Euclidean
-space, one may also regard each data point as a function. The challenge
-of analyzing infinite-dimensional functions can be ameliorated if the
-curves are smooth since the dimensionality is then only artificially
-high. This insight underpins functional data analysis, a subfield of
-statistics that studies functional data. For certain types of functional
-data such as classes of probability density functions and classes of
-warped curves of a common template function, there is further structure
-to exploit. Namely, when functional data lie on a manifold, the
-dimensionality at play might be even lower if the manifold is itself of
-low intrinsic dimension. This work addresses the estimation of pairwise
-geodesic distances between functional manifold data that are observed
-with noise and which may live near, rather than on, a manifold. The
-proposed methodology first sends the observed functional data to the
-hidden manifold, estimated using subspace-constrained mean-shift.
-Geodesic distances are subsequently calculated by employing
-shortest-path algorithms on this estimated manifold. Improved estimation
-of the pairwise geodesic distance has beneficial implications for many
-downstream tasks in functional data analysis which we illustrate in the
-case of distance-based functional classification.
+space, one may also regard the data as functions. The challenge of
+analyzing infinite-dimensional objects can be ameliorated if the curves
+are smooth since the dimensionality is then only artificially high. This
+insight underpins functional data analysis, a subfield of statistics
+that studies functional data. For certain types of functional data such
+as probability density functions and warped curves of a common template
+function, there is further structure to exploit. Namely, certain
+functional data may lie on a manifold of low intrinsic dimension. For
+nonlinear manifolds, even basic operations such as addition and
+subtraction require special consideration. This work addresses the
+estimation of pairwise geodesic distances between noisy functional
+manifold data that live near, rather than on, a manifold. This setting
+cannot be tackled by classic manifold learning techniques which require
+data to live exactly on a manifold. The proposed methodology first sends
+the observed functional data to the hidden manifold, estimated using
+subspace-constrained mean-shift. Geodesic distances are subsequently
+calculated by employing shortest-path algorithms on this estimated
+manifold. Improved estimation of the pairwise geodesic distance has
+beneficial implications for many downstream tasks in functional data
+analysis which we illustrate in the case of distance-based functional
+classification/clustering.
 
 \section{Introduction}\label{introduction}
 
@@ -329,14 +331,38 @@ which is estimated using numerical integration.
 
 \subsection{Results}\label{results}
 
-???Still need to describe parameters under study: SNR, denseness of
-observations (\(K_{observed}\)). Describe parameters that are fixed:
-\(K_smooth\) and com\_grid. Describe tuning parameters for our method:
-\(s\) and \(h\).
+The tuning parameters for the proposed method were chosen as described
+at the end of Section
+\ref{proposed-method-for-estimating-geodesic-distances}. In step 1 of
+our procedure, we take \(D = 100\) for the size of the common time grid.
+We will investigate how two parameters affect the performance of the
+various methods in consideration. The first one is the signal-to-noise
+ratio ???describe??? which we fix at either \(0.1\) (low) or \(0.5\)
+(high). The second parameter is \(K\), the dimension of the
+dscrietly-observed noisy \(Y_i\)'s. We set \(K\) to either \(30\)
+(sparse) or \(100\) (abundant).
+
+We show the performance of the SS and L2 method versus our method for
+three different values of \(s\). We omit the result of the square root
+velocity scenario because all methods perform comparably. We can see
+from Figures \ref{fig:normal} and \ref{fig:warping} that ???.
 
 \begin{figure}
-\includegraphics{sim_results/sce=5_SNR=high_Kobs=30}
-\caption{blah}
+\centering
+\includegraphics[height=0.3\textheight]{sim_results/sce=2_SNR=high_Kobs=30_MSE}
+\includegraphics[height=0.3\textheight]{sim_results/sce=2_SNR=high_Kobs=30_isometry}
+\includegraphics[height=0.3\textheight]{sim_results/sce=2_SNR=high_Kobs=30_Pearson}
+\caption{Normal density}
+\label{fig:normal}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[height=0.3\textheight]{sim_results/sce=5_SNR=high_Kobs=30_MSE}
+\includegraphics[height=0.3\textheight]{sim_results/sce=5_SNR=high_Kobs=30_isometry}
+\includegraphics[height=0.3\textheight]{sim_results/sce=5_SNR=high_Kobs=30_Pearson}
+\caption{Warping function}
+\label{fig:warping}
 \end{figure}
 
 \section{Distance-based functional classification
