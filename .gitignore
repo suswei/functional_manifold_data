@@ -4,7 +4,7 @@
 .Ruserdata
 __pycache__
 *.pyc
-.idea
-.bbl
-.log
+*.idea
+*.bbl
+*.log
 taskid*
