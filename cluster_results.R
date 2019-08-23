@@ -31,18 +31,30 @@ create_boxplot<- function(sce_details,mat_ind,method_names,nr_methods){
     results<- matrix(unlist(temp_res2,use.names=FALSE),ncol=3*nr_methods)
     
     ### We plot one boxplot per method and per assesment measure
-    pdf(paste(base_pattern_out,".pdf",sep=""),width=4,height=2)
     
-    par(mfrow=c(1,3))
-    # par(oma=c(3,3,3,3))
-    boxplot(results[,1:nr_methods],main="MSE",names=method_names)
-    boxplot(results[,(1+nr_methods):(2*nr_methods)],main="isometry",names=method_names)
-    boxplot(results[,(2*nr_methods+1):(3*nr_methods)],main="Pearson",names=method_names)
+    pdf(paste(base_pattern_out,"_MSE",".pdf",sep=""),width=16/4,height=3)
+    par(mgp=c(2.2,0.45,0), tcl=-0.4, mar=c(3.3,3.6,1.1,1.1))
+    # par(
+    #   # Change the colors
+    #   col.main="red", col.lab="blue", col.sub="black",
+    #   # Titles in italic and bold
+    #   font.main=4, font.lab=4, font.sub=4,
+    #   # Change font size
+    #   cex.main=0.5, cex.lab=0.5, cex.sub=0.5
+    # )
+    boxplot(results[,1:nr_methods],main="MSE",names=method_names,cex.main=0.5,cex.names=0.5,cex.axis=0.5)
+    dev.off()
+    
+    pdf(paste(base_pattern_out,"_isometry",".pdf",sep=""),width=16/4,height=3)
+    par(mgp=c(2.2,0.45,0), tcl=-0.4, mar=c(3.3,3.6,1.1,1.1))
+    boxplot(results[,(1+nr_methods):(2*nr_methods)],main="isometry",names=method_names,cex.main=0.5,cex.names=0.5,cex.axis=0.5)
+    dev.off()
+    
+    pdf(paste(base_pattern_out,"_Pearson",".pdf",sep="") ,width=16/4,height=3)
+    par(mgp=c(2.2,0.45,0), tcl=-0.4, mar=c(3.3,3.6,1.1,1.1))
+    boxplot(results[,(2*nr_methods+1):(3*nr_methods)],main="Pearson",names=method_names,cex.main=0.5,cex.names=0.5,cex.axis=0.5)
+    dev.off()
     
     # mtext(base_pattern,outer=TRUE,cex=1.5)
-    dev.off()
   }
 }
-
-
-

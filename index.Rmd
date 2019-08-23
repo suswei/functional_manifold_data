@@ -22,18 +22,18 @@ source("cluster_results.R",echo=FALSE)
 \newcommand{\M}{\mathcal{M}}
 
 # Abstract
-The clustering and classification of functional data, discretely-sampled data varying over a continuum, is frequently encountered in machine learning.
-While one can naively treat the data as vectors in Euclidean space, one may also regard each data point as a function.
-The challenge of analyzing infinite-dimensional functions can be ameliorated if the curves are smooth since the dimensionality is then only artificially high. 
+The clustering and classification of functional data, discretely-sampled curves varying over a continuum, is frequently encountered in machine learning.
+While one can naively treat the data as vectors in Euclidean space, one may also regard the data as functions.
+The challenge of analyzing infinite-dimensional objects can be ameliorated if the curves are smooth since the dimensionality is then only artificially high. 
 This insight underpins functional data analysis, a subfield of statistics that studies functional data.
-For certain types of functional data such as classes of probability density functions and classes of warped curves of a common template function, there is further structure to exploit. Namely, when functional data lie on a manifold, the dimensionality at play might be even lower if the manifold is itself of low intrinsic dimension.
-<!-- Since these spaces are not vector spaces, even basic operations such as addition and subtraction require special consideration.-->
-This work addresses the estimation of pairwise geodesic distances between functional manifold data that are observed with noise and which may live near, rather than on, a manifold.
-<!-- This setting cannot be tackled by classic manifold learning techniques which require data to live exactly on a manifold.  -->
+For certain types of functional data such as probability density functions and warped curves of a common template function, there is further structure to exploit. Namely, certain functional data may lie on a manifold of low intrinsic dimension.
+For nonlinear manifolds, even basic operations such as addition and subtraction require special consideration.
+This work addresses the estimation of pairwise geodesic distances between noisy functional manifold data that live near, rather than on, a manifold.
+This setting cannot be tackled by classic manifold learning techniques which require data to live exactly on a manifold.
 <!-- We will show that estimation of the geodesic distance cannot easily be accomplished by a naive method such as smoothing followed by a shortest-path algorithm. -->
-The proposed methodology first sends the observed functional data to the hidden manifold, estimated using subspace-constrained mean-shift. 
+The proposed methodology first sends the observed functional data to the hidden manifold, estimated using subspace-constrained mean-shift.
 Geodesic distances are subsequently calculated by employing shortest-path algorithms on this estimated manifold. 
-Improved estimation of the pairwise geodesic distance has beneficial implications for many downstream tasks in functional data analysis which we illustrate in the case of distance-based functional classification.
+Improved estimation of the pairwise geodesic distance has beneficial implications for many downstream tasks in functional data analysis which we illustrate in the case of distance-based functional classification/clustering.
 
 
 # Introduction 
@@ -76,14 +76,13 @@ The work of [@ChenMuller2012] was among the first in functional data analysis to
 
 
 
-# Proposed method for estimating geodesic distances
+# Proposed method for estimating geodesic distances 
 Suppose that each curve $X_i \in (\M,g)$ is observed with measurement error on a time grid $T_i=(t_{i1},\ldots,t_{iK}), a \le t_{i1} < \ldots < t_{iK} \le b$, i.e.\ we observe a sample of $K$-dimensional vectors $Y_1,\ldots,Y_n$ with $Y_{ij} = X_i(t_{ij}) + \epsilon_{ij}$, where the random variables $\epsilon_{ij}$ have mean zero and are uncorrelated with each other. We assume that each observation grid $T_1,\ldots,T_n$ is dense, i.e.\ $K$ is large.
 
 We begin by converting the discretly-sampled functional observations into continuous ones. Let $\tilde X_1,\ldots,\tilde X_n$ denote the functional versions of the raw data obtained by some smoothing method. For example, we may employ spline smoothing ???add reference for spline smoothing??? to recover the functional versions of the raw data, i.e.\
 \begin{equation}\label{eq_spline_smoothing} 
 \tilde X_i = \arg \min_{f\in C^2[0,1]}\left\{\sum_{j=1}^{K}\left(f(t_{ij})-Y_{ij}\right)^2+\lambda \|\partial^2_tf\|^2_{L^2}\right\},
-\end{equation}
-where $\lambda>0$ is a tuning parameter controlling the smoothness of $\tilde X_i$. The proposed methodology for estimating the pairwise geodesic distances $\{ d_\M (X_i,X_j)\}_{i>j}$ is agnostic to the smoothing method employed.
+\end{equation} where $\lambda>0$ is a tuning parameter controlling the smoothness of $\tilde X_i$. The proposed methodology for estimating the pairwise geodesic distances $\{ d_\M (X_i,X_j)\}_{i>j}$ is agnostic to the smoothing method employed.
 
 Our method is based on the idea that the underlying functional manifold $\M$ can be sufficiently well-recovered by the subspace-constrained mean-shift (SCMS) algorithm [@Ozertem2011]. Let $\hat M \subset L^2([a,b],\mathbb R)$ denote the collection of basins of attraction of the estimated probability density function of $X$. The SCMS algorithm sends each point $\tilde X_i \in L^2([a,b],\mathbb R)$ to a point in $\hat M$. This destination is unique and we denote it $\tilde X_i^{\hat \M}$. We expect the points $\tilde X^{\hat \M}_1,\ldots,\tilde X^{\hat \M}_n \in \hat M$ to lie close to the real manifold $\M$. Theoretical justificaton that $\hat M$ as estimated by SCMS is a reasonable surrogate for the true manifold $\M$ can be found in [@Genovese2014].
 
@@ -181,8 +180,10 @@ The geodesic distance is then $$ d(X_{\alpha_1},X_{\alpha_2}) = \int_{\alpha_1}^
 
 ## Results
 
+The tuning parameters for the proposed method were chosen as described at the end of Section \ref{proposed-method-for-estimating-geodesic-distances}. In step 1 of our procedure, we take $D = 100$ for the size of the common time grid. We will investigate how two parameters affect the performance of the various methods in consideration. The first one is the signal-to-noise ratio ???describe??? which we fix at either $0.1$ (low) or $0.5$ (high). The second parameter is $K$, the dimension of the dscrietly-observed noisy $Y_i$'s. We set $K$ to either $30$ (sparse) or $100$ (abundant). 
 
-???Still need to describe parameters under study: SNR, denseness of observations ($K_{observed}$). Describe parameters that are fixed:  $K_smooth$ and com_grid. Describe tuning parameters for our method: $s$ and $h$. 
+We show the performance of the SS and L2 method versus our method for three different values of $s$. We omit the result of the square root velocity scenario because all methods perform comparably. We can see from Figures \ref{fig:normal} and \ref{fig:warping} that ???.
+
 
 ```{r, engine = 'bash', eval = FALSE, include=FALSE}
 sbatch compare_methods.sh
@@ -200,7 +201,7 @@ nr_methods = length(method_names)
 
 combination_res_assess<- cbind(rep(1:nr_methods,3),rep(1:3,each=nr_methods)) # nr_methods*3 combinations of methods and assesment measures
 # TODO: fix hardcoding
-combination_para <- expand.grid(c(5,2,4),c(0.5),c(30)) # combinations of the parameters, copied from compare_methods.R
+combination_para <- expand.grid(c(5,2,4),c(0.1,0.5),c(30,100)) # combinations of the parameters, copied from compare_methods.R
 
 apply(combination_para,1,create_boxplot,mat_ind=combination_res_assess,method_names=method_names,nr_methods=nr_methods)
  
@@ -208,8 +209,28 @@ setwd("../")
 ``` 
 
 \begin{figure}
-\includegraphics{sim_results/sce=5_SNR=high_Kobs=30}
-\caption{blah}
+\centering
+\includegraphics[height=0.3\textheight]{sim_results/sce=2_SNR=high_Kobs=30_MSE}
+\includegraphics[height=0.3\textheight]{sim_results/sce=2_SNR=high_Kobs=30_isometry}
+\includegraphics[height=0.3\textheight]{sim_results/sce=2_SNR=high_Kobs=30_Pearson}
+\caption{Normal density}
+\label{fig:normal}
+\end{figure}
+
+<!-- \begin{figure} -->
+<!-- \includegraphics{sim_results/sce=4_SNR=high_Kobs=30_MSE} -->
+<!-- \includegraphics{sim_results/sce=4_SNR=high_Kobs=30_isometry} -->
+<!-- \includegraphics{sim_results/sce=4_SNR=high_Kobs=30_Pearson} -->
+<!-- \caption{Square root velocity} -->
+<!-- \end{figure} -->
+
+\begin{figure}
+\centering
+\includegraphics[height=0.3\textheight]{sim_results/sce=5_SNR=high_Kobs=30_MSE}
+\includegraphics[height=0.3\textheight]{sim_results/sce=5_SNR=high_Kobs=30_isometry}
+\includegraphics[height=0.3\textheight]{sim_results/sce=5_SNR=high_Kobs=30_Pearson}
+\caption{Warping function}
+\label{fig:warping}
 \end{figure}
 
 <!--
