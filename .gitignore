@@ -5,3 +5,6 @@
 __pycache__
 *.pyc
 .idea
+.bbl
+.log
+taskid*
