@@ -23,11 +23,8 @@ source("cluster_results.R",echo=FALSE)
 
 # Abstract
 The clustering and classification of functional data, discretely-sampled curves varying over a continuum, is frequently encountered in machine learning.
-While one can naively treat the data as vectors in Euclidean space, one may also regard the data as functions.
-The challenge of analyzing infinite-dimensional objects can be ameliorated if the curves are smooth since the dimensionality is then only artificially high. 
-This insight underpins functional data analysis, a subfield of statistics that studies functional data.
-For certain types of functional data such as probability density functions and warped curves of a common template function, there is further structure to exploit. Namely, certain functional data may lie on a manifold of low intrinsic dimension.
-For nonlinear manifolds, even basic operations such as addition and subtraction require special consideration.
+While one can naively treat the data as vectors in Euclidean space, one may do better to regard the data as functions.
+For certain types of functional data such as probability density functions or warped curves of a common template function, there is further structure to exploit. Namely, the curves may lie on a manifold of low intrinsic dimension.
 This work addresses the estimation of pairwise geodesic distances between noisy functional manifold data that live near, rather than on, a manifold.
 This setting cannot be tackled by classic manifold learning techniques which require data to live exactly on a manifold.
 <!-- We will show that estimation of the geodesic distance cannot easily be accomplished by a naive method such as smoothing followed by a shortest-path algorithm. -->
@@ -37,14 +34,20 @@ Improved estimation of the pairwise geodesic distance has beneficial implication
 
 
 # Introduction 
-Many statistical and machine learning methods rely on some measure of distance. For example, clustering and classification of functional data, discretely-sampled data varying over a continuum, is a common machine learning task in which distance plays a crucial role. The successful development of functional data analysis, a branch of statistics dedicated to the analysis of infinite-dimensional smooth curves, demonstrates that employing the $L^2$ distance between the smoothed functional observations has advantages over the Euclidean distance between functional observations treated as vectors. 
-In this work, we advocate that for functional manifold data, i.e. functional data that lie on a manifold, the geodesic distance is potentially even better than the $L^2$ distance, with benefits realized in downstream tasks such as distanced-based clustering and classification of functional manifold data.
-In other words, when the manifold hypothesis is plausible, e.g.\ classes of probability density functions and classes of warped curves of a common template function, clustering and classification using the goedesic distance may give better results than using the $L_2$ distance.
+Many statistical and machine learning methods rely on some measure of distance. For example, clustering and classification of functional data, discretely-sampled curves varying over a continuum, is a common machine learning task in which distance plays a crucial role. In a naive treatment, the data may be simply processed as vectors in Euclidean space. Doing so however risks losing the richness of functional data; indeed, one may do better to regard the data as functions.
+
+The challenge of analyzing infinite-dimensional objects can be ameliorated if the curves are smooth since the dimensionality is then only artificially high.
+This insight underpins functional data analysis, a subfield of statistics that studies functional data. This has many implications for the processing of functional data. 
+For example, the $L^2$ distance between the smoothed functional observations has advantages over the Euclidean distance between functional observations treated as vectors. 
+
+In this work, we advocate that for functional manifold data, i.e. functional data that lie on a manifold, the geodesic distance is potentially even better than the $L^2$ distance, with benefits realized in downstream tasks such as distanced-based clustering and classification.
+In other words, when the manifold hypothesis is plausible, e.g.\ for classes of probability density functions and classes of warped curves of a common template function, clustering and classification using the goedesic distance may give better results than using the $L_2$ distance. The manifold setting presents its own challenges since for nonlinear manifolds, even basic operations such as addition and subtraction require special consideration.
 
 Let $X_1,\ldots,X_n$ be a sample of $n$ independant realizations of a random variable $X$ that takes value in the Hilbert space $L^2([a,b],\R)$. Suppose additionally that the function $X$ belongs to a Riemannian manifold $\M \subset L^2([a,b],\R)$ with Riemannian metric tensor $g$ which can be used to assign a metric on the manifold as follows [@Lin2014]. For each point $X$ on the manifold, the Riemannian metric tensor $g$ has an inner product $g_X$ on the tangent space $T_X \M$. The norm of a tangent vector $V \in T_X \M$ is defined as $$||V|| = \sqrt{g_X(V,V)}.$$ The geodesic distance between two functions $X_i,X_j$ on the manifold $\M$, based on this metric tensor $g$, is defined as
-$$ d_{\M}(X_i,X_j):=\inf \{l(\gamma): \gamma \text{ is piecewise-smooth function from } [a,b] \text{ to } \M, \gamma(a) = X_i, \gamma(b) = X_j \}$$
+$$ d_{\M}(X_i,X_j):=\inf_{\gamma:[a,b] \to \M, \gamma(a) = X_i, \gamma(b) = X_j} l(\gamma)$$
 where $$ l(\gamma) := \int_a^b || \frac{\,d\gamma}{\,d t}(t) || \,dt$$
-is the length of the curve $\gamma$. ???Is it clear how $l(\gamma)$ depends on $g$???
+is the length of the piecewise-smooth curve $\gamma$. 
+<!-- ???Is it clear how $l(\gamma)$ depends on $g$??? -->
 
 
 
@@ -56,7 +59,7 @@ is the length of the curve $\gamma$. ???Is it clear how $l(\gamma)$ depends on $
 <!-- There exist many nonlinear dimension reduction methods for manifolds embedded in Euclidean space, also known as manifold learning methods, which are particularly popular in computer vision. However, the success of these methods typically require the data to be observed with a high signal-to-noise ratio. (is it true? ref?)  -->
 
 Ideally, the functions $X_i$ and $X_j$ are observed on a very dense domain grid with no measurement error. Then the estimation of the geodesic distance $d_\M(X_i,X_j)$ is straightfoward, e.g.\ a shortest-path algorithm such as Floyd-Warhsall [@Floyd1962] may be used.
-However, most shortest-path algorithms critically assume observations live on the manifold ???add reference??? and are thus likely to fail for functional data which are almost certainly observed with noise.
+However, most shortest-path algorithms critically assume observations live on the manifold [@Yeh2005] and are thus likely to fail for functional data which are almost certainly observed with noise.
 <!-- A preprocessing step where the nosiy functional manifold data is smoothed is also likely to fail. This is because smoothing techniques in functional data analysis are designed for the $L_2$ recovery of the original curve, not to ensure the recovered functional versions of the data lie on or close to the functional manifold $\M$. This presents challenges to the application of many manifold learning techniques which assume fully observed nearly-noiseless inputs. -->
 <!-- Estimating the manifold $\M$ from a sample of functions observed discretely and with measurements is a challenging task (results depend on curvature of the manifold, need a lot of data). Even after recovering a functional version of the data, the chances are pretty high that $\tilde X_1,\ldots,\tilde X_n$ do not lie exactly on $\M$.  -->
 In this work, we put forth a technique for the recovery of the $n{\times}n$ matrix $G$ of pairwise geodesic distances, i.e.\
@@ -79,7 +82,7 @@ The work of [@ChenMuller2012] was among the first in functional data analysis to
 # Proposed method for estimating geodesic distances 
 Suppose that each curve $X_i \in (\M,g)$ is observed with measurement error on a time grid $T_i=(t_{i1},\ldots,t_{iK}), a \le t_{i1} < \ldots < t_{iK} \le b$, i.e.\ we observe a sample of $K$-dimensional vectors $Y_1,\ldots,Y_n$ with $Y_{ij} = X_i(t_{ij}) + \epsilon_{ij}$, where the random variables $\epsilon_{ij}$ have mean zero and are uncorrelated with each other. We assume that each observation grid $T_1,\ldots,T_n$ is dense, i.e.\ $K$ is large.
 
-We begin by converting the discretly-sampled functional observations into continuous ones. Let $\tilde X_1,\ldots,\tilde X_n$ denote the functional versions of the raw data obtained by some smoothing method. For example, we may employ spline smoothing ???add reference for spline smoothing??? to recover the functional versions of the raw data, i.e.\
+We begin by converting the discretly-sampled functional observations into continuous ones. Let $\tilde X_1,\ldots,\tilde X_n$ denote the functional versions of the raw data obtained by some smoothing method. For example, we may employ spline smoothing [@Ramsay2005] to recover the functional versions of the raw data, i.e.\
 \begin{equation}\label{eq_spline_smoothing} 
 \tilde X_i = \arg \min_{f\in C^2[0,1]}\left\{\sum_{j=1}^{K}\left(f(t_{ij})-Y_{ij}\right)^2+\lambda \|\partial^2_tf\|^2_{L^2}\right\},
 \end{equation} where $\lambda>0$ is a tuning parameter controlling the smoothness of $\tilde X_i$. The proposed methodology for estimating the pairwise geodesic distances $\{ d_\M (X_i,X_j)\}_{i>j}$ is agnostic to the smoothing method employed.
@@ -87,11 +90,11 @@ We begin by converting the discretly-sampled functional observations into contin
 Our method is based on the idea that the underlying functional manifold $\M$ can be sufficiently well-recovered by the subspace-constrained mean-shift (SCMS) algorithm [@Ozertem2011]. Let $\hat M \subset L^2([a,b],\mathbb R)$ denote the collection of basins of attraction of the estimated probability density function of $X$. The SCMS algorithm sends each point $\tilde X_i \in L^2([a,b],\mathbb R)$ to a point in $\hat M$. This destination is unique and we denote it $\tilde X_i^{\hat \M}$. We expect the points $\tilde X^{\hat \M}_1,\ldots,\tilde X^{\hat \M}_n \in \hat M$ to lie close to the real manifold $\M$. Theoretical justificaton that $\hat M$ as estimated by SCMS is a reasonable surrogate for the true manifold $\M$ can be found in [@Genovese2014].
 
 Before presenting our procedure, we need to first review the ISOMAP algorithm [@Tenenbaum2000], a three-step procedure that takes as input a set of points $x_1,\ldots,x_n$ in a submanifold $\M$ of $\R^D$ and produces an embedding in the space $\R^d$ with $d<D$ that preserves pairwise geodesic distances. The procedure is as follows.
-\begin{enumerate}
-\item Construct a weighted graph $G$ with nodes corresponding to the observations $x_1,\ldots,x_n\in \R^D$. Two nodes $x_i$ and $x_j$ are connected by an edge $e_{ij}$ with weight $d_{ij} 1\{d_{ij} \le \epsilon \}$ where $d_{ij}=||x_i-x_j ||_{2}$ and $\epsilon > 0$.
-\item Estimate the pairwise geodesic distances $d_\M(x_i,x_j)$ based on $G$ using shortest-path algorithms. Specifically, the geodesic distance between two nodes is estimated to be the length of the shortest path in $G$ between these two nodes, i.e.\ the sum of the weights of the edges forming the shortest path, which is calculated either with the Floyd-Warshall algorithm [@Floyd1962] or with the Dijkstra algorithm [@Dijkstra59anote].
-\item Use multidimensional scaling ???add reference??? to obtain an embedding in $\R^d$ that preserves the pairwise geodesic distances estimated above.
-\end{enumerate}
+
+1. Construct a weighted graph $G$ with nodes corresponding to the observations $x_1,\ldots,x_n\in \R^D$. Two nodes $x_i$ and $x_j$ are connected by an edge $e_{ij}$ with weight $d_{ij} 1\{d_{ij} \le \epsilon \}$ where $d_{ij}=||x_i-x_j ||_{2}$ and $\epsilon > 0$.
+2. Estimate the pairwise geodesic distances $d_\M(x_i,x_j)$ based on $G$ using shortest-path algorithms. Specifically, the geodesic distance between two nodes is estimated to be the length of the shortest path in $G$ between these two nodes, i.e.\ the sum of the weights of the edges forming the shortest path, which is calculated either with the Floyd-Warshall algorithm [@Floyd1962] or with the Dijkstra algorithm [@Dijkstra59anote].
+3. Use multidimensional scaling to obtain an embedding in $\R^d$ that preserves the pairwise geodesic distances estimated above.
+
 Note that shortest-path algorithms such as the Floyd-Warshall algorithm are used to find the smallest path \textit{given} a weigthed graph but they do not produce the weighted graphs themselves. Both P-ISOMAP and robust-ISOMAP are modifications of ISOMAP in the sense that they change the construction of the weighted graph in step 1.  
 <!-- (which is the difficult part, depend on number of neighbors, many method out there to calculate that graph in a robust way, P-ISOMAP is one of these). -->
 
@@ -105,11 +108,10 @@ We are now ready to describe our procedure. Since SCMS is based on kernel densit
 <!-- 1. [Susan: I think the smoothing step should be independent of our proposed methodology] Transform each vector $Y_i$ into a function $\tilde X_i$ by spline smoothing: -->
 <!-- $$ \tilde X_i = \arg\min_{f\in C^2[0,1]}\left\{\sum_{j=1}^{K}\left(f(t_{ij})-Y_{ij}\right)^2+\lambda \|\partial^2_tf\|^2_{L^2}\right\}$$ -->
 <!-- where $\lambda>0$ is a tuning parameter controlling the smoothness of $\tilde X_i$.  -->
-\begin{enumerate}
-\item Discretise the functions $\tilde X_1,\ldots,\tilde X_n$ by evaluating them on a dense common grid $\tilde T=(t_{1},\ldots,t_{D})$. Let $s$ be a positive integer, much smaller than $D$. Obtain $\tilde X^s_1,\ldots,\tilde X^s_n \in \mathbb R^s$ using multidimensional scaling whereby the pairwise $\mathbb R^D$ Euclidean distances of the discretised functions $\tilde X_i$ are preserved.
-\item Apply the subspace constrained mean-shift algorithm [@Ozertem2011] to each of $\tilde X^s_i$ to obtain $\tilde X^{s,\hat \M}_i$.
-\item Use IsoGeo on the inputs $(\tilde X^{s,\hat \M}_1,\ldots,\tilde X^{s,\hat \M}_n)$ to obtain $\text{IsoGeo}(\tilde X^{s,\hat \M}_i,\tilde X^{s,\hat \M}_j)\}_{i>j}$.
-\end{enumerate}
+1. Discretise the functions $\tilde X_1,\ldots,\tilde X_n$ by evaluating them on a dense common grid $\tilde T=(t_{1},\ldots,t_{D})$. Let $s$ be a positive integer, much smaller than $D$. Obtain $\tilde X^s_1,\ldots,\tilde X^s_n \in \mathbb R^s$ using multidimensional scaling whereby the pairwise $\mathbb R^D$ Euclidean distances of the discretised functions $\tilde X_i$ are preserved.
+2. Apply the subspace constrained mean-shift algorithm [@Ozertem2011] to each of $\tilde X^s_i$ to obtain $\tilde X^{s,\hat \M}_i$.
+3. Use IsoGeo on the inputs $(\tilde X^{s,\hat \M}_1,\ldots,\tilde X^{s,\hat \M}_n)$ to obtain $\text{IsoGeo}(\tilde X^{s,\hat \M}_i,\tilde X^{s,\hat \M}_j)\}_{i>j}$.
+
 Our geodesic distance estimator is the $n{\times}n$ matrix $\hat G$ whose elements are given by
 $$
 \hat G(i,j)=\hat G(j,i) = \left\{ \begin{array}{ll}
@@ -145,29 +147,29 @@ We ran Chen and Muller's P-ISOMAP separately in Matlab and tuned for the number 
 We shall consider three functional manifolds in our simulation study. As of yet, there is little work as to how to sample from a functional manifold. Even in the Euclidean case, it is not obvious how sampling should be done [@Diaconis2013]. How to properly sample from a functional manifold could be interesting future work. For now, to safeguard against sampling unevenly on the functional manifold, we sample on a very concentrated measure for the intrinsic parameters.
 
 
-\textbf{Isometric functional manifold of normal density functions}
+### Isometric functional manifold of normal density functions
 <!-- Scenario 2 in sim_functional_data -->
 This scenario is modified from what is referred to as Manifold 2 in [@ChenMuller2012] by fixing the variance of the normal density to be $1$. We have $$\M =  \left \{X_\beta: \beta \in [-1,1], t \in [a,b]\right \}$$ with the $L_2$ inner product as the metric tensor of $\M$, where $X_\beta: [a,b] \to \R$ is given by $X_\beta(t) = \frac{1}{\sqrt{2\pi}} \exp{[-\frac{1}{2}(t-\beta)^2]}$. First, note that the "straight" line connecting $X_{\beta_1}$ and $X_{\beta_2}$ in $\M$ does not always stay inside of $\M$. Thus the geodesic distance will not coincide with the $L^2$ distance.
 
 We set $a=-4$ and $b=4$ and sample $\beta$ according to a truncated standard normal with support on $[-1,1]$.   The geodesic distance between the curves $X_{\beta_1}$ and $X_{\beta_2}$ is given by
 \begin{eqnarray*}
 d(X_{\beta_1},X_{\beta_2}) &=& \int_{\beta_1}^{\beta_2} \left \| \frac{d X_\beta (t)}{d\beta} \right\|_{L^2} d\beta \\
-&=&  \int_{\beta_1}^{\beta_2} \sqrt{ \frac{1}{2\sqrt{\pi}} \int_{-4}^4 \frac{1}{\sqrt{\pi}} \exp\{-(t-\beta)^2\}(t-\beta)^2 dt  }  \  d\beta \\
-&=&   \int_{\beta_1}^{\beta_2} \sqrt{ \frac{1}{2\sqrt{\pi}} \int_{-4}^4(t-\beta)^2 f(t) dt  }  \  d\beta, \textrm{ where $f$ is the density of a N$(\beta,1/2)$ }   \\
+% &=&  \int_{\beta_1}^{\beta_2} \sqrt{ \frac{1}{2\sqrt{\pi}} \int_{-4}^4 \frac{1}{\sqrt{\pi}} \exp\{-(t-\beta)^2\}(t-\beta)^2 dt  }  \  d\beta \\ 
+&=&   \int_{\beta_1}^{\beta_2} \sqrt{ \frac{1}{2\sqrt{\pi}} \int_{-4}^4(t-\beta)^2 f(t) dt  }  \  d\beta   \\
 &\approx&  \int_{\beta_1}^{\beta_2}  \sqrt{ \frac{1}{2\sqrt{\pi}} \frac{1}{2}} \ d\beta \\
-&=& (\beta_2-\beta_1) \frac{1}{2\pi^{1/4}},
-\end{eqnarray*}
-where the approximation comes from the fact that we are integrating on $[a,b]=[-4,4]$ and not on $\R$. 
+&=& (\beta_2-\beta_1) \frac{1}{2\pi^{1/4}}
+\end{eqnarray*} 
+where $f$ is the density of a N$(\beta,1/2)$ and the approximation in the next to last step comes from the fact that we are integrating on $[a,b]=[-4,4]$ and not on $\R$. 
 We can see this manifold is isometric, since the geodesic distance between $X_{\beta_1}$ and $X_{\beta_2}$ in $\M$ is proportional to $\beta_2-\beta_1$, the Euclidean distance between the $\beta$'s. 
 
-\textbf{Functional manifold of square root velocity functions}
+### Functional manifold of square root velocity functions
 <!-- Scenario 4 in sim_functional_data -->
 It was shown in @Joshi2007 that the square root representation of probability density functions gives rise to a simple closed-form geodesic distance.
 They consider the manifold $$ \M = \{ \psi:[0,1] \to \R : \psi \ge 0, \int_0^1 \psi^2(s) \,ds = 1 \}$$ with the metric tensor given by the Fisher-Rao metric tensor $$ <v_1,v_2> = \int_0^1 v_1(s) v_2(s) \,ds $$ for two tangent vectors $v_1,v_2 \in T_\psi(\M)$. Note that this concides with the $L_2[0,1]$ inner product. @Joshi2007 showed that the geodesic distance between any two $\psi_1$ and $\psi_2$ in $\M$ is simply $$d_\M(\psi_1,\psi_2) = \cos^{-1}<\psi_1,\psi_2>.$$
 We will specifically examine the square root of $Beta(\alpha,\beta)$ distributions which is supported on $[0,1]$. That is, $$ M = \{ \psi_{\alpha,\beta}: 1 \le \alpha \le 5, 2 \le \beta \le 5\} $$ where $\psi_{\alpha,\beta}: [0,1] \to \R$ is the pdf of $Beta(\alpha,\beta)$. We sample $\alpha$ according to a truncated normal with mean 3 and variance 0.09 with support on $[1,5]$. We sample $\beta$ according to a truncated normal with mean 3.5 and variance 0.09 with support on $[2,5]$. 
 
  
-\textbf{Functional manifold of warping functions}
+### Functional manifold of warping functions
 <!-- Scenario 5 in sim_functional_data -->
 This is based on Equations 17 and 18 in @Kneip2008 but with $z_{i1}, z_{i2}$ both set to $1$. (Note that Equation 17 has a typo where the exponentials are missing negative signs.) Let $X_\alpha(t) = \mu(h_\alpha(t))$ be defined on $[-3,3]$ where $$ \mu(t) = \exp\{(t-1.5)^2/2\} + \exp\{(t+1.5)^2/2\}$$ and $$ h_\alpha(t) = 6 \frac{ \exp\{\alpha(t+3)/6\} - 1}{\exp\{\alpha\}-1}$$ if $\alpha \ne 0$ and $h_\alpha(t) = t$ otherwise. 
 
@@ -192,7 +194,7 @@ scp susanwei@spartan.hpc.unimelb.edu.au:/home/susanwei/functional_manifold_data/
 
 
 
-```{r, echo=FALSE, eval=FALSE, results='hide'}
+```{r, echo=FALSE, eval=FaALSE, results='hide'}
 
 setwd("./sim_results")
  
