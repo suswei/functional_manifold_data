@@ -15,6 +15,10 @@
 \setlength{\pdfpageheight}{11in}  % DO NOT CHANGE THIS
 
 
+\def\tightlist{}
+
+
+
 \usepackage{hyperref}       % hyperlinks
 \usepackage{url}            % simple URL typesetting
 \usepackage{booktabs}       % professional-quality tables
@@ -71,6 +75,9 @@
 % \multicol} -- This package is specifically forbidden
 % \nameref} -- This package is specifically forbidden
 % \natbib} -- This package is specifically forbidden -- use the following workaround:
+\newcommand{\citet}[1]{\citeauthor{#1} \shortcite{#1}} 
+\newcommand{\citep}{\cite} 
+\newcommand{\citealp}[1]{\citeauthor{#1} \citeyear{#1}}
 % \usepackage{savetrees} -- This package is specifically forbidden
 % \usepackage{setspace} -- This package is specifically forbidden
 % \usepackage{stfloats} -- This package is specifically forbidden
