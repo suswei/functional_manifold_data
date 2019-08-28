@@ -17,17 +17,16 @@
 
 \def\tightlist{}
 
-
-
-\usepackage{hyperref}       % hyperlinks
+% 
+% 
 \usepackage{url}            % simple URL typesetting
 \usepackage{booktabs}       % professional-quality tables
 \usepackage{amsfonts}       % blackboard math symbols
 \usepackage{nicefrac}       % compact symbols for 1/2, etc.
 \usepackage{microtype}      % microtypography
-
-
-
+% 
+% 
+% 
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{latexsym}
@@ -35,8 +34,6 @@
 \usepackage{amsbsy}
 \usepackage{graphics}
 \usepackage{epsfig}
-\usepackage[usenames]{color}
-\usepackage{graphicx}
 
 
 %\nocopyright
@@ -75,9 +72,9 @@
 % \multicol} -- This package is specifically forbidden
 % \nameref} -- This package is specifically forbidden
 % \natbib} -- This package is specifically forbidden -- use the following workaround:
-\newcommand{\citet}[1]{\citeauthor{#1} \shortcite{#1}} 
-\newcommand{\citep}{\cite} 
-\newcommand{\citealp}[1]{\citeauthor{#1} \citeyear{#1}}
+%\newcommand{\citet}[1]{\citeauthor{#1} \shortcite{#1}} 
+%\newcommand{\citep}{\cite} 
+%\newcommand{\citealp}[1]{\citeauthor{#1} \citeyear{#1}}
 % \usepackage{savetrees} -- This package is specifically forbidden
 % \usepackage{setspace} -- This package is specifically forbidden
 % \usepackage{stfloats} -- This package is specifically forbidden
@@ -107,7 +104,7 @@
 %
 \setlength\titlebox{2.5in} % If your paper contains an overfull \vbox too high warning at the beginning of the document, use this
 % command to correct it. You may not alter the value below 2.5 in
-\title{The hidden manifold distance for functional data}
+\title{The Hidden Manifold Distance for Functional ata}
 %Your title must be in mixed case, not sentence case. 
 % That means all verbs (including short verbs like be, is, using,and go), 
 % nouns, adverbs, adjectives should be capitalized, including both words in hyphenated terms, while
@@ -122,6 +119,29 @@
 
 \maketitle
 
+\begin{abstract}
+In many machine learning applications, the observed data is a
+discretely-sampled realization of a continuous process. While one can
+naively treat such data as vectors in Euclidean space, one may do better
+to regard them as functional data. For certain types of functional data,
+there is further structure to exploit, e.g.~probability density
+functions or warped curves of a common template function. Namely, the
+underlying curves of interest may lie on a manifold of low intrinsic
+dimension. This work addresses the estimation of pairwise geodesic
+distances between functional manifold data that are observed with noise,
+causing them to lie off the manifold. This setting falls outside of
+classic manifold learning techniques which require data to live exactly
+on or very near a manifold. The proposed methodology first sends the
+observed functional data to the hidden manifold, estimated using
+subspace-constrained mean-shift. Geodesic distances are subsequently
+calculated by employing shortest-path algorithms on this estimated
+manifold. Improved estimation of the pairwise geodesic distance has
+beneficial implications for many downstream tasks in functional data
+analysis which we illustrate in the case of distance-based functional
+classification/clustering.
+\end{abstract}
+
 \input{index}
+
 
 \end{document}
