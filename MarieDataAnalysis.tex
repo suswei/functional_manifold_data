@@ -1,0 +1,44 @@
+\section{Distance-based functional classification
+{[}Marie{]}}\label{distance-based-functional-classification-marie}
+
+In this section, we explore whether our geodesic distance estimator has
+benefits for downstream analysis task. There are many tasks we could
+consider here such as distance-based nonparametric regression and
+distanced-based functional clustering, but we will focus on
+distance-based functional classification. It must be noted that while
+curve alignment, also known as curve registration, is necessarily
+performed as a preprocessing technique prior to clustering and
+classification, our geodesic distance estimator allows one to forsake
+this step.
+
+For simplicity, assume the task is binary classification. Associated to
+each functional object \(x\) is a binary \(y\) indicating class
+membership. Consider the classifier proposed in \cite{Ferraty2006} which
+is a functional version of the Nadaraya-Watson kernel estimator of class
+membership probabilities: \[
+\hat p(y = 0 | x) \frac{ \sum_{i=1}^n K[h^{-1} d(x,x_i)] 1(y_i = 0) }{ \sum_{i=1}^n K[h^{-1} d(x,x_i)] }
+\] We shall compare our method to using \(L^2\) distance, possibly
+weighted, and with curve registration already accomplished. Describe
+alternative methods in detail.
+
+The bandwidth in the classifier should be tuned individually for each
+method. Also we might need to tune MDS dimension \(s\) since in real
+data, the dimension of the manifold might be much higher than
+encountered in the simulation scenarios where it never goes above 2.
+
+Datasets used by functional classification papers
+
+\begin{itemize}
+\item Wheat, rainfall and phoneme in Aurore's paper "Achieving near-perfect classification for functional data"
+\item Berkeley growth curves in \cite{ChenReiss2014}.
+\item Tecator and phoneme in \cite{Galeano2015} Mahalanobis technometrics paper.
+\item yeast cell cycle gene expression (can't find this publicly) in \cite{LengMuller2005} "Classification using functional data analysis for temporal gene expression data"
+\end{itemize}
+
+Datasets used in functional manifold papers
+
+\begin{itemize}
+\item Berkeley growth, yeast cell cycle gene expression (can't find this publicly) in \cite{ChenMuller2012}
+\item Tecator in \cite{LinYao2017} contamination paper
+\item Berkeley growth, gait cycle in \cite{Dimeglio2014} robust isomap paper
+\end{itemize}

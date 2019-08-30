@@ -104,7 +104,7 @@
 %
 \setlength\titlebox{2.5in} % If your paper contains an overfull \vbox too high warning at the beginning of the document, use this
 % command to correct it. You may not alter the value below 2.5 in
-\title{The Hidden Manifold Distance for Functional ata}
+\title{The Hidden Manifold Distance for Functional Data}
 %Your title must be in mixed case, not sentence case. 
 % That means all verbs (including short verbs like be, is, using,and go), 
 % nouns, adverbs, adjectives should be capitalized, including both words in hyphenated terms, while
@@ -121,13 +121,13 @@
 
 \begin{abstract}
 In many machine learning applications, the observed data is a
-discretely-sampled realization of a continuous process. While one can
+discretely-sampled realisation of a continuous process. While one can
 naively treat such data as vectors in Euclidean space, one may do better
-to regard them as functional data. For certain types of functional data,
-there is further structure to exploit, e.g.~probability density
-functions or warped curves of a common template function. Namely, the
-underlying curves of interest may lie on a manifold of low intrinsic
-dimension. This work addresses the estimation of pairwise geodesic
+to regard them as functional data.  
+When the underlying curves of interest lie on a manifold of low intrinsic
+dimension, e.g.~probability density
+functions or warped curves of a common template function, there is further structure to exploit. 
+This work addresses the estimation of pairwise geodesic
 distances between functional manifold data that are observed with noise,
 causing them to lie off the manifold. This setting falls outside of
 classic manifold learning techniques which require data to live exactly
@@ -136,12 +136,39 @@ observed functional data to the hidden manifold, estimated using
 subspace-constrained mean-shift. Geodesic distances are subsequently
 calculated by employing shortest-path algorithms on this estimated
 manifold. Improved estimation of the pairwise geodesic distance has
-beneficial implications for many downstream tasks in functional data
-analysis which we illustrate in the case of distance-based functional
-classification/clustering.
+potential benefits for downstream tasks such as distance-based functional
+???Marie: update classification/clustering???.
 \end{abstract}
 
 \input{index}
 
+\input{MarieDataAnalysis}
+
+\section{Acknowledgement}\label{acknowledgement}
+
+The authors would like to acknowledge support from the ARC Centre of
+Excellence for Mathematical and Statistical Frontiers (ACEMS) which
+enabled the two authors to work on the project at the University of
+Melbourne.
+
+\section{Appendices}\label{appendices}
+
+The result of the square root velocity manifold scenario is presented in
+Figure \ref{fig:betas}. The Spline L2 method has similar performance to
+our proposed method. This could be due to the fact that we did not
+sample the manifold broadly enough so that the sample lives in a locally
+flat region where the \(L^2\) distance holds.
+
+\begin{figure}
+\includegraphics[height=0.3\textheight]{sim_results/sce=4_SNR=high_Kobs=30_MSE}
+\includegraphics[height=0.3\textheight]{sim_results/sce=4_SNR=high_Kobs=30_isometry}
+\includegraphics[height=0.3\textheight]{sim_results/sce=4_SNR=high_Kobs=30_Pearson}
+\caption{Manifold of square root Beta densities. Besides Spline IsoGeo, all methods perform comparably well.}
+\label{fig:betas}
+\end{figure}
+
+
+\bibliography{references}
+\bibliographystyle{aaai}
 
 \end{document}
