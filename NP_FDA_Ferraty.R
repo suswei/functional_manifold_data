@@ -927,10 +927,10 @@ funopadi.knn.lcv <- function(ind_train,data, kind.of.kernel = "quadratic", pairw
     Classes.predicted <- as.vector((PROB.PREDICTED == apply(
       PROB.PREDICTED, 1, max)) %*% (1:nbclass))
     Misclas<- sum(Classes.predicted != class_test)/n2
-    return(Misclas.estimated)
+    return(Misclas)
     #return(list(Estimated.classnumber = Classes.estimated, 
-                #Predicted.classnumber = Classes.predicted, Bandwidths
-                #= Bandwidth.opt, Misclas = Misclas.estimated))
+    #Predicted.classnumber = Classes.predicted, Bandwidths
+    #= Bandwidth.opt, Misclas = Misclas.estimated))
     
   }else {
     return(list(Estimated.classnumber = Classes.estimated, 
@@ -3259,6 +3259,141 @@ unbal2equibal <- function(DATA, INSTANTS, Range.grid, lnewgrid)
   return(list(NEWDATA = NEWDATA, Newgrid = Newgrid))
 }
 
+
+#####################################################################
+funopadi.knn.lcv_ORIGINAL_DISTANCE <- function(ind_train,data, ...,kind.of.kernel = "quadratic",semimetric,true_class)
+{
+  Classes<- true_class[ind_train]
+  CURVES<- data[ind_train,]
+  PRED<- data[-ind_train,]
+  class_test<- true_class[-ind_train]
+  ################################################################
+  # Performs functional discrimination of a sample of curves when 
+  # a categorical response is observed (supervised classification). 
+  # A local bandwidth (i.e. local number of neighbours) is selected 
+  # by a cross-validation procedure.
+  #    "Classes" vector containing the categorical responses
+  #              giving the group number for each curve in 
+  #              the matrix CURVES (if nbclass is the number of 
+  #              groups, "Classes" contains numbers 1,2,...,nbclass)
+  #    "CURVES" matrix containing the curves dataset (row by row) 
+  #             used for the estimating stage
+  #    "PRED" matrix containing new curves stored row by row
+  #           used for computing predictions
+  #    "..." arguments needed for the call of the function computing 
+  #          the semi-metric between curves
+  #    "kind.of.kernel" the kernel function used for computing of 
+  #                     the kernel estimator; you can choose 
+  #                     "indicator", "triangle" or "quadratic (default)
+  #    "semimetric" character string allowing to choose the function 
+  #                 computing the semimetric;  you can select 
+  #                 "deriv" (default), "fourier", "hshift", "mplsr", 
+  #                 and "pca"
+  # Returns a list containing:
+  #    "Estimated.classnumber" vector containing estimated class membership 
+  #                            for each curve of "CURVES"
+  #    "Predicted.classnumber" if PRED different from CURVES, this vector 
+  #                            contains predicted class membership for each 
+  #                            curve of PRED
+  #    "Bandwidths" vector containing the local data-driven bandwidths
+  #                 for each curve in the matrix "CURVES"
+  #    "Misclas" misclassification rate computed from estimated values and 
+  #              observed values
+  ################################################################
+  Classes <- as.vector(Classes)
+  if(is.vector(PRED)) PRED <- as.matrix(t(PRED))
+  testfordim <- sum(dim(CURVES)==dim(PRED))==2
+  twodatasets <- T
+  if(testfordim) twodatasets <- sum(CURVES==PRED)!=prod(dim(CURVES))
+  sm <- get(paste("semimetric.", semimetric, sep = ""))
+  if(semimetric == "mplsr")
+    SEMIMETRIC1 <- sm(Classes, CURVES, CURVES, ...)
+  else SEMIMETRIC1 <- sm(CURVES, CURVES, ...)
+  kernel <- get(kind.of.kernel)
+  n1 <- ncol(SEMIMETRIC1)
+  step <- ceiling(n1/100)
+  if(step == 0)
+    step <- 1
+  Knearest <- seq(from = 10, to = n1 %/% 2, by = step)
+  kmax <- max(Knearest)
+  # the vector Knearest contains the sequence of the 
+  # k-nearest neighbours used for computing the optimal bandwidth
+  Classes.estimated <- 0
+  Bandwidth.opt <- 0
+  nbclass <- max(Classes)
+  BINARY <- matrix(0, n1, nbclass)
+  for(g in 1:nbclass)
+    BINARY[, g] <- as.numeric(Classes == g)
+  HAT.PROB <- matrix(0, nrow = nbclass, ncol = length(Knearest))
+  Knn1 <- 0
+  for(i in 1:n1) {
+    Norm.diff <- SEMIMETRIC1[, i]
+    # "norm.order" gives the sequence k_1, k_2,... such that
+    # dq(X_{k_1},X_i) < dq(X_{k_2},X_i) < ...
+    Norm.order <- order(Norm.diff)
+    # "zz" contains dq(X_{k_2},X_i), dq(X_{k_3},X_i),..., 
+    # dq(X_{j_{kamx+2}},X_i)
+    zz <- sort(Norm.diff)[2:(kmax + 2)]
+    # Bandwidth[l-1] contains (dq(X_{j_l},X_i) + 
+    # dq(X_{j_l},X_i))/2 for l=2,...,kmax+2
+    Bandwidth <- 0.5 * (zz[-1] + zz[ - (kmax + 1)])
+    z <- zz[ - (kmax + 1)]
+    ZMAT <- matrix(rep(z, kmax), nrow = kmax, byrow = T)
+    UMAT <- ZMAT/Bandwidth
+    KMAT <- kernel(UMAT)
+    KMAT[col(KMAT) > row(KMAT)] <- 0
+    Ind.curves <- Norm.order[2:(kmax + 1)]
+    for(g in 1:nbclass) {
+      Ind.resp <- BINARY[Ind.curves, g]
+      YMAT <- matrix(rep(Ind.resp, kmax), nrow = kmax, byrow
+                     = T)
+      HAT.PROB[g,  ] <- apply(YMAT[Knearest,  ] * KMAT[
+        Knearest,  ], 1, sum)
+    }
+    Kmatsumbyrow <- apply(KMAT[Knearest,  ], 1, sum)
+    HAT.PROB <- HAT.PROB/matrix(Kmatsumbyrow,nrow(HAT.PROB), ncol(HAT.PROB), byrow=T)
+    Criterium <- t(rep(1, nbclass)) %*% (HAT.PROB - BINARY[i,  ])^2
+    index <- order(as.vector(Criterium))[1]
+    Knn1[i] <- Knearest[index]
+    Classes.estimated[i] <- order(HAT.PROB[, index])[nbclass]
+    Bandwidth.opt[i] <- Bandwidth[index]
+  }
+  Misclas.estimated <- sum(Classes.estimated != Classes)/n1
+  if(twodatasets) {
+    if(semimetric == "mplsr")
+      SEMIMETRIC2 <- sm(Classes, CURVES, PRED, ...)
+    else SEMIMETRIC2 <- sm(CURVES, PRED, ...)
+    Bandwidth2 <- 0
+    n2 <- ncol(SEMIMETRIC2)
+    for(k in 1:n2) {
+      Sm2k <- SEMIMETRIC2[, k]
+      Sm2k.ord <- order(SEMIMETRIC2[, k])
+      knn <- Knn1[Sm2k.ord[1]]
+      Bandwidth2[k] <- sum(sort(Sm2k)[knn:(knn+1)])*0.5
+    }
+    KERNEL <- kernel(t(t(SEMIMETRIC2)/Bandwidth2))
+    KERNEL[KERNEL < 0] <- 0
+    KERNEL[KERNEL > 1] <- 0
+    Denom <- apply(as.matrix(KERNEL), 2, sum)
+    PROB.PREDICTED <- matrix(0, nrow = n2, ncol = nbclass)
+    for(g in 1:nbclass) {
+      PROBKERNEL <- KERNEL * BINARY[, g]
+      PROB.PREDICTED[, g] <- apply(as.matrix(PROBKERNEL), 2, 
+                                   sum)/Denom
+    }
+    Classes.predicted <- as.vector((PROB.PREDICTED == apply(
+      PROB.PREDICTED, 1, max)) %*% (1:nbclass))
+    Misclas<- sum(Classes.predicted != class_test)/n2
+    return(Misclas)
+    #return(list(Estimated.classnumber = Classes.estimated, 
+    #Predicted.classnumber = Classes.predicted, Bandwidths
+    #= Bandwidth.opt, Misclas = Misclas.estimated))
+    
+  }else {
+    return(list(Estimated.classnumber = Classes.estimated, 
+                Bandwidths = Bandwidth.opt, Misclas = Misclas.estimated))
+  }
+}
 
 
 
