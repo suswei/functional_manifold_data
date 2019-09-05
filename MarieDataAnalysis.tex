@@ -1,18 +1,16 @@
 \section{Distance-based functional classification}\label{distance-based-functional-classification-marie}
 
+There are many downstream analysis tasks in functional data analysis that are based on pairwise distances, including distance-based nonparametric regression and distanced-based functional clustering.
 In this section, we explore whether our geodesic distance estimator has
-benefits for downstream analysis task. There are many tasks we could
-consider here such as distance-based nonparametric regression and
-distanced-based functional clustering, but we will focus on
-distance-based functional classification. 
+benefits for the downstream analysis task of functional classification. 
 
-We work with the non-parametric classifier proposed in \cite{Ferraty2006} which is a functional version of the Nadaraya-Watson kernel estimator. Given a sample of curves $X_1,\ldots,X_n$ where each function $X_i$ is associated to a class $Y_i$, the estimator of the probability that a new observation $X^\star$ is in class $Y^\star=y$ is defined as
+We work with the non-parametric classifier proposed in \cite{Ferraty2006} which is a functional version of the Nadaraya-Watson kernel estimator. Given a sample of curves $X_1,\ldots,X_n$ where each function $X_i$ is associated to a class label $Y_i$, the estimator of the probability that a new observation $X^\star$ is in class $Y^\star=y$ is defined as
 \begin{equation}\label{func_NW}
 \hat P(Y^\star = y | X^\star)= \frac{ \sum_{i=1}^n k[h^{-1} d(X^\star,X_i)] {\bf{1}}(Y_i = y) }{ \sum_{i=1}^n k[h^{-1} d(X^\star,X_i)] },
 \end{equation}
-where $d$ is a distance, $k$ a kernel, $h$ a bandwidth and $\bf{1}$ the indicator function. The curve $X^\star$ is then classified in the class $Y^\star =y$ for which the conditional probability (\ref{func_NW}) is larger. We compare the classification performance obtained with the distance $d$ being equal to our proposed geodesic distance with $s=1,2$ and $3$, and to the one obtained with Spline IsoGeo and Spline L2 described in the simulation study section. We set $k$ to be a quadratic kernel and the bandwidth $h$ is chosen by cross-validation. 
+where $d$ is a distance, $k$ a kernel, $h$ a bandwidth and $\bf{1}$ the indicator function. The curve $X^\star$ is then classified in the class $Y^\star =y$ for which the conditional probability (\ref{func_NW}) is largest. We compare the classification performance obtained with the distance $d$ given by our proposed geodesic distance with $s=1,2$ and $3$, as well as that given by Spline IsoGeo and Spline L2 described in the simulation study section. We set $k$ to be a quadratic kernel and the bandwidth $h$ is chosen by cross-validation. 
 
-The classification task is perform on a famous dataset in Functional Data Analysis which is called the Berkeley growth curves dataset and is available in the \emph{fda} package \cite{Ram-Hoo-Gra} for R \cite{Rproject}. We chose this dataset because we expect the data to contain nonlinear features as it is hinted in \cite{ChenMuller2012}. The data consist in the height of $n=93$ individuals, 39 boys and 54 girls, measured on a common grid $t_1,\ldots,t_K$ of $K=31$ points taken between the ages of 1 and 18 years. The raw data $Y_1,\ldots,Y_n$ are transformed to continuous functions by smoothing with B-spline bases with a roughness penalty on the fourth derivative :
+The classification task is performed on the well-known Berkeley growth curves dataset in functional data analysis, available in the \emph{fda} package \cite{Ram-Hoo-Gra} for R \cite{Rproject}. We chose this dataset because we expect the data to contain nonlinear features as suggested in \cite{ChenMuller2012}. The data consist of the height of $n=93$ individuals, 39 boys and 54 girls, measured on a common grid $t_1,\ldots,t_K$ of $K=31$ points taken between the ages of 1 and 18 years. The raw data $Y_1,\ldots,Y_n$ are transformed to continuous functions by smoothing with B-spline bases with a roughness penalty on the fourth derivative :
 $$\tilde X_i(t) = \sum_{l=1}^{b} c_{il}B_l(t), $$
 where
  \begin{eqnarray*}
@@ -25,16 +23,16 @@ We use $b=35$ B-splines bases of order 6 and the parameter $\lambda$ is chosen b
 
 
 
-To assess the classification performance of the different distances, we randomly split $200$ times the dataset into a training set of $50$ curves and a test set of $43$ curves. For each split, we calculate the misclassification error for the 5 different distances, and we average these errors over the splits. The results are presented in Figure \ref{fig:class_err_velo}, we can see that our method with $s=3$ performs a little bit better than the others and that our method with $s=2$ is equivalent to Spline IsoGeo and Spline L2.
+To assess the classification performance of the the proposed geodesic distance, we randomly split $200$ times the dataset into a training set of $50$ curves and a test set of $43$ curves. For each split, we calculate the misclassification error, and we average these errors over the splits. The results are presented in Figure \ref{fig:class_err_velo}, we can see that our method with $s=3$ performs a little bit better than the others and that our method with $s=2$ is equivalent to Spline IsoGeo and Spline L2.
 
-\begin{figure}
+\begin{figure}[t]
 \centering
-\includegraphics[height=0.55\textheight]{./Velocity_curves_data_illustration.pdf}
+\includegraphics[height=0.5\textheight]{./Velocity_curves_data_illustration.pdf}
 \caption{Velocity curves of 39 boys (top) and 54 girls (bottom).}
 \label{fig:data_illu}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[h!]
 \centering
 \includegraphics[height=0.3\textheight]{./Erreur_classification_velocity.pdf}
 \caption{Classification errors for the velocity curves, our method with $s=3$ performs better while our method with $s=2$ is equivalent to Spline IsoGeo and Spline L2.}

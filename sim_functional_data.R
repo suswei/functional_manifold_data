@@ -79,7 +79,7 @@
 # SNR (signal to noise ratio)
 # reg_sampling : 0 if manifold parameters are drawn uniformly and 1 if manifold parameters are drawn from a concentrated measure.
 # com_grid : if 1 each curve is observed on the same grid and if 0 the grid for each curve is randomly genarated from unif[a,b]
-# plot_true : if 1 plot the true data, the observed data and the true geodesic matrix
+# plot_true : if 1 plot the true data, the observed data and the true geodesic matrix, 2 if plots are for publication
 
 ## Output
 # noiseless_data : samplesize x K matrix containing the original data (no noise)
@@ -381,6 +381,18 @@ sim_functional_data<-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,com_g
     matplot(t(grid),t(noisy_data),main="Observed data",type='l', col=rainbow(samplesize))
     image.plot(analytic_geo,main='analytic geodesic')
   }
+  if (plot_true==2){
+    pdf(paste(sprintf("sim_sce=%d",sce),".pdf",sep=""),width=2,height=2)
+    par(mgp=c(2.2,0.45,0), tcl=-0.4, mar=c(1.5,1.5,1.5,1.5))
+    par(cex.axis=0.5,cex.lab=0.5)
+    # matplot(t(grid),t(noiseless_data),main="True data",type='l', col=rainbow(samplesize))
+    matplot(t(grid),t(noisy_data),main="",type='l', col=rainbow(samplesize))
+    title(main = list("Observed data", cex = 0.5, font=1))
+    # image.plot(analytic_geo,main='analytic geodesic')
+    dev.off()    
+    
+  }
+    
   return(list('noiseless_data'=noiseless_data,'noisy_data'=noisy_data,'analytic_geo'=analytic_geo,'grid'=grid,'reg_grid'=reg_grid))
 }
 

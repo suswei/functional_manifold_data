@@ -7,6 +7,7 @@ output:
 
 ```{r, include=FALSE}
 source("cluster_results.R",echo=FALSE)
+source('sim_functional_data.R')
 ```
 
 
@@ -31,9 +32,9 @@ This insight underpins functional data analysis, a subfield of statistics that s
 In this work, we advocate that for functional manifold data, i.e. functional data that lie on a manifold, the geodesic distance is more appropriate than the $L^2$ distance.
 Indeed, when the manifold hypothesis is plausible, e.g.\ for classes of probability density functions and classes of warped curves of a common template function, clustering and classification using the geodesic distance may give better results than using the $L^2$ distance. 
 
-The manifold setting presents certainly challenges since for nonlinear manifolds, even basic operations such as addition and subtraction require special consideration. We will carefully lay out a technique for estimating the geodesic distance between noisy functional manifold data.
+The manifold setting presents certain challenges since, for nonlinear manifolds, even basic operations such as addition and subtraction require special consideration. We will carefully lay out a technique for estimating the geodesic distance between noisy functional manifold data.
 
-Let $X_1,\ldots,X_n$ be a sample of $n$ independent realizations of a random variable $X$ that takes value in the Hilbert space $L^2([a,b],\R)$. Suppose additionally that the function $X$ belongs to a Riemannian manifold $\M \subset L^2([a,b],\R)$ with Riemannian metric tensor $g$ which can be used to assign a metric on the manifold as follows \cite{Lin2014}. For each point $X$ on the manifold, the Riemannian metric tensor $g$ has an inner product $g_X$ on the tangent space $T_X \M$. The norm of a tangent vector $V \in T_X \M$ is defined as $$\|V\| = \sqrt{g_X(V,V)}.$$ The geodesic distance between two functions $X_i,X_j$ on the manifold $\M$, based on this metric tensor $g$, is defined as
+Let $X_1,\ldots,X_n$ be a sample of $n$ independent realizations of a random variable $X$ that takes value in the Hilbert space $L^2([a,b],\R)$. Suppose additionally that the function $X$ belongs to a Riemannian manifold $\M \subset L^2([a,b],\R)$ with Riemannian metric tensor $g$ which are often used to assign a metric on the manifold as follows \cite{Lin2014}. For each point $X$ on the manifold, the Riemannian metric tensor $g$ has an inner product $g_X$ on the tangent space $T_X \M$. The norm of a tangent vector $V \in T_X \M$ is defined as $$\|V\| = \sqrt{g_X(V,V)}.$$ The geodesic distance between two functions $X_i,X_j$ on the manifold $\M$, based on this metric tensor $g$, is defined as
 $$ d_{\M}(X_i,X_j):=\inf_{\gamma:[0,1] \to \M, \gamma(0) = X_i, \gamma(1) = X_j} l(\gamma),$$
 where $$ l(\gamma) := \int_0^1 \left\| \frac{\,d\gamma}{\,d t}(t) \right\| \,dt$$
 is the length of the piecewise-smooth curve $\gamma$. 
@@ -52,7 +53,7 @@ Ideally, the functions $X_i$ and $X_j$ are observed on a very dense domain grid 
 However, most shortest-path algorithms critically assume observations live near the manifold with little noise \cite{Yeh2005} and are thus likely to fail for functional data which can be observed with low signal-to-noise ratio.
 <!-- A preprocessing step where the nosiy functional manifold data is smoothed is also likely to fail. This is because smoothing techniques in functional data analysis are designed for the $L^2$ recovery of the original curve, not to ensure the recovered functional versions of the data lie on or close to the functional manifold $\M$. This presents challenges to the application of many manifold learning techniques which assume fully observed nearly-noiseless inputs. -->
 <!-- Estimating the manifold $\M$ from a sample of functions observed discretely and with measurements is a challenging task (results depend on curvature of the manifold, need a lot of data). Even after recovering a functional version of the data, the chances are pretty high that $\tilde X_1,\ldots,\tilde X_n$ do not lie exactly on $\M$.  -->
-In this work, we put forth a technique for the recovery of the $n{\times}n$ matrix $G$ of pairwise geodesic distances, i.e.\
+In this work, we put forth a technique for the recovery of the $n{\times}n$ matrix $G$ of pairwise geodesic distances:
 $$
 G(i,j)=G(j,i) = \begin{cases} 
       d_{\M} (X_i,X_j) & \textrm{if $i\neq j$,} \\
@@ -63,7 +64,7 @@ In lieu of $X_i$ and $X_j$, we have access only to discretely-sampled noisy func
 
 <!-- Pairwise distances are important for many downstream tasks, e.g.  classification, clustering, manifold learning (ISOMAP), nonparametric regression (kernel regression). Certainly, pairwise geodesic distances are legitimate objects of interest in themselves but our motivation is more general in nature. Specifically, we use pairwise distances as an illuminating example to advocate and promote the nonlinear perspective in FDA.  -->
 
-The work of \cite{ChenMuller2012} was among the first in functional data analysis to consider the manifold hypothesis for functional data. A notion of the mean and variation of functional manifold data was introduced there. Of particular relevance to this work is their proposed P-ISOMAP procedure which allows for noisy functional observations. This is in contrast to the classic ISOMAP algorithm \cite{Tenenbaum2000} which assumes observations lie exactly on the manifold.  \cite{Dimeglio2014} also realized this drawback to ISOMAP and proposed a procedure we will call robust-ISOMAP for functional data that is less sensitive to outliers. We will discuss P-ISOMAP and robust-ISOMAP in more details below. 
+The work of \cite{ChenMuller2012} was among the first in functional data analysis to consider the manifold hypothesis for functional data. A notion of the mean and variation of functional manifold data was introduced there. Of particular relevance to this work is their proposed P-ISOMAP procedure which allows for noisy functional observations. This is in contrast to the classic ISOMAP algorithm \cite{Tenenbaum2000} which assumes observations lie exactly on the manifold. This drawback to ISOMAP was also realised in \cite{Dimeglio2014} who proposed a procedure we will call robust-ISOMAP for functional data that is less sensitive to outliers. We will discuss P-ISOMAP and robust-ISOMAP in more details below. 
 
 <!-- \cite{LinYao2017]  -->
 
@@ -92,7 +93,7 @@ Before presenting our procedure, we also need to review the ISOMAP algorithm \ci
 Note that shortest-path algorithms such as the Floyd-Warshall algorithm are used to find the smallest path \textit{given} a weighted graph but they do not produce the weighted graphs themselves. Both P-ISOMAP and robust-ISOMAP are modifications of ISOMAP in the sense that they change the construction of the weighted graph in step 1 above.
 <!-- (which is the difficult part, depend on number of neighbors, many method out there to calculate that graph in a robust way, P-ISOMAP is one of these). -->
 
-In what follows, we call IsoGeo the two-step procedure which performs a modified version of the first step of ISOMAP followed by the original second step of ISOMAP. The first step of IsoGeo constructs a weighted graph $\mathcal{G}$ according to \cite{Dimeglio2014}. First we construct a complete weighted graph $\mathcal{G}_c$, meaning that every pair of nodes $x_i$ and $x_j$ are connected by an edge of weight $d_{ij}$, so that the graph is independent of the tuning parameter $\varepsilon$. Next, we obtain the minimal spanning tree associated with $\mathcal{G}_c$ and denote its set of edges by $E_s$. The graph $\mathcal{G}$ is obtained by adding all edges $e_{ij}$ to $E_s$ for which the following condition is true:
+In what follows, we call IsoGeo the two-step procedure which performs a modified version of the first step of ISOMAP followed by the original second step of ISOMAP. The first step of IsoGeo constructs a weighted graph $\mathcal{G}$ according to \cite{Dimeglio2014} as follows. First we construct a complete weighted graph $\mathcal{G}_c$, meaning that every pair of nodes $x_i$ and $x_j$ is connected by an edge of weight $d_{ij}$, so that the graph is independent of the tuning parameter $\varepsilon$. Next, we obtain the minimal spanning tree associated with $\mathcal{G}_c$ and denote its set of edges by $E_s$. The graph $\mathcal{G}$ is obtained by adding all edges $e_{ij}$ to $E_s$ for which the following condition is true:
 $$ \overline{x_ix_j} \subset \bigcup_{i=1}^n B(x_i,\varepsilon_i),$$
 where $B(x_i,\varepsilon_i)$ is the open ball of center $x_i$ and radius $\epsilon_i = \max_{e_{ij}\in E_s}d_{ij}$, and $\overline{x_ix_j}= \{x\in R^D \ | \ \exists \lambda \in [0,1], x=\lambda x_i + (1-\lambda)x_j \}$. Let the distance estimated by IsoGeo be denoted $\text{IsoGeo}(x_i,x_j)$.
 Note that IsoGeo has no tuning parameters. 
@@ -104,8 +105,7 @@ We are now ready to describe our procedure. Since SCMS is based on kernel densit
 <!-- where $\lambda>0$ is a tuning parameter controlling the smoothness of $\tilde X_i$.  -->
 1. Discretise the functions $\tilde X_1,\ldots,\tilde X_n$ by evaluating them on a dense common grid $\tilde T=(t_{1},\ldots,t_{D})$. Let $s$ be a positive integer, much smaller than $D$. Obtain $\tilde X^s_1,\ldots,\tilde X^s_n \in \mathbb R^s$ using multidimensional scaling so that the pairwise $\mathbb R^D$ Euclidean distances of the discretised functions $\tilde X_i$ can be preserved as much as possible.
 2. Apply the subspace constrained mean-shift algorithm \cite{Ozertem2011} to each of $\tilde X^s_i$ to obtain its destination $\tilde X^{s,\hat \M}_i$.
-3. Use IsoGeo on the inputs $\tilde X^{s,\hat \M}_1,\ldots,\tilde X^{s,\hat \M}_n \in \R^s$ to obtain $\text{IsoGeo}(\tilde X^{s,\hat \M}_i,\tilde X^{s,\hat \M}_j)\}_{i>j}$.
-Our geodesic distance estimator is the $n{\times}n$ matrix $\hat G$ whose elements are given by
+3. Our geodesic distance estimator is the $n{\times}n$ matrix $\hat G$ whose elements are given by
 $$
 \hat G(i,j)=\hat G(j,i) = \left\{ \begin{array}{ll}
  \text{IsoGeo}(\tilde X^{s,\hat \M}_i,\tilde X^{s,\hat \M}_j) & \textrm{if $i\neq j$,}\\
@@ -114,26 +114,26 @@ $$
 $$
 
 There are two tuning parameters to our procedure. First, there is the dimension $s$ in step 1. In our simulations we try $s \in \{1,2,3\}$. The other parameter is the bandwidth $h$ in the subspace constrained mean-shift. In our simulations we set $h$ according to the heuristic in Equation (A1) of \cite{ChenHo2015}: 
-$$h = A_0\left(\frac{1}{s+2}\right)^{\frac{1}{s+4}}n^{\frac{-1}{s+4}}\sigma_{\min}, $$ where $A_0 = ?$ and $\sigma_{\min}$ is the minimum over $j=1,\ldots,s$ of the standard deviation of $\tilde X^s_{1,j},\ldots, \tilde X^s_{n,j}$, with $\tilde X^s_{i,j}$ being the $j$th entry of the vector $\tilde X^s_{i}$. In reality, depending on the downstream task, both $s$ and $h$ can be tuned in a data-adaptive way, say using cross-validation. 
+$$h = \left(\frac{4}{s+2}\right)^{\frac{1}{s+4}}n^{\frac{-1}{s+4}}\sigma_{\min}, $$ where $\sigma_{\min}$ is the minimum over $j=1,\ldots,s$ of the standard deviation of $\tilde X^s_{1,j},\ldots, \tilde X^s_{n,j}$, with $\tilde X^s_{i,j}$ being the $j$th entry of the vector $\tilde X^s_{i}$. In reality, depending on the downstream task, both $s$ and $h$ can be tuned in a data-adaptive way, say using cross-validation. 
 
 <!-- ##############  -->
 
 # Simulation study
 
-We perform simulations to study various estimators of pairwise geodesic distances. We compare the performance of our method to each of the following four alternatives. The first alternative, denoted RD, takes the naive approach of applying IsoGeo directly on the raw vectors $Y_1,\ldots,Y_n \in R^K$. Note that this procedure is only sensible if all the time grids $T_1,\ldots,T_n$ are the same. 
+We perform simulations to study various estimators of pairwise geodesic distances. We compare the performance of our method to each of the following four alternatives. The first alternative, denoted **RD**, takes the naive approach of applying IsoGeo directly on the raw vectors $Y_1,\ldots,Y_n \in R^K$. Note that this procedure is only sensible if all the time grids $T_1,\ldots,T_n$ are the same. 
 
-For the next two alternatives, we first smooth the discretely-sampled noisy functional data using splines as described in (\ref{eq_spline_smoothing}). Then, we either estimate pairwise distance between the smoothed $\tilde X_1,\ldots,\tilde X_n$ evaluated on a common time grid of $D$ points using IsoGeo (denoted Spline IsoGeo) or the $L^2$ distance (denoted Spline L2).
+For the next two alternatives, we first smooth the discretely-sampled noisy functional data using splines as described in (\ref{eq_spline_smoothing}). Then, we either estimate pairwise distance between the smoothed $\tilde X_1,\ldots,\tilde X_n$ evaluated on a common time grid of $D$ points using IsoGeo or the $L^2$ distance. The former method will be denoted **Spline IsoGeo** and the latter **Spline L2**.
 
 The final alternative we consider is P-ISOMAP which is the two-step procedure developed in \cite{ChenMuller2012} for handling noisy functional data. In the first step, a penalty is incorporated to robustify the construction of the weighted graph. This is followed by the original second step of ISOMAP.
 <!--* **(Random Projection) RP**  same method as our but change step 2 by : obtain $s$-dimensional representation by random projection and setp 4 by obtain $\hat G$ using a ensemble method.-->
 
-We ran P-ISOMAP separately in Matlab and tuned for the parameter $\varepsilon$ and the penalty parameter using the relative Frobenius assessment metric. We found that the penalty parameter chosen in this oracle fashion was always zero, thus reducing the P-ISOMAP procedure to standard ISOMAP. Given this, we did not make further comparison to P-ISOMAP in our simulation study. We also do not present the results for the RD method which always produced poor estimates of the geodesic distance.
+The code for P-ISOMAP was provided by \cite{ChenMuller2012} in MATLAB. We ran P-ISOMAP and tuned for the parameter $\varepsilon$ and the penalty parameter $\delta$ using the relative Frobenius assessment metric, described below. We found that the penalty parameter chosen in this oracle fashion was always zero, thus reducing the P-ISOMAP procedure to standard ISOMAP. Given this, we did not make further comparison to P-ISOMAP in our simulation study. We also do not present the results for the RD method which always produced poor estimates of the geodesic distance.
 
 Three different metrics are used to assess the quality of a pairwise geodesic distance estimator. The first metric assesses near-$\epsilon$ isometry, which we define as the percentage of estimated pairwise geodesic distances between $1-\epsilon$ and $1+\epsilon$ of the corresponding true pairwise geodesic distance. We form the receiver operating curve with $\epsilon$ on the $x$-axis and near-$\epsilon$ isometry on the $y$-axis. The metric is the area under this receiver operating curve. Thus a good estimator has high values for the near-isometry metric.
 
 The second metric $\|G-\hat G\|/\|G\|$ is the Frobenius norm of the estimation error matrix $G-\hat G$, relative to the Frobenius norm of the true distance matrix $G$. The third metric is the Pearson correlation coefficient between the upper diagonal of $G$ and $\hat G$. A good geodesic distance estimator has low Frobenius norm and high Pearson correlation coefficient. 
 
-We shall consider three functional manifolds in our simulation study. Throughout, we make use of a helpful property of one-dimensional manifolds. If $X \in \M$, with the $L^2$ metric tensor, depends on a parameter $\theta \in \mathbb R$, then 
+We shall consider three functional manifolds in our simulation study. Throughout, we make use of a helpful property of one-dimensional manifolds. If $X \in \M$, with the $L^2$ metric tensor, depends on a scalar parameter $\theta \in \mathbb R$, then 
 $$
 d_\M(X_{\theta_1},X_{\theta_2}) = \int_{\theta_1}^{\theta_2} \left\| \frac{\partial X}{\partial \theta}(t)\right\|_{L^2} \,d\theta.
 $$
@@ -143,7 +143,18 @@ We also need to make a disclaimer about our sampling technique below. Proper sam
 
 ## Isometric functional manifold of normal density functions
 <!-- Scenario 2 in sim_functional_data -->
+```{r, echo=FALSE, eval=TRUE, cache=TRUE, results='hide'}
+# Generate data
+sim <- sim_functional_data(sce=2,samplesize=100,K=30,plot_true=2,reg_sampling=1)
+```
 We take Manifold 2 in \cite{ChenMuller2012} and set the variance of the normal density to be $1$. Let $X_\beta: [a,b] \to \R$ be given by $X_\beta(t) = \frac{1}{\sqrt{2\pi}} \exp{[-\frac{1}{2}(t-\beta)^2]}$. Consider $$\M = \left \{X_\beta: \beta \in [-1,1], t \in [a,b]\right \},$$ with the $L^2$ inner product as the metric tensor. First, note that the "straight" line connecting $X_{\beta_1}$ and $X_{\beta_2}$ does not always stay inside of $\M$. Thus the geodesic distance will not coincide with the $L^2$ distance.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.5\textwidth]{sim_sce=2}
+\caption{One hundred noisy curves in the functional manifold of normal probability density.}
+\label{fig:sce2}
+\end{figure}
 
 We set $a=-4$ and $b=4$ and sample $\beta$ according to a truncated standard normal with support on $[-1,1]$. The geodesic distance between the curves $X_{\beta_1}$ and $X_{\beta_2}$ is given by
 \begin{eqnarray*}
@@ -158,34 +169,65 @@ We can see this manifold is isometric, since the geodesic distance between $X_{\
 
 ## Functional manifold of square root velocity functions
 <!-- Scenario 4 in sim_functional_data -->
+```{r, echo=FALSE, eval=TRUE, cache=TRUE, results='hide'}
+# Generate data
+sim <- sim_functional_data(sce=4,samplesize=100,K=30,plot_true=2,reg_sampling=1)
+```
 It was shown in \cite{Joshi2007} that the square root representation of probability density functions gives rise to a simple closed-form geodesic distance.
 They consider the manifold $$ \M = \{ \psi:[0,1] \to \R : \psi \ge 0, \int_0^1 \psi^2(s) \,ds = 1 \},$$ with the Fisher-Rao metric tensor $$ <v_1,v_2> = \int_0^1 v_1(s) v_2(s) \,ds ,$$ for two tangent vectors $v_1,v_2 \in T_\psi(\M)$. Note that this coincides with the $L^2[0,1]$ inner product. It was shown in \cite{Joshi2007} that the geodesic distance between any two $\psi_1$ and $\psi_2$ in $\M$ is simply $$d_\M(\psi_1,\psi_2) = \cos^{-1}<\psi_1,\psi_2>.$$
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.5\textwidth]{sim_sce=4}
+\caption{One hundred noisy curves in the functional manifold of square root probability density functions.}
+\label{fig:sce4}
+\end{figure}
+
 We will specifically examine the square root of $Beta(\alpha,\beta)$ densities, which are of course supported on $[0,1]$. That is, consider $$ \M = \big\{ \sqrt{\psi_{\alpha,\beta}}: 1 \le \alpha \le 5, 2 \le \beta \le 5\big\}, $$ where $\psi_{\alpha,\beta}: [0,1] \to \R$ is the probability density function of a Beta random variable with shape parameters $\alpha$ and $\beta$. We sample $\alpha$ according to a truncated normal with mean 3 and variance 0.09 with support on $[1,5]$. We sample $\beta$ according to a truncated normal with mean 3.5 and variance 0.09 with support on $[2,5]$. 
 
  
 ## Functional manifold of warped functions
 <!-- Scenario 5 in sim_functional_data -->
-This is based on Equations 17 and 18 in \cite{Kneip2008} but with $z_{i1}, z_{i2}$ both set to $1$. (Note that Equation 17 therein has a typo where the exponentials are missing negative signs.) Let $X_\alpha(t) = \mu(h_\alpha(t))$ be defined on $[-3,3]$ where $$ \mu(t) = \exp\{(t-1.5)^2/2\}+\exp\{(t+1.5)^2/2\},$$ and $$ h_\alpha(t) = 6\frac{\exp\{\alpha(t+3)/6\}-1}{\exp\{\alpha\}-1},$$ if $\alpha \ne 0$ and $h_\alpha(t) = t$ otherwise. 
+```{r, echo=FALSE, eval=TRUE, cache=TRUE, results='hide'}
+# Generate data
+sim <- sim_functional_data(sce=5,samplesize=100,K=30,plot_true=2,reg_sampling=1)
+```
+
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.5\textwidth]{sim_sce=5}
+\caption{One hundred noisy curves in the functional manifold of warped functions.}
+\label{fig:sce5}
+\end{figure}
+
+Let $X_\alpha(t) = \mu(h_\alpha(t))$ be defined on $[-3,3]$ where $$ \mu(t) = \exp\{(t-1.5)^2/2\}+\exp\{(t+1.5)^2/2\},$$ and $$ h_\alpha(t) = 6\frac{\exp\{\alpha(t+3)/6\}-1}{\exp\{\alpha\}-1},$$ if $\alpha \ne 0$ and $h_\alpha(t) = t$ otherwise. 
 
 Consider the manifold $$ \M = \{X_\alpha: -1 \le \alpha \le 1\}.$$ 
-We sample $\alpha$ according to a truncated standard normal with support on $[-1,1]$.
-The geodesic distance is then $$ d_\M(X_{\alpha_1},X_{\alpha_2}) = \int_{\alpha_1}^{\alpha_2} \left \| \frac{d X_\alpha (t)}{d\alpha} \right\|_{L^2} d\alpha.$$ We estimate this using numerical integration.
+We sample $\alpha$ according to a truncated standard normal with support on $[-1,1]$. This manifold is based on Equations 17 and 18 in \cite{Kneip2008} but with $z_{i1}, z_{i2}$ therein both set to $1$. (Note that Equation 17 therein has a typo where the exponentials are missing negative signs.)
+
+
+The geodesic distance is $$ d_\M(X_{\alpha_1},X_{\alpha_2}) = \int_{\alpha_1}^{\alpha_2} \left \| \frac{d X_\alpha (t)}{d\alpha} \right\|_{L^2} d\alpha.$$ We estimate this using numerical integration.
       
 
 
 
 ## Results
 
-For each manifold $\M$ described above, we simulate ???Susan how many? 1000?? samples of $200$ functions $X_i\in\M$. We then construct vectors $Y_i\in \R^K$ such that $Y_{ij}=X_i(t_j) + \epsilon_{ij}$ with $T=(t_1,\ldots,t_K)$ a common grid of equally spaced points and $\epsilon_{ij}\sim N(0,\sigma_\epsilon^2)$.
-The tuning parameters for the proposed method were chosen as described at the end of the methodology section.  In step 1 of our procedure, we take $D = 100$ for the size of the common time grid. We will investigate how two parameters affect the performance of the various methods in consideration. The first one is the signal-to-noise ratio 
+For each manifold $\M$ described above, we simulate 100 Monte Carlo samples of $100$ functions $X_i\in\M$. We then construct vectors $Y_i\in \R^K$ such that $Y_{ij}=X_i(t_j) + \epsilon_{ij}$ with $T=(t_1,\ldots,t_K)$ a common grid of equally spaced points and $\epsilon_{ij}\sim N(0,\sigma_\epsilon^2)$.
+The tuning parameters for the proposed method, $s$ and $h$, were chosen as described at the end of the methodology section.  In step 1 of our procedure, we take $D = 100$ for the size of the common time grid. We will investigate how two parameters affect the performance of the various methods in consideration. The first one is the signal-to-noise ratio 
 $$SNR = 10 log_{10}\left(\frac{\sigma^2_{sig}}{\sigma^2_\epsilon}\right),$$
 where $\sigma^2_{sig}$ is the variance of the signal. We fix SNR at either $0.1$ (low) or $0.5$ (high). The second parameter is $K$, the dimension of the discretely-observed noisy $Y_i$'s. We set $K$ to either $30$ (sparse) or $100$ (abundant). 
 
-We will present the results for the high signal-to-noise and sparse $K$ setting. We show the performance of the Spline IsoGeo and Spline L2 method versus our method for three dimensions $s=1,2,3$. We can see from Figures \ref{fig:normal} and \ref{fig:warping} that spline smoothing followed by either IsoGeo or the $L^2$ distance calculation estimates the pairwise geodesic distances reasonably well though not as well as the proposed method for $s=2$ and $s=3$. Interestingly, when $s$ in our method is not selected properly, for instance when $s=1$, our estimator performs poorly in terms of the relative Frobenius norm although still better than Spline IsoGeo and Spline L2 in the other two metrics. It may be possible that for certain downstream tasks such as clustering or classification, precise estimation of the geodesic distance is less important than one that respects the ordering of the distances. In such cases, the near-isometry and Pearson correlation metrics may give a better indication of downstream performance of the geodesic distance estimator. The result of the square root velocity manifold scenario is presented in
+We will present the results for the high signal-to-noise and sparse $K$ setting. We show the performance of the Spline IsoGeo and Spline L2 method versus our method for three dimensions $s=1,2,3$. We can see from Figures \ref{fig:normal} and \ref{fig:warping} that spline smoothing followed by either IsoGeo or the $L^2$ distance estimates the pairwise geodesic distances reasonably well though not as well as the proposed method for $s=2$ and $s=3$. Notably, when $s$ in our method is not selected properly, for instance when $s=1$, our estimator performs poorly in terms of the relative Frobenius norm although still better than Spline IsoGeo and Spline L2 in the other two metrics. It may be possible that for certain downstream tasks such as clustering or classification, precise estimation of the geodesic distance is less important than one that respects the ordering of the distances. In such cases, the near-isometry and Pearson correlation metrics may give a better indication of downstream performance of the geodesic distance estimator. 
+
+The result of the square root velocity manifold scenario is presented in
 Figure \ref{fig:betas}. The Spline L2 method has similar performance to
 our proposed method. This could be due to the fact that we did not
 sample the manifold broadly enough so that the sample lives in a locally
-flat region where the \(L^2\) distance holds.
+flat region where the $L^2$ distance holds.
 
 ```{r, engine = 'bash', eval = FALSE, include=FALSE}
 sbatch compare_methods.sh
@@ -215,7 +257,7 @@ setwd("../")
 \includegraphics[height=0.3\textheight]{sim_results/sce=2_SNR=high_Kobs=30_MSE}
 \includegraphics[height=0.3\textheight]{sim_results/sce=2_SNR=high_Kobs=30_isometry}
 \includegraphics[height=0.3\textheight]{sim_results/sce=2_SNR=high_Kobs=30_Pearson}
-\caption{Manifold of $N(\beta,1)$ probability density functions. Across all three metrics, our method with $s=2$ performs the best, followed by our method with $s=3$.}
+\caption{Manifold of $N(\beta,1)$ probability density functions. The boxplots indicate the distributions of each of the three metrics over 100 Monte Carlo samples. Across all three metrics, our method with $s=2$ performs the best, followed by our method with $s=3$.}
 \label{fig:normal}
 \end{figure}
 
@@ -226,7 +268,7 @@ setwd("../")
 \includegraphics[height=0.3\textheight]{sim_results/sce=5_SNR=high_Kobs=30_MSE}
 \includegraphics[height=0.3\textheight]{sim_results/sce=5_SNR=high_Kobs=30_isometry}
 \includegraphics[height=0.3\textheight]{sim_results/sce=5_SNR=high_Kobs=30_Pearson}
-\caption{Manifold of warped functions. The best performing estimators are given by our method with $s=2$ and then $s=3$.}
+\caption{Manifold of warped functions. The boxplots indicate the distributions of each of the three metrics over 100 Monte Carlo samples. The best performing estimators are given by our method with $s=2$ and then $s=3$.}
 \label{fig:warping}
 \end{figure}
 
@@ -236,7 +278,7 @@ setwd("../")
 \includegraphics[height=0.3\textheight]{sim_results/sce=4_SNR=high_Kobs=30_MSE}
 \includegraphics[height=0.3\textheight]{sim_results/sce=4_SNR=high_Kobs=30_isometry}
 \includegraphics[height=0.3\textheight]{sim_results/sce=4_SNR=high_Kobs=30_Pearson}
-\caption{Manifold of square root Beta densities. Besides Spline IsoGeo, all methods perform comparably well.}
+\caption{Manifold of square root Beta densities. The boxplots indicate the distributions of each of the three metrics over 100 Monte Carlo samples. Besides Spline IsoGeo, all methods perform comparably well.}
 \label{fig:betas}
 \end{figure}
 
