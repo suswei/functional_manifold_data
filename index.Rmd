@@ -22,7 +22,7 @@ source('sim_functional_data.R')
 \newcommand{\M}{\mathcal{M}}
 
 
-# Introduction 
+# INTRODUCTION 
 Many statistical and machine learning methods rely on some measure of distance. For example, clustering and classification of functional data, discretely-sampled curves varying over a continuum, is a common learning task in which distance plays a crucial role. In a naive treatment, the data may be simply processed as vectors in Euclidean space. Doing so however risks losing the richness of functional data; indeed, one may do better to regard the data as functions. The challenge of analyzing infinite-dimensional objects can be ameliorated if the curves are smooth since the dimensionality is then only artificially high.
 This insight underpins functional data analysis, a subfield of statistics that studies functional data. 
 
@@ -70,7 +70,7 @@ The work of \cite{ChenMuller2012} was among the first in functional data analysi
 
 
 
-# Proposed method for estimating geodesic distances 
+# PROPOSED METHOD FOR ESTIMATING GEODESIC DISTANCES
 Suppose that each curve $X_i \in (\M,g)$ is observed with measurement error on a time grid $T_i=(t_{i1},\ldots,t_{iK}), a \le t_{i1} < \ldots < t_{iK} \le b$, i.e.\ we observe a sample of $K$-dimensional vectors $Y_1,\ldots,Y_n$ with $Y_{ij} = X_i(t_{ij}) + \epsilon_{ij}$. Let the random variables $\epsilon_{ij}$ have mean zero and be uncorrelated with each other. We assume that each observation grid $T_1,\ldots,T_n$ is dense, i.e.\ $K$ is large.
 
 We begin by converting the discretely-sampled functional observations into continuous ones. Let $\tilde X_1,\ldots,\tilde X_n$ denote the functional versions of the raw data obtained by some smoothing method. For example, we may employ spline smoothing \cite{Ramsay2005} to recover the functional versions of the raw data, i.e.\
@@ -118,7 +118,7 @@ $$h = \left(\frac{4}{s+2}\right)^{\frac{1}{s+4}}n^{\frac{-1}{s+4}}\sigma_{\min},
 
 <!-- ##############  -->
 
-# Simulation study
+# SIMULATION STUDY
 
 We perform simulations to study various estimators of pairwise geodesic distances. We compare the performance of our method to each of the following four alternatives. The first alternative, denoted **RD**, takes the naive approach of applying IsoGeo directly on the raw vectors $Y_1,\ldots,Y_n \in R^K$. Note that this procedure is only sensible if all the time grids $T_1,\ldots,T_n$ are the same. 
 
