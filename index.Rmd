@@ -64,11 +64,11 @@ In lieu of $X_i$ and $X_j$, we have access only to discretely-sampled noisy func
 
 <!-- Pairwise distances are important for many downstream tasks, e.g.  classification, clustering, manifold learning (ISOMAP), nonparametric regression (kernel regression). Certainly, pairwise geodesic distances are legitimate objects of interest in themselves but our motivation is more general in nature. Specifically, we use pairwise distances as an illuminating example to advocate and promote the nonlinear perspective in FDA.  -->
 
-The work of \cite{ChenMuller2012} was among the first in functional data analysis to consider the manifold hypothesis for functional data. A notion of the mean and variation of functional manifold data was introduced there. Of particular relevance to this work is their proposed P-ISOMAP procedure which allows for noisy functional observations. This is in contrast to the classic ISOMAP algorithm \cite{Tenenbaum2000} which assumes observations lie exactly on the manifold. This drawback to ISOMAP was also realised in \cite{Dimeglio2014} who proposed a procedure we will call robust-ISOMAP for functional data that is less sensitive to outliers. We will discuss P-ISOMAP and robust-ISOMAP in more details below. 
 
 <!-- \cite{LinYao2017]  -->
 
 # RELATED WORK
+The work of \cite{ChenMuller2012} was among the first in functional data analysis to consider the manifold hypothesis for functional data. A notion of the mean and variation of functional manifold data was introduced there. Of particular relevance to this work is their proposed P-ISOMAP procedure which allows for noisy functional observations. This is in contrast to the classic ISOMAP algorithm \cite{Tenenbaum2000} which assumes observations lie exactly on the manifold. This drawback to ISOMAP was also realised in \cite{Dimeglio2014} who proposed a procedure we will call robust-ISOMAP for functional data that is less sensitive to outliers. We will discuss P-ISOMAP and robust-ISOMAP in more details below. 
 
 
 # PROPOSED METHOD FOR ESTIMATING GEODESIC DISTANCES
@@ -269,6 +269,11 @@ setwd("../")
 \caption{Manifold of square root Beta densities. The boxplots indicate the distributions of each of the three metrics over 100 Monte Carlo samples. Besides Spline IsoGeo, all methods perform comparably well.}
 \label{fig:betas}
 \end{figure}
+
+# CONCLUSION
+
+In this work, we firstly challenge the existing paradigm of measuring distance for functional data. We advocated for the manifold perspective. We develop a method for estimating geodesic distances between functional manifold data. The approach relies on integrating ideas across several disciplines including manifold learning, functional data analysis, and signal processing.
+
 
 <!--
 
