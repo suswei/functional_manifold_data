@@ -382,7 +382,7 @@ sim_functional_data<-function(sce,samplesize=100,K=30,SNR=1,reg_sampling=1,com_g
     image.plot(analytic_geo,main='analytic geodesic')
   }
   if (plot_true==2){
-    pdf(paste(sprintf("sim_sce=%d",sce),".pdf",sep=""),width=2,height=2)
+    pdf(paste(sprintf("./writing/graphics/sim_sce=%d",sce),".pdf",sep=""),width=2,height=2)
     par(mgp=c(2.2,0.45,0), tcl=-0.4, mar=c(1.5,1.5,1.5,1.5))
     par(cex.axis=0.5,cex.lab=0.5)
     # matplot(t(grid),t(noiseless_data),main="True data",type='l', col=rainbow(samplesize))

@@ -1,17 +1,9 @@
 # About
 
-The project webpage is organized according to _site.yml. Individual pages are created using Rmarkdown .Rmd files. Before committing and pushing to Github, click the Build button in Rstudio.
+The tex files are written through index.Rmd. 
 
-Some useful resources for building a webpage hosted on Github Pages comprising of Rmarkdown files:
+Any changes to the writing should be performed in index.Rmd. Afterwards, do "run_this.R" to produce a corresponding index.tex.
 
-https://github.com/lgreski/datasciencectacontent/blob/master/markdown/pml-ghPagesSetup.md
+The wrapper latex files call index.tex.
 
-https://jules32.github.io/rmarkdown-website-tutorial/index.html
-
-https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html
-
-https://www.emilyzabor.com/tutorials/rmarkdown_websites_tutorial.html
-
-*Note: the default branch is set to gh-pages.
-
-*Note: original repository was called LocalCovarianceOperator. 
+Warning: bad idea to direclty modify index.tex as it gets overwritten when index.Rmd is knit.

@@ -68,6 +68,7 @@ The work of \cite{ChenMuller2012} was among the first in functional data analysi
 
 <!-- \cite{LinYao2017]  -->
 
+# RELATED WORK
 
 
 # PROPOSED METHOD FOR ESTIMATING GEODESIC DISTANCES
@@ -140,6 +141,16 @@ $$
 
 We also need to make a disclaimer about our sampling technique below. Proper sampling from a manifold remains an open problem. Even in the Euclidean case, it is not obvious how sampling should be done \cite{Diaconis2013}. For now, to safeguard against sampling unevenly on the functional manifold, we sample on a very narrow support of the manifold parameters.
 
+\begin{figure}
+\centering
+\includegraphics[width=0.3\textwidth]{./graphics/sim_sce=2}
+\includegraphics[width=0.3\textwidth]{./graphics/sim_sce=4}
+\includegraphics[width=0.3\textwidth]{./graphics/sim_sce=5}
+\caption{Left: One hundred noisy curves in the functional manifold of normal probability density. Middle: One hundred noisy curves in the functional manifold of square root probability density functions. Right: One hundred noisy curves in the functional manifold of warped functions.}
+\label{fig:sce2} 
+\end{figure}
+<!-- previous labels {fig:sce4} and {fig:sce5} need to be updated -->
+
 
 ## Isometric functional manifold of normal density functions
 <!-- Scenario 2 in sim_functional_data -->
@@ -148,13 +159,6 @@ We also need to make a disclaimer about our sampling technique below. Proper sam
 sim <- sim_functional_data(sce=2,samplesize=100,K=30,plot_true=2,reg_sampling=1)
 ```
 We take Manifold 2 in \cite{ChenMuller2012} and set the variance of the normal density to be $1$. Let $X_\beta: [a,b] \to \R$ be given by $X_\beta(t) = \frac{1}{\sqrt{2\pi}} \exp{[-\frac{1}{2}(t-\beta)^2]}$. Consider $$\M = \left \{X_\beta: \beta \in [-1,1], t \in [a,b]\right \},$$ with the $L^2$ inner product as the metric tensor. First, note that the "straight" line connecting $X_{\beta_1}$ and $X_{\beta_2}$ does not always stay inside of $\M$. Thus the geodesic distance will not coincide with the $L^2$ distance.
-
-\begin{figure}
-\centering
-\includegraphics[width=0.5\textwidth]{sim_sce=2}
-\caption{One hundred noisy curves in the functional manifold of normal probability density.}
-\label{fig:sce2}
-\end{figure}
 
 We set $a=-4$ and $b=4$ and sample $\beta$ according to a truncated standard normal with support on $[-1,1]$. The geodesic distance between the curves $X_{\beta_1}$ and $X_{\beta_2}$ is given by
 \begin{eqnarray*}
@@ -177,13 +181,6 @@ It was shown in \cite{Joshi2007} that the square root representation of probabil
 They consider the manifold $$ \M = \{ \psi:[0,1] \to \R : \psi \ge 0, \int_0^1 \psi^2(s) \,ds = 1 \},$$ with the Fisher-Rao metric tensor $$ <v_1,v_2> = \int_0^1 v_1(s) v_2(s) \,ds ,$$ for two tangent vectors $v_1,v_2 \in T_\psi(\M)$. Note that this coincides with the $L^2[0,1]$ inner product. It was shown in \cite{Joshi2007} that the geodesic distance between any two $\psi_1$ and $\psi_2$ in $\M$ is simply $$d_\M(\psi_1,\psi_2) = \cos^{-1}<\psi_1,\psi_2>.$$
 
 
-\begin{figure}[h!]
-\centering
-\includegraphics[width=0.5\textwidth]{sim_sce=4}
-\caption{One hundred noisy curves in the functional manifold of square root probability density functions.}
-\label{fig:sce4}
-\end{figure}
-
 We will specifically examine the square root of $Beta(\alpha,\beta)$ densities, which are of course supported on $[0,1]$. That is, consider $$ \M = \big\{ \sqrt{\psi_{\alpha,\beta}}: 1 \le \alpha \le 5, 2 \le \beta \le 5\big\}, $$ where $\psi_{\alpha,\beta}: [0,1] \to \R$ is the probability density function of a Beta random variable with shape parameters $\alpha$ and $\beta$. We sample $\alpha$ according to a truncated normal with mean 3 and variance 0.09 with support on $[1,5]$. We sample $\beta$ according to a truncated normal with mean 3.5 and variance 0.09 with support on $[2,5]$. 
 
  
@@ -193,15 +190,6 @@ We will specifically examine the square root of $Beta(\alpha,\beta)$ densities, 
 # Generate data
 sim <- sim_functional_data(sce=5,samplesize=100,K=30,plot_true=2,reg_sampling=1)
 ```
-
-
-
-\begin{figure}[h!]
-\centering
-\includegraphics[width=0.5\textwidth]{sim_sce=5}
-\caption{One hundred noisy curves in the functional manifold of warped functions.}
-\label{fig:sce5}
-\end{figure}
 
 Let $X_\alpha(t) = \mu(h_\alpha(t))$ be defined on $[-3,3]$ where $$ \mu(t) = \exp\{(t-1.5)^2/2\}+\exp\{(t+1.5)^2/2\},$$ and $$ h_\alpha(t) = 6\frac{\exp\{\alpha(t+3)/6\}-1}{\exp\{\alpha\}-1},$$ if $\alpha \ne 0$ and $h_\alpha(t) = t$ otherwise. 
 
@@ -254,9 +242,9 @@ setwd("../")
 
 \begin{figure}
 \centering
-\includegraphics[height=0.3\textheight]{sim_results/sce=2_SNR=high_Kobs=30_MSE}
-\includegraphics[height=0.3\textheight]{sim_results/sce=2_SNR=high_Kobs=30_isometry}
-\includegraphics[height=0.3\textheight]{sim_results/sce=2_SNR=high_Kobs=30_Pearson}
+\includegraphics[width=0.3\textwidth]{./graphics/sce=2_SNR=high_Kobs=30_MSE}
+\includegraphics[width=0.3\textwidth]{./graphics/sce=2_SNR=high_Kobs=30_isometry}
+\includegraphics[width=0.3\textwidth]{./graphics/sce=2_SNR=high_Kobs=30_Pearson}
 \caption{Manifold of $N(\beta,1)$ probability density functions. The boxplots indicate the distributions of each of the three metrics over 100 Monte Carlo samples. Across all three metrics, our method with $s=2$ performs the best, followed by our method with $s=3$.}
 \label{fig:normal}
 \end{figure}
@@ -265,9 +253,9 @@ setwd("../")
 
 \begin{figure}
 \centering
-\includegraphics[height=0.3\textheight]{sim_results/sce=5_SNR=high_Kobs=30_MSE}
-\includegraphics[height=0.3\textheight]{sim_results/sce=5_SNR=high_Kobs=30_isometry}
-\includegraphics[height=0.3\textheight]{sim_results/sce=5_SNR=high_Kobs=30_Pearson}
+\includegraphics[width=0.3\textwidth]{./graphics/sce=5_SNR=high_Kobs=30_MSE}
+\includegraphics[width=0.3\textwidth]{./graphics/sce=5_SNR=high_Kobs=30_isometry}
+\includegraphics[width=0.3\textwidth]{./graphics/sce=5_SNR=high_Kobs=30_Pearson}
 \caption{Manifold of warped functions. The boxplots indicate the distributions of each of the three metrics over 100 Monte Carlo samples. The best performing estimators are given by our method with $s=2$ and then $s=3$.}
 \label{fig:warping}
 \end{figure}
@@ -275,9 +263,9 @@ setwd("../")
 
 
 \begin{figure}
-\includegraphics[height=0.3\textheight]{sim_results/sce=4_SNR=high_Kobs=30_MSE}
-\includegraphics[height=0.3\textheight]{sim_results/sce=4_SNR=high_Kobs=30_isometry}
-\includegraphics[height=0.3\textheight]{sim_results/sce=4_SNR=high_Kobs=30_Pearson}
+\includegraphics[width=0.3\textwidth]{./graphics/sce=4_SNR=high_Kobs=30_MSE}
+\includegraphics[width=0.3\textwidth]{./graphics/sce=4_SNR=high_Kobs=30_isometry}
+\includegraphics[width=0.3\textwidth]{./graphics/sce=4_SNR=high_Kobs=30_Pearson}
 \caption{Manifold of square root Beta densities. The boxplots indicate the distributions of each of the three metrics over 100 Monte Carlo samples. Besides Spline IsoGeo, all methods perform comparably well.}
 \label{fig:betas}
 \end{figure}

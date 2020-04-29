@@ -12,10 +12,10 @@ create_boxplot<- function(sce_details,mat_ind,method_names,nr_methods){
   
   # TODO: fix hardcoding
   if(sce_details[2]==0.1){
-    base_pattern_out = do.call(sprintf, c(list("sce=%d_SNR=low_Kobs=%d"), sce_details[1],sce_details[3]))
+    base_pattern_out = do.call(sprintf, c(list("../writing/graphics/sce=%d_SNR=low_Kobs=%d"), sce_details[1],sce_details[3]))
   }
   else{
-    base_pattern_out = do.call(sprintf, c(list("sce=%d_SNR=high_Kobs=%d"), sce_details[1],sce_details[3]))
+    base_pattern_out = do.call(sprintf, c(list("../writing/graphics/sce=%d_SNR=high_Kobs=%d"), sce_details[1],sce_details[3]))
   }
   
 
