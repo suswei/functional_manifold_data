@@ -22,3 +22,4 @@ writing/*.bbl
 writing/*.blg
 writing/*.log
 writing/*.pag
+writing/index.tex
