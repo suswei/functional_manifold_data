@@ -1,0 +1,106 @@
+\documentclass[AMS,STIX1COL]{WileyNJD-v2}
+
+\def\tightlist{}
+
+%\usepackage{amsmath,amsfonts}
+
+\articletype{Article Type}%
+
+\received{26 April 2016}
+\revised{6 June 2016}
+\accepted{6 June 2016}
+
+\raggedbottom
+
+\begin{document}
+
+\title{This is the sample article title\protect\thanks{This is an example for title footnote.}}
+
+\author[1]{Author One*}
+
+\author[2,3]{Author Two}
+
+\author[3]{Author Three}
+
+\authormark{AUTHOR ONE \textsc{et al}}
+
+
+\address[1]{\orgdiv{Org Division}, \orgname{Org Name}, \orgaddress{\state{State name}, \country{Country name}}}
+
+\address[2]{\orgdiv{Org Division}, \orgname{Org Name}, \orgaddress{\state{State name}, \country{Country name}}}
+
+\address[3]{\orgdiv{Org Division}, \orgname{Org Name}, \orgaddress{\state{State name}, \country{Country name}}}
+
+\corres{*Corresponding author name, This is sample corresponding address. \email{authorone@gmail.com}}
+
+\presentaddress{This is sample for present address text this is sample for present address text}
+
+\abstract[Summary]{
+\include{abstract}
+}
+
+\keywords{keyword1, keyword2, keyword3, keyword4}
+
+\jnlcitation{\cname{%
+\author{Williams K.}, 
+\author{B. Hoskins}, 
+\author{R. Lee}, 
+\author{G. Masato}, and 
+\author{T. Woollings}} (\cyear{2016}), 
+\ctitle{A regime analysis of Atlantic winter jet variability applied to evaluate HadGEM3-GC2}, \cjournal{Q.J.R. Meteorol. Soc.}, \cvol{2017;00:1--6}.}
+
+\maketitle
+
+\footnotetext{\textbf{Abbreviations:} ANA, anti-nuclear antibodies; APC, antigen-presenting cells; IRF, interferon regulatory factor}
+
+\include{index}
+
+\include{MarieDataAnalysis.tex}
+
+%\backmatter
+
+\section*{Acknowledgments}
+This is acknowledgment text~\cite{Elbaum2002}. Provide text here. This is acknowledgment text. Provide text here. This is acknowledgment text. Provide text here. This is acknowledgment text. Provide text here. This is acknowledgment text. Provide text here. This is acknowledgment text. Provide text here. This is acknowledgment text. Provide text here. This is acknowledgment text. Provide text here. This is acknowledgment text. Provide text here. 
+
+\subsection*{Author contributions}
+
+This is an author contribution text. This is an author contribution text. This is an author contribution text. This is an author contribution text. This is an author contribution text. 
+
+\subsection*{Financial disclosure}
+
+None reported.
+
+\subsection*{Conflict of interest}
+
+The authors declare no potential conflict of interests.
+
+
+\section*{Supporting information}
+
+The following supporting information is available as part of the online article:
+
+\noindent
+\textbf{Figure S1.}
+{500{\uns}hPa geopotential anomalies for GC2C calculated against the ERA Interim reanalysis. The period is 1989--2008.}
+
+\noindent
+\textbf{Figure S2.}
+{The SST anomalies for GC2C calculated against the observations (OIsst).}
+
+
+\appendix
+
+\section{Section title of first appendix\label{app1}}
+
+
+
+%\nocite{*}% Show all bib entries - both cited and uncited; comment this line to view only cited bib entries;
+\bibliography{references.bib}%
+
+
+\section*{Author Biography}
+
+\begin{biography}{\includegraphics[width=60pt,height=70pt,draft]{empty}}{\textbf{Author Name.} This is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text this is sample author biography text.}
+\end{biography}
+
+\end{document}

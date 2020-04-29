@@ -33,7 +33,7 @@ TODO: The reg_sampling parameter in sim_functional_data is somewhat of a misnome
 
 ```{r}
 # Generate data
-sim <- sim_functional_data(sce=2,samplesize=100,K=30,plot_true=1,reg_sampling=1)
+sim <- sim_functional_data(sce=4,samplesize=100,K=30,plot_true=1,reg_sampling=1)
 ```
 
 The output contains the in-sample pairwise geodesic distance matrix (analytic_geo) via analytic derivation. The purpose of this notebook is to see if our analytic derivations match numerical results.
